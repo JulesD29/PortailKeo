@@ -1,4 +1,4 @@
-# Portail Auto
+# Portail Keo
 
 Appelle automatiquement le numéro du portail quand vous entrez dans la zone
 (jours et plage horaire réglables, 1 appel par jour maximum).
@@ -34,7 +34,7 @@ Appelle automatiquement le numéro du portail quand vous entrez dans la zone
 6. **Accorder les autorisations** : localisation → *Toujours autoriser*, appels, notifications.
 7. **Désactiver l'optimisation batterie** (fortement conseillé, surtout Xiaomi,
    Huawei, Oppo, Samsung : mettre aussi l'app en « Sans restriction » dans
-   Paramètres › Applis › Portail Auto › Batterie).
+   Paramètres › Applis › Portail Keo › Batterie).
 
 Le bouton **Tester l'appel** vérifie que l'appel direct fonctionne.
 Le **Journal** montre chaque entrée dans la zone et pourquoi un appel a été
