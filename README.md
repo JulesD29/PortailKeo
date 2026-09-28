@@ -80,3 +80,6 @@ La première fois, Android demande d'autoriser Portail Keo à installer des appl
 - **Compte à rebours** (5 s par défaut) : notification « Appel du portail dans 5 s »
   avec « Annuler » (plus d'appel automatique ce jour-là) et « Appeler maintenant ».
   Mettre 0 pour appeler immédiatement. La tuile et le raccourci appellent sans délai.
+
+## Branches
+Voir [CONTRIBUTING.md](CONTRIBUTING.md) : on travaille sur `develop`, on publie en fusionnant dans `main`.

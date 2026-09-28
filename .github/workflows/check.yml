@@ -1,0 +1,17 @@
+# Vérifie que le code compile sur une pull request vers main.
+# Ne publie rien : aucune mise à jour n'est envoyée aux téléphones.
+name: Vérifier la compilation
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon

@@ -1,6 +1,10 @@
-name: Build APK
+# Construit l'APK et publie une Release (= mise à jour sur les téléphones).
+# Ne tourne QUE sur main : on y arrive en fusionnant develop (pull request).
+name: Release APK
 on:
   push:
+    branches: [main]
+    paths-ignore: ["**.md", ".gitignore"]
   workflow_dispatch:
 permissions:
   contents: write   # pour publier les Releases
