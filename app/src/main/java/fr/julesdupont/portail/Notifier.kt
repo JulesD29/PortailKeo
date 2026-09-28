@@ -41,7 +41,7 @@ object Notifier {
     fun info(ctx: Context, text: String) {
         post(ctx, ID_INFO, NotificationCompat.Builder(ctx, CHANNEL)
             .setSmallIcon(R.drawable.ic_notif)
-            .setContentTitle("Portail Auto")
+            .setContentTitle(ctx.getString(R.string.app_name))
             .setContentText(text)
             .setContentIntent(openApp(ctx))
             .setAutoCancel(true))
