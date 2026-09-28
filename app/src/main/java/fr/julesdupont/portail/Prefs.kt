@@ -60,6 +60,11 @@ class Prefs(context: Context) {
         get() = sp.getBoolean("skipHolidays", true)
         set(v) = sp.edit().putBoolean("skipHolidays", v).apply()
 
+    /** Date (yyyy-MM-dd) de la dernière recherche de mise à jour réussie. */
+    var lastUpdateCheck: String
+        get() = sp.getString("lastUpdateCheck", "") ?: ""
+        set(v) = sp.edit().putString("lastUpdateCheck", v).apply()
+
     val logText: String get() = sp.getString("log", "") ?: ""
 
     @Synchronized

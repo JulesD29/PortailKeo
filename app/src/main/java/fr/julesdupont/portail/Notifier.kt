@@ -13,6 +13,8 @@ object Notifier {
     private const val CHANNEL = "portail"
     private const val ID_INFO = 1
     private const val ID_FALLBACK = 2
+    private const val ID_UPDATE = 3
+    const val EXTRA_SHOW_UPDATE = "show_update"
 
     private fun ensureChannel(ctx: Context) {
         val nm = ctx.getSystemService(NotificationManager::class.java)
@@ -44,6 +46,21 @@ object Notifier {
             .setContentTitle(ctx.getString(R.string.app_name))
             .setContentText(text)
             .setContentIntent(openApp(ctx))
+            .setAutoCancel(true))
+    }
+
+    fun update(ctx: Context, version: String) {
+        val pi = PendingIntent.getActivity(
+            ctx, 3,
+            Intent(ctx, MainActivity::class.java).putExtra(EXTRA_SHOW_UPDATE, true)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        post(ctx, ID_UPDATE, NotificationCompat.Builder(ctx, CHANNEL)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Mise à jour disponible")
+            .setContentText("${ctx.getString(R.string.app_name)} $version : touchez pour installer")
+            .setContentIntent(pi)
             .setAutoCancel(true))
     }
 

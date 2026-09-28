@@ -63,3 +63,10 @@ passé ou non.
 La clé est dans `signing/` sur le PC (jamais envoyée sur Git — **à sauvegarder**,
 sa perte oblige à désinstaller l'app). GitHub Actions l'utilise via les secrets
 `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.
+
+## Mises à jour automatiques
+Chaque commit sur `main` publie une *Release* GitHub (si la clé fixe est configurée).
+L'app vérifie 2 fois par jour et à l'ouverture : une notification ou une fenêtre
+propose d'installer la nouvelle version, sans passer par l'ordinateur.
+Bouton « Rechercher une mise à jour » pour vérifier à la main.
+La première fois, Android demande d'autoriser Portail Keo à installer des applis.

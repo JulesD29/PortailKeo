@@ -65,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         b.btnPerms.setOnClickListener { requestPermissions() }
         b.btnBattery.setOnClickListener { requestBatteryExemption() }
         b.btnTest.setOnClickListener { testCall() }
+        b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
+        Updater.scheduleDaily(this)
+        if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
         b.btnPause.setOnClickListener { pickPauseDate() }
         b.btnResume.setOnClickListener {
             prefs.pauseUntil = ""
@@ -80,10 +83,49 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
+    }
+
     override fun onResume() {
         super.onResume()
         refreshStatus()
         applyGeofence(silent = true)
+        if (prefs.lastUpdateCheck != LocalDate.now().toString()) checkForUpdate(interactive = false)
+    }
+
+    // ---------- Mises à jour ----------
+
+    private fun checkForUpdate(interactive: Boolean) {
+        if (interactive) toast("Recherche d'une mise à jour…")
+        Updater.check(this) { result ->
+            if (isFinishing || isDestroyed) return@check
+            result.onFailure { if (interactive) toast("Impossible de vérifier : ${it.message}") }
+            result.onSuccess { release ->
+                if (release != null) showUpdateDialog(release)
+                else if (interactive) toast("${getString(R.string.app_name)} est à jour")
+            }
+        }
+    }
+
+    private fun showUpdateDialog(release: Updater.Release) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Nouvelle version ${release.name}")
+            .setMessage(release.notes.ifBlank { "Une nouvelle version est disponible." }.take(1000))
+            .setPositiveButton("Installer") { _, _ -> installUpdate(release) }
+            .setNegativeButton("Plus tard", null)
+            .show()
+    }
+
+    private fun installUpdate(release: Updater.Release) {
+        if (!packageManager.canRequestPackageInstalls()) {
+            toast("Autorisez « Installer des applis inconnues » pour ${getString(R.string.app_name)}, puis réessayez")
+            startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
+            return
+        }
+        toast("Téléchargement de la version ${release.name}…")
+        Updater.downloadAndInstall(this, release) { err -> toast("Échec de la mise à jour : $err") }
     }
 
     // ---------- Formulaire ----------
@@ -244,6 +286,7 @@ class MainActivity : AppCompatActivity() {
             else -> "Aucune pause en cours"
         }
         b.btnResume.isEnabled = pause != null
+        b.txtVersion.text = "Version installée : ${Updater.currentVersionName(this)}"
     }
 
     // ---------- Test ----------
