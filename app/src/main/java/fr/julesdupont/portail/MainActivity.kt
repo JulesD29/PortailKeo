@@ -1,0 +1,229 @@
+package fr.julesdupont.portail
+
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.TimePickerDialog
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Bundle
+import android.provider.Settings
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.material.chip.Chip
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import fr.julesdupont.portail.databinding.ActivityMainBinding
+import java.util.Locale
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var b: ActivityMainBinding
+    private lateinit var prefs: Prefs
+    private var start = 0
+    private var end = 0
+
+    private val dayLabels = listOf("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim")
+
+    private val basePermLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            refreshStatus()
+            if (Perms.fineLocation(this) && !Perms.backgroundLocation(this)) askBackgroundLocation()
+        }
+
+    private val bgPermLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+            refreshStatus()
+            applyGeofence()
+        }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        b = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(b.root)
+        prefs = Prefs(this)
+
+        dayLabels.forEachIndexed { i, label ->
+            b.chipDays.addView(Chip(this).apply {
+                text = label
+                isCheckable = true
+                id = 1000 + i + 1 // 1 = lundi … 7 = dimanche
+            })
+        }
+        loadForm()
+
+        b.btnStart.setOnClickListener { pickTime(start) { start = it; updateTimeButtons() } }
+        b.btnEnd.setOnClickListener { pickTime(end) { end = it; updateTimeButtons() } }
+        b.btnHere.setOnClickListener { useCurrentLocation() }
+        b.btnSave.setOnClickListener { save() }
+        b.btnPerms.setOnClickListener { requestPermissions() }
+        b.btnBattery.setOnClickListener { requestBatteryExemption() }
+        b.btnTest.setOnClickListener { testCall() }
+        b.switchEnabled.setOnCheckedChangeListener { _, _ -> /* pris en compte à l'enregistrement */ }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshStatus()
+        applyGeofence(silent = true)
+    }
+
+    // ---------- Formulaire ----------
+
+    private fun loadForm() {
+        b.switchEnabled.isChecked = prefs.enabled
+        b.editPhone.setText(prefs.phone)
+        if (prefs.hasLocation) b.editCoords.setText(formatCoords(prefs.lat, prefs.lng))
+        b.editRadius.setText(prefs.radius.toString())
+        val days = prefs.days
+        for (d in 1..7) (b.chipDays.findViewById<Chip>(1000 + d)).isChecked = d in days
+        start = prefs.startMinutes
+        end = prefs.endMinutes
+        updateTimeButtons()
+    }
+
+    private fun updateTimeButtons() {
+        b.btnStart.text = "De ${Rules.fmt(start)}"
+        b.btnEnd.text = "À ${Rules.fmt(end)}"
+    }
+
+    private fun pickTime(current: Int, onPicked: (Int) -> Unit) {
+        TimePickerDialog(this, { _, h, m -> onPicked(h * 60 + m) }, current / 60, current % 60, true).show()
+    }
+
+    private fun formatCoords(lat: Double, lng: Double) =
+        String.format(Locale.US, "%.6f, %.6f", lat, lng)
+
+    private fun parseCoords(text: String): Pair<Double, Double>? {
+        val nums = Regex("-?\\d+(?:\\.\\d+)?").findAll(text).map { it.value.toDouble() }.toList()
+        if (nums.size != 2) return null
+        val (lat, lng) = nums
+        if (lat !in -90.0..90.0 || lng !in -180.0..180.0) return null
+        return lat to lng
+    }
+
+    private fun save() {
+        val phone = b.editPhone.text?.toString()?.trim().orEmpty()
+        val coords = parseCoords(b.editCoords.text?.toString().orEmpty())
+        val radius = b.editRadius.text?.toString()?.toIntOrNull()
+        val days = (1..7).filter { b.chipDays.findViewById<Chip>(1000 + it).isChecked }.toSet()
+
+        when {
+            phone.isEmpty() -> return toast("Indiquez le numéro du portail")
+            coords == null -> return toast("Coordonnées invalides (ex. 48.856600, 2.352200)")
+            radius == null || radius < 50 || radius > 5000 -> return toast("Rayon entre 50 et 5000 m")
+            days.isEmpty() -> return toast("Choisissez au moins un jour")
+        }
+        prefs.phone = phone
+        prefs.lat = coords!!.first
+        prefs.lng = coords.second
+        prefs.radius = radius!!
+        prefs.days = days
+        prefs.startMinutes = start
+        prefs.endMinutes = end
+        prefs.enabled = b.switchEnabled.isChecked
+        prefs.log("Réglages enregistrés (${if (prefs.enabled) "activé" else "désactivé"})")
+
+        if (prefs.enabled && (!Perms.backgroundLocation(this) || !Perms.call(this))) {
+            requestPermissions()
+        }
+        applyGeofence()
+    }
+
+    private fun applyGeofence(silent: Boolean = false) {
+        GeofenceManager.register(this) { ok, msg ->
+            b.txtZoneStatus.text = (if (ok) "✓ " else "✗ ") + msg
+            if (!silent) toast(msg)
+            refreshStatus()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun useCurrentLocation() {
+        if (!Perms.fineLocation(this)) {
+            toast("Autorisez d'abord la localisation")
+            requestPermissions()
+            return
+        }
+        toast("Recherche de la position…")
+        LocationServices.getFusedLocationProviderClient(this)
+            .getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { loc ->
+                if (loc == null) toast("Position indisponible, réessayez dehors")
+                else {
+                    b.editCoords.setText(formatCoords(loc.latitude, loc.longitude))
+                    toast("Position trouvée (±${loc.accuracy.toInt()} m). Pensez à enregistrer.")
+                }
+            }
+            .addOnFailureListener { toast("Erreur : ${it.message}") }
+    }
+
+    // ---------- Autorisations ----------
+
+    private fun requestPermissions() {
+        if (!Perms.fineLocation(this) || !Perms.call(this) || !Perms.notifications(this)) {
+            basePermLauncher.launch(Perms.basePermissions())
+        } else if (!Perms.backgroundLocation(this)) {
+            askBackgroundLocation()
+        } else {
+            toast("Toutes les autorisations sont accordées")
+        }
+    }
+
+    private fun askBackgroundLocation() {
+        if (Build.VERSION.SDK_INT < 29) return
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Localisation en arrière-plan")
+            .setMessage("Pour détecter votre arrivée même quand l'app est fermée, choisissez « Toujours autoriser » sur l'écran suivant.")
+            .setPositiveButton("Continuer") { _, _ ->
+                bgPermLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    @SuppressLint("BatteryLife")
+    private fun requestBatteryExemption() {
+        if (Perms.batteryUnrestricted(this)) return toast("Déjà désactivée")
+        try {
+            startActivity(Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                Uri.parse("package:$packageName")))
+        } catch (_: Exception) {
+            startActivity(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS))
+        }
+    }
+
+    private fun refreshStatus() {
+        fun line(ok: Boolean, label: String) = (if (ok) "✓  " else "✗  ") + label
+        b.txtPerms.text = listOf(
+            line(Perms.fineLocation(this), "Localisation précise"),
+            line(Perms.backgroundLocation(this), "Localisation « Toujours autoriser »"),
+            line(Perms.call(this), "Passer des appels"),
+            line(Perms.notifications(this), "Notifications"),
+            line(Perms.batteryUnrestricted(this), "Optimisation batterie désactivée (recommandé)"),
+        ).joinToString("\n")
+        b.txtLog.text = prefs.logText.ifEmpty { "—" }
+    }
+
+    // ---------- Test ----------
+
+    private fun testCall() {
+        val phone = b.editPhone.text?.toString()?.trim().orEmpty()
+        if (phone.isEmpty()) return toast("Indiquez le numéro du portail")
+        if (!Perms.call(this)) return requestPermissions()
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Tester l'appel")
+            .setMessage("Appeler $phone maintenant ?")
+            .setPositiveButton("Appeler") { _, _ ->
+                CallHelper.call(this, phone, automatic = false)
+                refreshStatus()
+            }
+            .setNegativeButton("Annuler", null)
+            .show()
+    }
+
+    private fun toast(msg: String) = Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+}
