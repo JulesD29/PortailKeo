@@ -50,6 +50,16 @@ class Prefs(context: Context) {
         get() = sp.getString("lastCall", "") ?: ""
         set(v) = sp.edit().putString("lastCall", v).apply()
 
+    /** Pause de l'automatisation jusqu'à cette date incluse (yyyy-MM-dd), vide = pas de pause. */
+    var pauseUntil: String
+        get() = sp.getString("pauseUntil", "") ?: ""
+        set(v) = sp.edit().putString("pauseUntil", v).apply()
+
+    /** Ne pas appeler automatiquement les jours fériés. */
+    var skipHolidays: Boolean
+        get() = sp.getBoolean("skipHolidays", true)
+        set(v) = sp.edit().putBoolean("skipHolidays", v).apply()
+
     val logText: String get() = sp.getString("log", "") ?: ""
 
     @Synchronized

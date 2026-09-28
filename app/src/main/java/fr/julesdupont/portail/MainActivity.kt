@@ -2,6 +2,7 @@ package fr.julesdupont.portail
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
@@ -17,6 +18,8 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.chip.Chip
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import fr.julesdupont.portail.databinding.ActivityMainBinding
+import java.time.LocalDate
+import java.time.ZoneId
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -62,7 +65,19 @@ class MainActivity : AppCompatActivity() {
         b.btnPerms.setOnClickListener { requestPermissions() }
         b.btnBattery.setOnClickListener { requestBatteryExemption() }
         b.btnTest.setOnClickListener { testCall() }
-        b.switchEnabled.setOnCheckedChangeListener { _, _ -> /* pris en compte à l'enregistrement */ }
+        b.btnPause.setOnClickListener { pickPauseDate() }
+        b.btnResume.setOnClickListener {
+            prefs.pauseUntil = ""
+            prefs.log("Pause levée")
+            refreshStatus()
+        }
+        b.switchHolidays.setOnCheckedChangeListener { _, checked ->
+            if (checked != prefs.skipHolidays) {
+                prefs.skipHolidays = checked
+                prefs.log(if (checked) "Jours fériés ignorés" else "Appels aussi les jours fériés")
+                refreshStatus()
+            }
+        }
     }
 
     override fun onResume() {
@@ -80,6 +95,7 @@ class MainActivity : AppCompatActivity() {
         b.editRadius.setText(prefs.radius.toString())
         val days = prefs.days
         for (d in 1..7) (b.chipDays.findViewById<Chip>(1000 + d)).isChecked = d in days
+        b.switchHolidays.isChecked = prefs.skipHolidays
         start = prefs.startMinutes
         end = prefs.endMinutes
         updateTimeButtons()
@@ -92,6 +108,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun pickTime(current: Int, onPicked: (Int) -> Unit) {
         TimePickerDialog(this, { _, h, m -> onPicked(h * 60 + m) }, current / 60, current % 60, true).show()
+    }
+
+    private fun pickPauseDate() {
+        val today = LocalDate.now()
+        val dialog = DatePickerDialog(this, { _, y, m, d ->
+            val until = LocalDate.of(y, m + 1, d)
+            prefs.pauseUntil = until.toString()
+            prefs.log("Pause jusqu'au $until inclus")
+            refreshStatus()
+        }, today.year, today.monthValue - 1, today.dayOfMonth)
+        dialog.datePicker.minDate = today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        dialog.setTitle("Pas d'appel automatique jusqu'au (inclus)")
+        dialog.show()
     }
 
     private fun formatCoords(lat: Double, lng: Double) =
@@ -206,6 +235,15 @@ class MainActivity : AppCompatActivity() {
             line(Perms.batteryUnrestricted(this), "Optimisation batterie désactivée (recommandé)"),
         ).joinToString("\n")
         b.txtLog.text = prefs.logText.ifEmpty { "—" }
+
+        val pause = Rules.pauseLabel(prefs)
+        val holiday = Holidays.name(LocalDate.now())
+        b.txtPause.text = when {
+            pause != null -> "⏸  Automatisation ${pause}"
+            holiday != null && prefs.skipHolidays -> "Aujourd'hui : $holiday, pas d'appel automatique"
+            else -> "Aucune pause en cours"
+        }
+        b.btnResume.isEnabled = pause != null
     }
 
     // ---------- Test ----------

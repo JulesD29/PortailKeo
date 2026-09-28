@@ -46,3 +46,20 @@ passé ou non.
   Si c'est trop tard, augmentez le rayon.
 - La localisation du téléphone doit rester activée.
 - L'appel reste ouvert : c'est vous qui raccrochez.
+
+## Ouvrir le portail à la main
+- **Tuile des réglages rapides** : tirer le volet du haut › crayon ✏️ › glisser la tuile
+  **Portail** dans les tuiles actives. Un appui = un appel.
+- **Raccourci** : appui long sur l'icône de l'app › « Ouvrir le portail ».
+  On peut le glisser sur l'écran d'accueil pour en faire un bouton.
+
+## Pause et jours fériés
+- « Mettre en pause… » : pas d'appel automatique jusqu'à la date choisie (incluse).
+- « Pas d'appel les jours fériés » (activé par défaut) : jours fériés de France
+  métropolitaine, lundi de Pâques, Ascension et lundi de Pentecôte inclus.
+- La tuile et le raccourci fonctionnent toujours, même en pause.
+
+## Signature fixe (mises à jour sans désinstaller)
+La clé est dans `signing/` sur le PC (jamais envoyée sur Git — **à sauvegarder**,
+sa perte oblige à désinstaller l'app). GitHub Actions l'utilise via les secrets
+`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`.

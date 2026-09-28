@@ -25,7 +25,7 @@ object CallHelper {
             val tm = ctx.getSystemService(TelecomManager::class.java)
             tm.placeCall(Uri.fromParts("tel", number, null), Bundle())
             if (automatic) prefs.lastCallDate = LocalDate.now().toString()
-            prefs.log(if (automatic) "Appel automatique lancé vers $number" else "Appel de test lancé vers $number")
+            prefs.log(if (automatic) "Appel automatique lancé vers $number" else "Appel manuel lancé vers $number")
             true
         } catch (e: Exception) {
             prefs.log("Échec de l'appel : ${e.javaClass.simpleName} ${e.message ?: ""}")
