@@ -49,7 +49,7 @@ passé ou non.
 
 ## Ouvrir le portail à la main
 - **Tuile des réglages rapides** : tirer le volet du haut › crayon ✏️ › glisser la tuile
-  **Portail** dans les tuiles actives. Un appui = un appel.
+  **Appeler Garage** dans les tuiles actives. Un appui = un appel.
 - **Raccourci** : appui long sur l'icône de l'app › « Ouvrir le portail ».
   On peut le glisser sur l'écran d'accueil pour en faire un bouton.
 
