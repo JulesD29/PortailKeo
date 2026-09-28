@@ -13,7 +13,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.common.api.ApiException
 
 object GeofenceManager {
-    private const val GEOFENCE_ID = "portail"
+    const val GEOFENCE_ID = "portail"
+    const val APPROACH_ID = "approche"
     const val ACTION_REFRESH = "fr.julesdupont.portail.REFRESH"
 
     private fun geofenceIntent(ctx: Context): PendingIntent {
@@ -54,16 +55,28 @@ object GeofenceManager {
             .build()
         // Pas de déclenchement initial : on ne veut pas appeler juste parce qu'on
         // enregistre les réglages en étant déjà sur place.
-        val request = GeofencingRequest.Builder()
+        val builder = GeofencingRequest.Builder()
             .setInitialTrigger(0)
             .addGeofence(geofence)
-            .build()
+        val twoStage = p.twoStage && p.approachRadius > p.radius
+        if (twoStage) {
+            builder.addGeofence(
+                Geofence.Builder()
+                    .setRequestId(APPROACH_ID)
+                    .setCircularRegion(p.lat, p.lng, p.approachRadius.toFloat())
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .build()
+            )
+        }
+        val request = builder.build()
 
         client.removeGeofences(geofenceIntent(app)).addOnCompleteListener {
             client.addGeofences(request, geofenceIntent(app))
                 .addOnSuccessListener {
                     scheduleRefresh(app)
-                    done(true, "Zone active (${p.radius} m)")
+                    done(true, if (twoStage) "Zone active (${p.radius} m, approche ${p.approachRadius} m)"
+                               else "Zone active (${p.radius} m)")
                 }
                 .addOnFailureListener { e ->
                     val code = (e as? ApiException)?.statusCode

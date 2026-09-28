@@ -70,3 +70,13 @@ L'app vérifie 2 fois par jour et à l'ouverture : une notification ou une fenê
 propose d'installer la nouvelle version, sans passer par l'ordinateur.
 Bouton « Rechercher une mise à jour » pour vérifier à la main.
 La première fois, Android demande d'autoriser Portail Keo à installer des applis.
+
+## Détection en deux temps et compte à rebours
+- **Zone d'approche** (2 km par défaut) : en y entrant, un GPS précis s'active
+  (notification « Approche du portail ») et mesure la distance toutes les 3 s.
+  L'arrivée est détectée dès que vous êtes dans le rayon du portail. Le GPS se coupe
+  à l'arrivée, en sortant de la zone d'approche, ou après 20 min.
+- La petite zone reste active en secours si le GPS précis ne démarre pas.
+- **Compte à rebours** (5 s par défaut) : notification « Appel du portail dans 5 s »
+  avec « Annuler » (plus d'appel automatique ce jour-là) et « Appeler maintenant ».
+  Mettre 0 pour appeler immédiatement. La tuile et le raccourci appellent sans délai.

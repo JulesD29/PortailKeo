@@ -83,6 +83,42 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switchTwoStage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="GPS précis à l'approche (recommandé)" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutApproach"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="Zone d'approche (mètres)"
+            app:helperText="Le GPS précis s'active dans cette zone jusqu'à l'arrivée (20 min max)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editApproach"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:hint="Compte à rebours avant l'appel (secondes)"
+            app:helperText="Notification avec « Annuler ». 0 = appel immédiat">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editCountdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Horaires -->
         <TextView
             android:layout_width="wrap_content"

@@ -19,16 +19,27 @@ class GeofenceReceiver : BroadcastReceiver() {
             }
             return
         }
-        if (event.geofenceTransition != Geofence.GEOFENCE_TRANSITION_ENTER) return
+        val ids = event.triggeringGeofences?.map { it.requestId }.orEmpty()
 
-        prefs.log("Entrée dans la zone du portail")
-        val refusal = Rules.check(prefs)
-        if (refusal != null) {
-            prefs.log("Pas d'appel : $refusal")
-            return
-        }
-        if (CallHelper.call(context, prefs.phone, automatic = true)) {
-            Notifier.info(context, "Appel du portail lancé")
+        when (event.geofenceTransition) {
+            Geofence.GEOFENCE_TRANSITION_ENTER -> when {
+                GeofenceManager.GEOFENCE_ID in ids ->
+                    AutoCall.attempt(context, "Entrée dans la zone du portail")
+
+                GeofenceManager.APPROACH_ID in ids -> {
+                    val refusal = Rules.check(prefs)
+                    if (refusal != null) {
+                        prefs.log("Approche détectée, pas de suivi GPS : $refusal")
+                    } else {
+                        prefs.log("Approche détectée (zone de ${prefs.approachRadius} m)")
+                        PortalService.startApproach(context)
+                    }
+                }
+            }
+            Geofence.GEOFENCE_TRANSITION_EXIT -> if (GeofenceManager.APPROACH_ID in ids) {
+                prefs.log("Sortie de la zone d'approche")
+                PortalService.stop(context)
+            }
         }
     }
 }

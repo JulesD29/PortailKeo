@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         b.btnPerms.setOnClickListener { requestPermissions() }
         b.btnBattery.setOnClickListener { requestBatteryExemption() }
         b.btnTest.setOnClickListener { testCall() }
+        b.switchTwoStage.setOnCheckedChangeListener { _, checked -> b.layoutApproach.isEnabled = checked }
         b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
@@ -135,6 +136,10 @@ class MainActivity : AppCompatActivity() {
         b.editPhone.setText(prefs.phone)
         if (prefs.hasLocation) b.editCoords.setText(formatCoords(prefs.lat, prefs.lng))
         b.editRadius.setText(prefs.radius.toString())
+        b.switchTwoStage.isChecked = prefs.twoStage
+        b.editApproach.setText(prefs.approachRadius.toString())
+        b.layoutApproach.isEnabled = prefs.twoStage
+        b.editCountdown.setText(prefs.countdownSeconds.toString())
         val days = prefs.days
         for (d in 1..7) (b.chipDays.findViewById<Chip>(1000 + d)).isChecked = d in days
         b.switchHolidays.isChecked = prefs.skipHolidays
@@ -180,6 +185,9 @@ class MainActivity : AppCompatActivity() {
         val phone = b.editPhone.text?.toString()?.trim().orEmpty()
         val coords = parseCoords(b.editCoords.text?.toString().orEmpty())
         val radius = b.editRadius.text?.toString()?.toIntOrNull()
+        val twoStage = b.switchTwoStage.isChecked
+        val approach = b.editApproach.text?.toString()?.toIntOrNull()
+        val countdown = b.editCountdown.text?.toString()?.toIntOrNull()
         val days = (1..7).filter { b.chipDays.findViewById<Chip>(1000 + it).isChecked }.toSet()
 
         when {
@@ -187,12 +195,18 @@ class MainActivity : AppCompatActivity() {
             coords == null -> return toast("Coordonnées invalides (ex. 48.856600, 2.352200)")
             radius == null || radius < 50 || radius > 5000 -> return toast("Rayon entre 50 et 5000 m")
             days.isEmpty() -> return toast("Choisissez au moins un jour")
+            twoStage && (approach == null || approach < radius!! + 300 || approach > 20000) ->
+                return toast("Zone d'approche : au moins ${radius!! + 300} m et au plus 20 000 m")
+            countdown == null || countdown < 0 || countdown > 60 -> return toast("Compte à rebours entre 0 et 60 s")
         }
         prefs.phone = phone
         prefs.lat = coords!!.first
         prefs.lng = coords.second
         prefs.radius = radius!!
         prefs.days = days
+        prefs.twoStage = twoStage
+        if (approach != null) prefs.approachRadius = approach
+        prefs.countdownSeconds = countdown!!
         prefs.startMinutes = start
         prefs.endMinutes = end
         prefs.enabled = b.switchEnabled.isChecked

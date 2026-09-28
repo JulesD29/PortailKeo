@@ -10,13 +10,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 object Notifier {
-    private const val CHANNEL = "portail"
+    const val CHANNEL = "portail"
+    const val CHANNEL_APPROACH = "approche"
     private const val ID_INFO = 1
     private const val ID_FALLBACK = 2
     private const val ID_UPDATE = 3
     const val EXTRA_SHOW_UPDATE = "show_update"
 
-    private fun ensureChannel(ctx: Context) {
+    fun ensureChannels(ctx: Context) {
         val nm = ctx.getSystemService(NotificationManager::class.java)
         if (nm.getNotificationChannel(CHANNEL) == null) {
             nm.createNotificationChannel(
@@ -24,11 +25,17 @@ object Notifier {
                     .apply { description = "Appels automatiques du portail" }
             )
         }
+        if (nm.getNotificationChannel(CHANNEL_APPROACH) == null) {
+            nm.createNotificationChannel(
+                NotificationChannel(CHANNEL_APPROACH, "Approche", NotificationManager.IMPORTANCE_LOW)
+                    .apply { description = "Suivi GPS à l'approche du portail" }
+            )
+        }
     }
 
     private fun post(ctx: Context, id: Int, builder: NotificationCompat.Builder) {
         if (!Perms.notifications(ctx)) return
-        ensureChannel(ctx)
+        ensureChannels(ctx)
         try {
             NotificationManagerCompat.from(ctx).notify(id, builder.build())
         } catch (_: SecurityException) { }

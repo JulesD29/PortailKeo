@@ -60,6 +60,21 @@ class Prefs(context: Context) {
         get() = sp.getBoolean("skipHolidays", true)
         set(v) = sp.edit().putBoolean("skipHolidays", v).apply()
 
+    /** Détection en deux temps : GPS précis dans la zone d'approche. */
+    var twoStage: Boolean
+        get() = sp.getBoolean("twoStage", true)
+        set(v) = sp.edit().putBoolean("twoStage", v).apply()
+
+    /** Rayon de la zone d'approche en mètres. */
+    var approachRadius: Int
+        get() = sp.getInt("approachRadius", 2000)
+        set(v) = sp.edit().putInt("approachRadius", v).apply()
+
+    /** Secondes de compte à rebours avant l'appel automatique (0 = appel immédiat). */
+    var countdownSeconds: Int
+        get() = sp.getInt("countdown", 5)
+        set(v) = sp.edit().putInt("countdown", v).apply()
+
     /** Date (yyyy-MM-dd) de la dernière recherche de mise à jour réussie. */
     var lastUpdateCheck: String
         get() = sp.getString("lastUpdateCheck", "") ?: ""

@@ -8,3 +8,4 @@ github-token.txt
 # Clé de signature et jeton : ne jamais committer
 signing/
 *.jks
+apk/

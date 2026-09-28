@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
@@ -59,6 +61,12 @@
         <receiver
             android:name=".GeofenceReceiver"
             android:exported="false" />
+
+        <!-- GPS précis à l'approche + compte à rebours avant l'appel -->
+        <service
+            android:name=".PortalService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
         <!-- Résultat de l'installation d'une mise à jour -->
         <receiver
