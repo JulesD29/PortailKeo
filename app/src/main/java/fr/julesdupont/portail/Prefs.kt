@@ -1,7 +1,6 @@
 package fr.julesdupont.portail
 
 import android.content.Context
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /** Réglages de l'app, stockés localement sur le téléphone. */
@@ -75,6 +74,14 @@ class Prefs(context: Context) {
         get() = sp.getInt("countdown", 5)
         set(v) = sp.edit().putInt("countdown", v).apply()
 
+    /**
+     * Assistant de premier lancement terminé. Par défaut : vrai si l'app est déjà configurée
+     * (installations existantes : pas d'assistant).
+     */
+    var setupDone: Boolean
+        get() = sp.getBoolean("setupDone", hasLocation && phone.isNotBlank())
+        set(v) = sp.edit().putBoolean("setupDone", v).apply()
+
     /** Date (yyyy-MM-dd) de la dernière recherche de mise à jour réussie. */
     var lastUpdateCheck: String
         get() = sp.getString("lastUpdateCheck", "") ?: ""
@@ -84,7 +91,7 @@ class Prefs(context: Context) {
 
     @Synchronized
     fun log(message: String) {
-        val stamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
+        val stamp = AppClock.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
         val lines = ("$stamp  $message\n" + logText).lines().filter { it.isNotBlank() }.take(40)
         sp.edit().putString("log", lines.joinToString("\n")).apply()
     }

@@ -37,6 +37,15 @@ class MainActivity : AppCompatActivity() {
             if (Perms.fineLocation(this) && !Perms.backgroundLocation(this)) askBackgroundLocation()
         }
 
+    private val mapLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val s = MapPickerActivity.parseResult(result.data) ?: return@registerForActivityResult
+            b.editCoords.setText(Coords.format(s.lat, s.lng))
+            b.editRadius.setText(s.radius.toString())
+            if (b.switchTwoStage.isChecked) b.editApproach.setText(s.approach.toString())
+            toast("Position choisie. Touchez « Enregistrer » pour l'appliquer.")
+        }
+
     private val bgPermLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             refreshStatus()
@@ -45,9 +54,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefs = Prefs(this)
+        // Premier lancement : assistant (sauf si l'app est ouverte par un QR code de configuration).
+        if (!prefs.setupDone && configLink(intent) == null) {
+            startActivity(SetupActivity.intent(this))
+            finish()
+            return
+        }
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
-        prefs = Prefs(this)
 
         dayLabels.forEachIndexed { i, label ->
             b.chipDays.addView(Chip(this).apply {
@@ -61,12 +76,21 @@ class MainActivity : AppCompatActivity() {
         b.btnStart.setOnClickListener { pickTime(start) { start = it; updateTimeButtons() } }
         b.btnEnd.setOnClickListener { pickTime(end) { end = it; updateTimeButtons() } }
         b.btnHere.setOnClickListener { useCurrentLocation() }
+        b.btnMap.setOnClickListener { openMap() }
         b.btnSave.setOnClickListener { save() }
         b.btnPerms.setOnClickListener { requestPermissions() }
         b.btnBattery.setOnClickListener { requestBatteryExemption() }
         b.btnTest.setOnClickListener { testCall() }
         b.switchTwoStage.setOnCheckedChangeListener { _, checked -> b.layoutApproach.isEnabled = checked }
         b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
+        b.btnShareQr.setOnClickListener {
+            if (!prefs.hasLocation || prefs.phone.isBlank()) toast("Enregistrez d'abord le numéro et la position")
+            else startActivity(Intent(this, ShareActivity::class.java))
+        }
+        b.btnScanQr.setOnClickListener { ConfigImport.scan(this) { importConfig(it) } }
+        b.btnWizard.setOnClickListener { startActivity(SetupActivity.intent(this)) }
+        configLink(intent)?.let { importConfig(it) }
+        setupTestTools()
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
         b.btnPause.setOnClickListener { pickPauseDate() }
@@ -86,21 +110,73 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        if (!::b.isInitialized) return
+        configLink(intent)?.let { importConfig(it) }
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
     }
 
     override fun onResume() {
         super.onResume()
+        if (!::b.isInitialized) return
         refreshStatus()
         applyGeofence(silent = true)
         if (prefs.lastUpdateCheck != LocalDate.now().toString()) checkForUpdate(interactive = false)
+    }
+
+    // ---------- Partage par QR code ----------
+
+    private fun configLink(i: Intent?): String? =
+        i?.data?.takeIf { i.action == Intent.ACTION_VIEW && it.host == "config" }?.toString()
+
+    private fun importConfig(text: String) {
+        ConfigImport.confirmAndApply(this, text) {
+            loadForm()
+            applyGeofence(silent = true)
+            if (!prefs.setupDone) {
+                startActivity(SetupActivity.intent(this, resume = true))
+                finish()
+            } else {
+                toast("Configuration importée")
+                refreshStatus()
+            }
+        }
+    }
+
+    // ---------- Version de test ----------
+
+    private fun setupTestTools() {
+        if (!TestTools.enabled) return
+        b.testBanner.visibility = android.view.View.VISIBLE
+        b.testTools.visibility = android.view.View.VISIBLE
+        b.btnSimArrival.setOnClickListener {
+            TestTools.simulateArrival(this)
+            toast("Arrivée simulée : voir la notification et le journal")
+            refreshStatus()
+        }
+        b.btnSimApproach.setOnClickListener {
+            TestTools.simulateApproach(this)
+            toast("Approche simulée : le GPS précis mesure la distance réelle")
+            refreshStatus()
+        }
+        b.btnResetSetup.setOnClickListener {
+            prefs.enabled = false
+            GeofenceManager.register(this) // retire les zones avant d'effacer
+            TestTools.resetSetup(this)
+            startActivity(SetupActivity.intent(this))
+            finish()
+        }
+        b.btnResetToday.setOnClickListener {
+            TestTools.resetToday(this)
+            toast("Appel du jour réinitialisé")
+            refreshStatus()
+        }
     }
 
     // ---------- Mises à jour ----------
 
     private fun checkForUpdate(interactive: Boolean) {
         if (interactive) toast("Recherche d'une mise à jour…")
-        Updater.check(this) { result ->
+        Updater.check(this, interactive) { result ->
             if (isFinishing || isDestroyed) return@check
             result.onFailure { if (interactive) toast("Impossible de vérifier : ${it.message}") }
             result.onSuccess { release ->
@@ -134,7 +210,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadForm() {
         b.switchEnabled.isChecked = prefs.enabled
         b.editPhone.setText(prefs.phone)
-        if (prefs.hasLocation) b.editCoords.setText(formatCoords(prefs.lat, prefs.lng))
+        if (prefs.hasLocation) b.editCoords.setText(Coords.format(prefs.lat, prefs.lng))
         b.editRadius.setText(prefs.radius.toString())
         b.switchTwoStage.isChecked = prefs.twoStage
         b.editApproach.setText(prefs.approachRadius.toString())
@@ -157,6 +233,14 @@ class MainActivity : AppCompatActivity() {
         TimePickerDialog(this, { _, h, m -> onPicked(h * 60 + m) }, current / 60, current % 60, true).show()
     }
 
+    private fun openMap() {
+        val radius = b.editRadius.text?.toString()?.toIntOrNull() ?: prefs.radius
+        val approach = b.editApproach.text?.toString()?.toIntOrNull() ?: prefs.approachRadius
+        mapLauncher.launch(MapPickerActivity.intent(
+            this, Coords.parse(b.editCoords.text?.toString().orEmpty()), radius, approach, b.switchTwoStage.isChecked
+        ))
+    }
+
     private fun pickPauseDate() {
         val today = LocalDate.now()
         val dialog = DatePickerDialog(this, { _, y, m, d ->
@@ -170,20 +254,9 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun formatCoords(lat: Double, lng: Double) =
-        String.format(Locale.US, "%.6f, %.6f", lat, lng)
-
-    private fun parseCoords(text: String): Pair<Double, Double>? {
-        val nums = Regex("-?\\d+(?:\\.\\d+)?").findAll(text).map { it.value.toDouble() }.toList()
-        if (nums.size != 2) return null
-        val (lat, lng) = nums
-        if (lat !in -90.0..90.0 || lng !in -180.0..180.0) return null
-        return lat to lng
-    }
-
     private fun save() {
         val phone = b.editPhone.text?.toString()?.trim().orEmpty()
-        val coords = parseCoords(b.editCoords.text?.toString().orEmpty())
+        val coords = Coords.parse(b.editCoords.text?.toString().orEmpty())
         val radius = b.editRadius.text?.toString()?.toIntOrNull()
         val twoStage = b.switchTwoStage.isChecked
         val approach = b.editApproach.text?.toString()?.toIntOrNull()
@@ -193,10 +266,9 @@ class MainActivity : AppCompatActivity() {
         when {
             phone.isEmpty() -> return toast("Indiquez le numéro du portail")
             coords == null -> return toast("Coordonnées invalides (ex. 48.856600, 2.352200)")
-            radius == null || radius < 50 || radius > 5000 -> return toast("Rayon entre 50 et 5000 m")
+            Zones.validationError(radius, approach, twoStage) != null ->
+                return toast(Zones.validationError(radius, approach, twoStage)!!)
             days.isEmpty() -> return toast("Choisissez au moins un jour")
-            twoStage && (approach == null || approach < radius!! + 300 || approach > 20000) ->
-                return toast("Zone d'approche : au moins ${radius!! + 300} m et au plus 20 000 m")
             countdown == null || countdown < 0 || countdown > 60 -> return toast("Compte à rebours entre 0 et 60 s")
         }
         prefs.phone = phone
@@ -239,7 +311,7 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { loc ->
                 if (loc == null) toast("Position indisponible, réessayez dehors")
                 else {
-                    b.editCoords.setText(formatCoords(loc.latitude, loc.longitude))
+                    b.editCoords.setText(Coords.format(loc.latitude, loc.longitude))
                     toast("Position trouvée (±${loc.accuracy.toInt()} m). Pensez à enregistrer.")
                 }
             }
@@ -300,7 +372,8 @@ class MainActivity : AppCompatActivity() {
             else -> "Aucune pause en cours"
         }
         b.btnResume.isEnabled = pause != null
-        b.txtVersion.text = "Version installée : ${Updater.currentVersionName(this)}"
+        b.txtVersion.text = "Version installée : ${Updater.currentVersionName(this)}" +
+            if (TestTools.enabled) " (version de test : mises à jour depuis develop, sur demande)" else ""
     }
 
     // ---------- Test ----------

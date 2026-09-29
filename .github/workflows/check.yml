@@ -1,10 +1,16 @@
-# Vérifie que le code compile sur une pull request vers main.
-# Ne publie rien : aucune mise à jour n'est envoyée aux téléphones.
-name: Vérifier la compilation
+# À chaque envoi sur develop (et feature/…) : tests + compilation, puis publication de la
+# VERSION DE TEST « Portail Keo (test) » en pré-release « test ».
+# Ne touche pas à la vraie app : aucune mise à jour n'est envoyée aux téléphones.
+name: Tests
 on:
+  push:
+    branches: [develop, "feature/**"]
+    paths-ignore: ["**.md"]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:
+permissions:
+  contents: write   # pour publier la pré-release de test
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -14,4 +20,60 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Clé de signature fixe
+        if: github.event_name != 'pull_request'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/portailkeo.jks"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/portailkeo.jks" >> "$GITHUB_ENV"
+          fi
+      - name: Tests unitaires + compilation (+ version de test)
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleBeta --no-daemon
+      - name: Résumé des tests
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          total = fail = skip = 0
+          for f in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
+              r = ET.parse(f).getroot()
+              total += int(r.get("tests", 0)); skip += int(r.get("skipped", 0))
+              fail += int(r.get("failures", 0)) + int(r.get("errors", 0))
+          level = "error" if fail else "notice"
+          print(f"::{level} title=Tests::{total} tests, {fail} en échec, {skip} ignorés")
+          PY
+      - name: Rapport des tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-tests
+          path: app/build/reports/tests/testDebugUnitTest/
+      # Version de test, uniquement pour les envois sur develop signés avec la clé fixe.
+      - name: Préparer la version de test
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop' && env.KEYSTORE_FILE != ''
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          cp app/build/outputs/apk/beta/*.apk PortailKeo-test.apk
+          {
+            echo "Version de test construite depuis \`develop\` (${GITHUB_SHA::7})."
+            echo
+            echo "**Dernier changement :** $COMMIT_MSG"
+            echo
+            echo "S'installe à côté de la vraie app. Ne pas partager."
+          } > notes-test.md
+      - name: Publier la version de test
+        if: github.event_name == 'push' && github.ref == 'refs/heads/develop' && env.KEYSTORE_FILE != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: test
+          name: "Test 1.${{ github.run_number }}"
+          prerelease: true
+          body_path: notes-test.md
+          files: PortailKeo-test.apk

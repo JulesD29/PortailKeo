@@ -26,6 +26,10 @@ android {
         val build = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
         versionCode = build
         versionName = "1.$build"
+        buildConfigField("boolean", "TEST_BUILD", "false")
+        // Lien des QR codes de configuration (portailkeo://config?...)
+        buildConfigField("String", "QR_SCHEME", "\"portailkeo\"")
+        manifestPlaceholders["qrScheme"] = "portailkeo"
     }
 
     signingConfigs {
@@ -45,14 +49,32 @@ android {
             // Clé fixe si disponible, sinon clé debug (l'APK s'installe quand même).
             signingConfig = signingConfigs.findByName("fixed") ?: signingConfigs.getByName("debug")
         }
+        // Version de test : s'installe à côté de la vraie app (autre identifiant),
+        // icône orange, outils de simulation, pas de mise à jour automatique.
+        create("beta") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".test"
+            versionNameSuffix = "-test"
+            buildConfigField("boolean", "TEST_BUILD", "true")
+            buildConfigField("String", "QR_SCHEME", "\"portailkeo-test\"")
+            manifestPlaceholders["qrScheme"] = "portailkeo-test"
+            matchingFallbacks += listOf("release")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { viewBinding = true }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
     lint { abortOnError = false }
+    testOptions {
+        // Robolectric : exécute le code Android (SharedPreferences, services…) sur la JVM.
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
@@ -60,4 +82,13 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    // Carte OpenStreetMap (sans clé ni compte Google)
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
+    // QR codes : génération (ZXing) et scan (Google Play Services, sans autorisation caméra)
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.robolectric:robolectric:4.14.1")
+    testImplementation("androidx.test:core:1.6.1")
 }

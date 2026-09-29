@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
@@ -31,10 +32,33 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- Lien d'un QR code de configuration (scanné avec l'appareil photo) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${qrScheme}" android:host="config" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
+
+        <!-- Assistant de premier lancement -->
+        <activity
+            android:name=".SetupActivity"
+            android:exported="false" />
+
+        <!-- QR code de partage de la configuration -->
+        <activity
+            android:name=".ShareActivity"
+            android:exported="false" />
+
+        <!-- Choix du portail sur une carte OpenStreetMap -->
+        <activity
+            android:name=".MapPickerActivity"
+            android:exported="false"
+            android:label="Position du portail" />
 
         <!-- Écran invisible qui lance l'appel (tuile + raccourci) -->
         <activity
