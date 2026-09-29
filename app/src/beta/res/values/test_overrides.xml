@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Remplace les ressources de l'app normale dans la version de test. -->
+<resources>
+    <string name="app_name">Portail Keo (test)</string>
+    <string name="tile_label">Garage (test)</string>
+    <string name="shortcut_short">Portail (test)</string>
+    <string name="shortcut_long">Appeler le portail (version de test)</string>
+    <color name="ic_bg">#E8710A</color>
+</resources>

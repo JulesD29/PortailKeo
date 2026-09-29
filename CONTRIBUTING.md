@@ -15,6 +15,28 @@ git push
 ```
 Les tests se lancent automatiquement (onglet **Actions › Tests**) ; rien n'arrive sur les téléphones.
 
+## Tester sur le téléphone (version de test)
+Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré-release :
+<https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk>
+
+- Elle s'installe **à côté** de la vraie app, avec ses propres réglages ; elle ne se met pas à jour seule
+  (retélécharger le lien pour avoir la dernière version de `develop`).
+- **Outils de test** en bas de l'écran : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
+- Pour tester l'appel automatique en conditions réelles, désactiver l'automatisation dans la vraie app
+  ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
+
+### Checklist de tests fonctionnels avant de fusionner dans `main`
+- [ ] Réglages : enregistrer, fermer, rouvrir → tout est conservé ; « ✓ Zone active »
+- [ ] Autorisations : les ✓ s'affichent après les avoir accordées
+- [ ] « Tester l'appel maintenant » appelle bien le numéro
+- [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
+- [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
+- [ ] Simuler l'arrivée hors plage horaire : pas d'appel, raison dans le journal
+- [ ] Simuler l'approche : notification « Approche du portail » avec la distance réelle ; « Arrêter » la coupe
+- [ ] Tuile « Garage (test) » et raccourci « Portail (test) » appellent sans délai
+- [ ] Pause jusqu'à demain : simuler l'arrivée → pas d'appel ; « Reprendre » → appel possible
+- [ ] Ce qui a été modifié dans la pull request
+
 ## Publier une version
 1. Sur GitHub : **Pull requests › New pull request**, base `main` ← compare `develop`.
 2. Les **Tests** tournent (sans rien publier).
@@ -53,6 +75,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
 | `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant |
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
+| `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements
 1. **Toute nouvelle fonctionnalité arrive avec ses tests**, dans le même commit ou la même pull request.

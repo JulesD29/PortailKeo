@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
         b.btnTest.setOnClickListener { testCall() }
         b.switchTwoStage.setOnCheckedChangeListener { _, checked -> b.layoutApproach.isEnabled = checked }
         b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
+        setupTestTools()
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
         b.btnPause.setOnClickListener { pickPauseDate() }
@@ -94,6 +95,30 @@ class MainActivity : AppCompatActivity() {
         refreshStatus()
         applyGeofence(silent = true)
         if (prefs.lastUpdateCheck != LocalDate.now().toString()) checkForUpdate(interactive = false)
+    }
+
+    // ---------- Version de test ----------
+
+    private fun setupTestTools() {
+        if (!TestTools.enabled) return
+        b.testBanner.visibility = android.view.View.VISIBLE
+        b.testTools.visibility = android.view.View.VISIBLE
+        b.btnUpdate.visibility = android.view.View.GONE
+        b.btnSimArrival.setOnClickListener {
+            TestTools.simulateArrival(this)
+            toast("Arrivée simulée : voir la notification et le journal")
+            refreshStatus()
+        }
+        b.btnSimApproach.setOnClickListener {
+            TestTools.simulateApproach(this)
+            toast("Approche simulée : le GPS précis mesure la distance réelle")
+            refreshStatus()
+        }
+        b.btnResetToday.setOnClickListener {
+            TestTools.resetToday(this)
+            toast("Appel du jour réinitialisé")
+            refreshStatus()
+        }
     }
 
     // ---------- Mises à jour ----------
@@ -289,7 +314,8 @@ class MainActivity : AppCompatActivity() {
             else -> "Aucune pause en cours"
         }
         b.btnResume.isEnabled = pause != null
-        b.txtVersion.text = "Version installée : ${Updater.currentVersionName(this)}"
+        b.txtVersion.text = "Version installée : ${Updater.currentVersionName(this)}" +
+            if (TestTools.enabled) " (version de test : pas de mise à jour automatique)" else ""
     }
 
     // ---------- Test ----------

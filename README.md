@@ -198,6 +198,15 @@ app/src/main/java/fr/julesdupont/portail/
   The `signing/` folder is git-ignored and must never be committed.
 </details>
 
+<details>
+<summary><b>Test version</b></summary>
+
+Every push to `develop` publishes **Portail Keo (test)** (orange icon) as the `test` pre-release:
+[PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
+It installs next to the real app, has its own settings, no auto-update, and a **test tools**
+section (simulate arrival / approach, reset today's call). See [CONTRIBUTING.md](CONTRIBUTING.md).
+</details>
+
 ## Contributing
 
 Work happens on `develop`; merging into `main` publishes a new version.

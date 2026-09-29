@@ -77,6 +77,10 @@ object Updater {
     /** Cherche une version plus récente que celle installée ; callback sur le thread principal. */
     fun check(ctx: Context, callback: (Result<Release?>) -> Unit) {
         val app = ctx.applicationContext
+        if (TestTools.enabled) { // la version de test ne se met jamais à jour toute seule
+            main.post { callback(Result.success(null)) }
+            return
+        }
         io.execute {
             val result = runCatching { fetchLatest()?.takeIf { isNewer(it, currentVersionCode(app)) } }
             if (result.isSuccess) Prefs(app).lastUpdateCheck = LocalDate.now().toString()
@@ -133,6 +137,7 @@ object Updater {
 
     /** Vérification automatique quotidienne, même si l'app n'est pas ouverte. */
     fun scheduleDaily(ctx: Context) {
+        if (TestTools.enabled) return
         val app = ctx.applicationContext
         val pi = PendingIntent.getBroadcast(
             app, 2,

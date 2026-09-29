@@ -205,6 +205,16 @@ app/src/main/java/fr/julesdupont/portail/
   Le dossier `signing/` est ignoré par Git et ne doit jamais être commité.
 </details>
 
+<details>
+<summary><b>Version de test</b></summary>
+
+Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré-release `test` :
+[PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
+Elle s'installe à côté de la vraie app, a ses propres réglages, pas de mise à jour automatique, et une
+section **Outils de test** (simuler l'arrivée / l'approche, réinitialiser l'appel du jour).
+Voir [CONTRIBUTING.md](CONTRIBUTING.md).
+</details>
+
 ## Contribuer
 
 On travaille sur `develop` ; la fusion dans `main` publie une nouvelle version.

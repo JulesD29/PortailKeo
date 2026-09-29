@@ -26,6 +26,7 @@ android {
         val build = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
         versionCode = build
         versionName = "1.$build"
+        buildConfigField("boolean", "TEST_BUILD", "false")
     }
 
     signingConfigs {
@@ -45,13 +46,25 @@ android {
             // Clé fixe si disponible, sinon clé debug (l'APK s'installe quand même).
             signingConfig = signingConfigs.findByName("fixed") ?: signingConfigs.getByName("debug")
         }
+        // Version de test : s'installe à côté de la vraie app (autre identifiant),
+        // icône orange, outils de simulation, pas de mise à jour automatique.
+        create("beta") {
+            initWith(getByName("release"))
+            applicationIdSuffix = ".test"
+            versionNameSuffix = "-test"
+            buildConfigField("boolean", "TEST_BUILD", "true")
+            matchingFallbacks += listOf("release")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { viewBinding = true }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
     lint { abortOnError = false }
     testOptions {
         // Robolectric : exécute le code Android (SharedPreferences, services…) sur la JVM.
