@@ -103,6 +103,7 @@ class PortalService : Service() {
                 val p = Prefs(this)
                 p.lastCallDate = AppClock.today().toString() // pas de nouvel appel auto aujourd'hui
                 p.log("Appel annulé (plus d'appel automatique aujourd'hui)")
+                PortalWidget.refresh(this)
                 stopSelf()
             }
             ACTION_CALL_NOW -> {

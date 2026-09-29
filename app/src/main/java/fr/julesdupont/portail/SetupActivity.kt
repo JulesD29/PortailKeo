@@ -159,6 +159,7 @@ class SetupActivity : AppCompatActivity() {
     private fun finishSetup() {
         prefs.enabled = true
         prefs.setupDone = true
+        prefs.lastSeenWhatsNew = WhatsNew.CURRENT // nouvelle installation : rien de « nouveau » à présenter
         prefs.log("Assistant terminé, automatisation activée")
         GeofenceManager.register(this)
         startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))

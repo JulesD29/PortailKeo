@@ -23,6 +23,7 @@ class CallHelperTest {
         assertEquals(listOf("0611"), TestSupport.calls)
         assertEquals("2026-10-05", Prefs(app).lastCallDate)
         assertTrue(Prefs(app).logText.contains("Appel automatique lancé vers 0611"))
+        assertEquals(listOf(TestSupport.MONDAY_8H), History.parse(Prefs(app).history))
     }
 
     @Test
@@ -31,6 +32,7 @@ class CallHelperTest {
         assertTrue(CallHelper.call(app, "0611", automatic = false))
         assertEquals("", Prefs(app).lastCallDate)
         assertTrue(Prefs(app).logText.contains("Appel manuel"))
+        assertEquals("pas dans l'historique des arrivées", "", Prefs(app).history)
     }
 
     @Test

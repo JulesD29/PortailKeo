@@ -28,6 +28,11 @@ object TestTools {
         ctx.getSharedPreferences("portail", Context.MODE_PRIVATE).edit().clear().commit()
     }
 
+    /** Fait réapparaître l'écran « Quoi de neuf ». */
+    fun resetWhatsNew(ctx: Context) {
+        Prefs(ctx).lastSeenWhatsNew = 0
+    }
+
     /** Oublie l'appel automatique du jour, pour pouvoir retester tout de suite. */
     fun resetToday(ctx: Context) {
         val p = Prefs(ctx)

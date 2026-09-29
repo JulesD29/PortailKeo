@@ -38,6 +38,10 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
 - [ ] « Ouvrir le portail maintenant » appelle bien le numéro
+- [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
+      l'état change après une pause / un appel
+- [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
+- [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
 - [ ] Simuler l'arrivée hors plage horaire : pas d'appel, raison dans le journal
@@ -91,6 +95,9 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `ConfigImportTest` | Import : réglages appliqués, activation/pause conservées ; assistant ; réinitialisation |
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
 | `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
+| `HistoryTest` | Historique des arrivées : limite, semaine en cours, heure moyenne, résumé |
+| `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
+| `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

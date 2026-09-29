@@ -42,7 +42,8 @@ les jours et aux heures que vous choisissez.
 | ⏱️ **Compte à rebours** | Notification « Appel du portail dans 5 s » avec **Annuler** et **Appeler maintenant**. |
 | 📅 **Horaires** | Jours actifs, plage horaire, un seul appel automatique par jour. |
 | 🏖️ **Pause et jours fériés** | Pause jusqu'à une date ; pas d'appel les jours fériés français. |
-| 📲 **Appel manuel** | Tuile **Appeler Garage** dans les réglages rapides et raccourci (appui long sur l'icône). |
+| 📲 **Appel manuel** | Tuile **Appeler Garage**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
+| 📊 **Historique** | Appels de la semaine, heure d'arrivée moyenne et derniers appels. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
 | 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'app. |
 

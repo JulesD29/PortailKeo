@@ -51,6 +51,12 @@ class UpdaterTest {
         assertEquals("v12", Updater.parseRelease(json("v12", name = "", assets = apkAsset))!!.name)
 
     @Test
+    fun `notes affichees sans titres markdown`() {
+        assertEquals("- Nouvelle interface\n- Widget", Updater.displayNotes("## Nouveautés\n- Nouvelle interface\n- Widget\n"))
+        assertEquals("Une nouvelle version est disponible.", Updater.displayNotes("## Nouveautés\n"))
+    }
+
+    @Test
     fun `comparaison des versions`() {
         val r = Updater.Release(12, "1.12", "u", "")
         assertTrue(Updater.isNewer(r, 11))

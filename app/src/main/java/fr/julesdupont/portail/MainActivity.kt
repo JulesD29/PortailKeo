@@ -102,6 +102,20 @@ class MainActivity : AppCompatActivity() {
         configLink(intent)?.let { importConfig(it) }
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
+        else showWhatsNewIfNeeded()
+    }
+
+    /** « Quoi de neuf » une seule fois après une mise à jour qui apporte des nouveautés. */
+    private fun showWhatsNewIfNeeded() {
+        val items = WhatsNew.toShow(prefs.lastSeenWhatsNew)
+        if (items.isEmpty() || !prefs.setupDone) return
+        MaterialAlertDialogBuilder(this)
+            .setIcon(R.drawable.ic_info)
+            .setTitle("Quoi de neuf dans ${getString(R.string.app_name)}")
+            .setMessage(WhatsNew.message(items))
+            .setPositiveButton("C'est parti") { _, _ -> }
+            .setOnDismissListener { prefs.lastSeenWhatsNew = WhatsNew.CURRENT }
+            .show()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -302,6 +316,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(SetupActivity.intent(this))
             finish()
         }
+        b.btnResetWhatsNew.setOnClickListener {
+            TestTools.resetWhatsNew(this)
+            showWhatsNewIfNeeded()
+        }
         b.btnResetToday.setOnClickListener {
             TestTools.resetToday(this)
             toast("Appel du jour réinitialisé")
@@ -326,7 +344,7 @@ class MainActivity : AppCompatActivity() {
     private fun showUpdateDialog(release: Updater.Release) {
         MaterialAlertDialogBuilder(this)
             .setTitle("Nouvelle version ${release.name}")
-            .setMessage(release.notes.ifBlank { "Une nouvelle version est disponible." }.take(1000))
+            .setMessage(Updater.displayNotes(release.notes).take(1500))
             .setPositiveButton("Installer") { _, _ -> installUpdate(release) }
             .setNegativeButton("Plus tard", null)
             .show()
@@ -535,6 +553,13 @@ class MainActivity : AppCompatActivity() {
         b.txtLog.text = (if (logExpanded) lines else lines.take(5)).joinToString("\n").ifEmpty { "—" }
         b.btnLogMore.visibility = if (lines.size > 5) View.VISIBLE else View.GONE
         b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${lines.size})"
+
+        val calls = History.parse(prefs.history)
+        b.txtHistorySummary.text = History.summary(calls, AppClock.today())
+        b.txtHistory.text = History.recent(calls).joinToString("\n")
+        b.txtHistory.visibility = if (calls.isEmpty()) View.GONE else View.VISIBLE
+
+        PortalWidget.refresh(this)
 
         b.txtVersion.text = "Version ${Updater.currentVersionName(this)}" +
             if (TestTools.enabled) " · version de test (mises à jour depuis develop, sur demande)" else ""

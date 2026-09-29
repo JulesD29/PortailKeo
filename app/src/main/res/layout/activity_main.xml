@@ -432,6 +432,29 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ===== Historique ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_check_circle"
+                        android:text="Historique des arrivées" />
+                    <TextView
+                        android:id="@+id/txtHistorySummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="?attr/textAppearanceBodyLarge" />
+                    <TextView
+                        android:id="@+id/txtHistory"
+                        style="@style/SectionHint"
+                        android:lineSpacingExtra="4dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- ===== Journal ===== -->
             <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
                 <LinearLayout
@@ -495,6 +518,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Réinitialiser l'appel du jour" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnResetWhatsNew"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Revoir « Quoi de neuf »" />
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnResetSetup"
                         style="@style/Widget.Material3.Button.OutlinedButton"

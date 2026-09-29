@@ -42,7 +42,8 @@ and at the times you choose. The app interface is in French.
 | ⏱️ **Countdown** | "Calling the gate in 5 s" notification with **Cancel** and **Call now**. |
 | 📅 **Schedule** | Active days, time window, at most one automatic call per day. |
 | 🏖️ **Pause & public holidays** | Pause until a given date; no call on French public holidays. |
-| 📲 **Manual call** | **Appeler Garage** Quick Settings tile and a launcher shortcut (long-press the icon). |
+| 📲 **Manual call** | **Appeler Garage** Quick Settings tile, home-screen widget and a launcher shortcut. |
+| 📊 **History** | Calls this week, average arrival time and latest calls. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
 | 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the app. |
 
