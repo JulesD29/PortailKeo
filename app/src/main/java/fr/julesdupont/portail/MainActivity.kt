@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadForm() {
         b.switchEnabled.isChecked = prefs.enabled
         b.editPhone.setText(prefs.phone)
-        if (prefs.hasLocation) b.editCoords.setText(formatCoords(prefs.lat, prefs.lng))
+        if (prefs.hasLocation) b.editCoords.setText(Coords.format(prefs.lat, prefs.lng))
         b.editRadius.setText(prefs.radius.toString())
         b.switchTwoStage.isChecked = prefs.twoStage
         b.editApproach.setText(prefs.approachRadius.toString())
@@ -170,20 +170,9 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun formatCoords(lat: Double, lng: Double) =
-        String.format(Locale.US, "%.6f, %.6f", lat, lng)
-
-    private fun parseCoords(text: String): Pair<Double, Double>? {
-        val nums = Regex("-?\\d+(?:\\.\\d+)?").findAll(text).map { it.value.toDouble() }.toList()
-        if (nums.size != 2) return null
-        val (lat, lng) = nums
-        if (lat !in -90.0..90.0 || lng !in -180.0..180.0) return null
-        return lat to lng
-    }
-
     private fun save() {
         val phone = b.editPhone.text?.toString()?.trim().orEmpty()
-        val coords = parseCoords(b.editCoords.text?.toString().orEmpty())
+        val coords = Coords.parse(b.editCoords.text?.toString().orEmpty())
         val radius = b.editRadius.text?.toString()?.toIntOrNull()
         val twoStage = b.switchTwoStage.isChecked
         val approach = b.editApproach.text?.toString()?.toIntOrNull()
@@ -239,7 +228,7 @@ class MainActivity : AppCompatActivity() {
             .addOnSuccessListener { loc ->
                 if (loc == null) toast("Position indisponible, réessayez dehors")
                 else {
-                    b.editCoords.setText(formatCoords(loc.latitude, loc.longitude))
+                    b.editCoords.setText(Coords.format(loc.latitude, loc.longitude))
                     toast("Position trouvée (±${loc.accuracy.toInt()} m). Pensez à enregistrer.")
                 }
             }

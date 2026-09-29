@@ -21,7 +21,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-import java.time.LocalDate
 
 /**
  * Service de premier plan :
@@ -31,11 +30,11 @@ import java.time.LocalDate
 class PortalService : Service() {
 
     companion object {
-        private const val ACTION_APPROACH = "fr.julesdupont.portail.APPROACH"
-        private const val ACTION_COUNTDOWN = "fr.julesdupont.portail.COUNTDOWN"
-        private const val ACTION_CANCEL = "fr.julesdupont.portail.CANCEL"
-        private const val ACTION_CALL_NOW = "fr.julesdupont.portail.CALL_NOW"
-        private const val ACTION_STOP = "fr.julesdupont.portail.STOP"
+        const val ACTION_APPROACH = "fr.julesdupont.portail.APPROACH"
+        const val ACTION_COUNTDOWN = "fr.julesdupont.portail.COUNTDOWN"
+        const val ACTION_CANCEL = "fr.julesdupont.portail.CANCEL"
+        const val ACTION_CALL_NOW = "fr.julesdupont.portail.CALL_NOW"
+        const val ACTION_STOP = "fr.julesdupont.portail.STOP"
         private const val NOTIF_ID = 10
         private const val APPROACH_TIMEOUT_MS = 20 * 60 * 1000L
 
@@ -102,7 +101,7 @@ class PortalService : Service() {
             ACTION_CANCEL -> {
                 handler.removeCallbacks(tick)
                 val p = Prefs(this)
-                p.lastCallDate = LocalDate.now().toString() // pas de nouvel appel auto aujourd'hui
+                p.lastCallDate = AppClock.today().toString() // pas de nouvel appel auto aujourd'hui
                 p.log("Appel annulé (plus d'appel automatique aujourd'hui)")
                 stopSelf()
             }
@@ -159,7 +158,7 @@ class PortalService : Service() {
         val distance = d[0]
         show(approachNotification(distance))
         // On ignore les positions trop imprécises pour éviter un appel prématuré.
-        if (distance <= p.radius && loc.accuracy <= maxOf(100f, p.radius.toFloat())) {
+        if (Arrival.isArrived(distance, loc.accuracy, p.radius)) {
             stopLocationUpdates()
             AutoCall.attempt(this, "Arrivée détectée par GPS (${distance.toInt()} m, ±${loc.accuracy.toInt()} m)")
         }

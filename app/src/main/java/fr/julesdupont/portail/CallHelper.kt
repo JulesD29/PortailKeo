@@ -5,15 +5,25 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.telecom.TelecomManager
-import java.time.LocalDate
 
 object CallHelper {
+    @SuppressLint("MissingPermission")
+    private fun telecomPlace(ctx: Context, uri: Uri) {
+        ctx.getSystemService(TelecomManager::class.java).placeCall(uri, Bundle())
+    }
+
+    /** Passe réellement l'appel. */
+    val defaultPlacer: (Context, Uri) -> Unit = { ctx, uri -> telecomPlace(ctx, uri) }
+
+    /** Remplaçable dans les tests pour ne pas passer de vrai appel. */
+    @Volatile
+    var placer: (Context, Uri) -> Unit = defaultPlacer
+
     /**
      * Lance l'appel directement (sans passer par le clavier du téléphone).
      * @param automatic true quand l'appel vient de la zone : on mémorise la date pour
      *                  ne pas rappeler le même jour.
      */
-    @SuppressLint("MissingPermission")
     fun call(ctx: Context, number: String, automatic: Boolean): Boolean {
         val prefs = Prefs(ctx)
         if (!Perms.call(ctx)) {
@@ -22,9 +32,8 @@ object CallHelper {
             return false
         }
         return try {
-            val tm = ctx.getSystemService(TelecomManager::class.java)
-            tm.placeCall(Uri.fromParts("tel", number, null), Bundle())
-            if (automatic) prefs.lastCallDate = LocalDate.now().toString()
+            placer(ctx, Uri.fromParts("tel", number, null))
+            if (automatic) prefs.lastCallDate = AppClock.today().toString()
             prefs.log(if (automatic) "Appel automatique lancé vers $number" else "Appel manuel lancé vers $number")
             true
         } catch (e: Exception) {

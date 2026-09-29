@@ -20,7 +20,7 @@ object AutoCall {
     /** Appel immédiat (fin du compte à rebours, ou si le service n'a pas pu démarrer). */
     fun callNow(ctx: Context) {
         val prefs = Prefs(ctx)
-        if (prefs.lastCallDate == java.time.LocalDate.now().toString()) return
+        if (prefs.lastCallDate == AppClock.today().toString()) return
         if (CallHelper.call(ctx, prefs.phone, automatic = true)) {
             Notifier.info(ctx, "Appel du portail lancé")
         }

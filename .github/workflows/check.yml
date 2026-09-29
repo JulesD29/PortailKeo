@@ -1,9 +1,12 @@
-# Vérifie que le code compile sur une pull request vers main.
+# Tests + compilation à chaque envoi sur develop et sur chaque pull request vers main.
 # Ne publie rien : aucune mise à jour n'est envoyée aux téléphones.
-name: Vérifier la compilation
+name: Tests
 on:
+  push:
+    branches: [develop, "feature/**"]
+    paths-ignore: ["**.md"]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:
 jobs:
   check:
@@ -14,4 +17,11 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Tests unitaires + compilation
+        run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleDebug --no-daemon
+      - name: Rapport des tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-tests
+          path: app/build/reports/tests/testDebugUnitTest/

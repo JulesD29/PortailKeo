@@ -1,7 +1,6 @@
 package fr.julesdupont.portail
 
 import android.content.Context
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 /** Réglages de l'app, stockés localement sur le téléphone. */
@@ -84,7 +83,7 @@ class Prefs(context: Context) {
 
     @Synchronized
     fun log(message: String) {
-        val stamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
+        val stamp = AppClock.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
         val lines = ("$stamp  $message\n" + logText).lines().filter { it.isNotBlank() }.take(40)
         sp.edit().putString("log", lines.joinToString("\n")).apply()
     }
