@@ -19,6 +19,19 @@ jobs:
           java-version: 17
       - name: Tests unitaires + compilation
         run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleDebug --no-daemon
+      - name: Résumé des tests
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          total = fail = skip = 0
+          for f in glob.glob("app/build/test-results/testDebugUnitTest/*.xml"):
+              r = ET.parse(f).getroot()
+              total += int(r.get("tests", 0)); skip += int(r.get("skipped", 0))
+              fail += int(r.get("failures", 0)) + int(r.get("errors", 0))
+          level = "error" if fail else "notice"
+          print(f"::{level} title=Tests::{total} tests, {fail} en échec, {skip} ignorés")
+          PY
       - name: Rapport des tests
         if: always()
         uses: actions/upload-artifact@v4
