@@ -10,13 +10,16 @@ permissions:
   contents: write   # pour publier les Releases
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # figé : image stable avec le SDK Android préinstallé
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0   # historique complet + tags, pour les notes de version
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle   # constructions plus rapides
       - name: Clé de signature fixe
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
@@ -35,16 +38,28 @@ jobs:
         run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleRelease --no-daemon
       - name: Renommer l'APK
         run: cp app/build/outputs/apk/release/*.apk "PortailKeo-1.${{ github.run_number }}.apk"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: PortailKeo-apk
           path: PortailKeo-*.apk
       # Publie une Release (lue par l'app pour les mises à jour), seulement avec la clé fixe.
+      # Notes de version : les commits depuis la release précédente (hors fusions, doc et CI).
+      - name: Notes de version
+        run: |
+          PREV=$(git describe --tags --abbrev=0 --match 'v*' HEAD^ 2>/dev/null || true)
+          git log --no-merges --pretty='- %s' ${PREV:+$PREV..}HEAD > all-commits.txt
+          grep -viE '^- (README|CI|Merge)|\[skip ci\]' all-commits.txt > kept.txt || true
+          {
+            echo "## Nouveautés"
+            if [ -s kept.txt ]; then head -30 kept.txt; else echo "- Améliorations et corrections"; fi
+            if [ -n "$PREV" ]; then echo; echo "Changements depuis $PREV."; fi
+          } > notes.md
+          cat notes.md
       - name: Publier la release
         if: github.ref == 'refs/heads/main' && env.KEYSTORE_FILE != ''
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ github.run_number }}
           name: "1.${{ github.run_number }}"
-          body: ${{ github.event.head_commit.message }}
+          body_path: notes.md
           files: PortailKeo-1.${{ github.run_number }}.apk

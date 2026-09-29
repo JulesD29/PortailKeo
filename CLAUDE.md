@@ -30,6 +30,15 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 - Partage : `ShareActivity` (QR via `QrCode`/ZXing), import `ConfigImport` (scanner Play Services) →
   lien `portailkeo://config?...` (`ConfigShare`, schéma `portailkeo-test` pour la version de test).
 
+## Commande vocale
+- `activity-alias` `.VoiceLauncher` (label `voice_label` = « Portail » / « Portail test ») vers `CallActivity`,
+  désactivé par défaut ; activé par `VoiceCommand.setEnabled` (PackageManager).
+
+## Nouveautés et release
+- Nouvelle fonctionnalité visible → ajouter une entrée dans `WhatsNew.items` et incrémenter `WhatsNew.CURRENT`.
+- Les notes de release sont générées depuis les messages de commit (hors README/CI/merge) : écrire des
+  messages de commit clairs, en français, compréhensibles par un utilisateur.
+
 ## Build
 - Pas de SDK Android sur le PC : la compilation et les tests tournent sur GitHub Actions.
 - `check.yml` (Tests) : push sur develop/feature, PR. `build.yml` (Release APK) : push sur main.

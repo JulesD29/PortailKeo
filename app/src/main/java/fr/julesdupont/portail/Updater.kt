@@ -79,6 +79,11 @@ object Updater {
         return Release(code, name, apk ?: return null, json.optString("body", ""))
     }
 
+    /** Notes de version sans titres Markdown, pour la fenêtre de mise à jour. */
+    fun displayNotes(notes: String): String =
+        notes.lines().filterNot { it.trimStart().startsWith("#") }.joinToString("\n").trim()
+            .ifBlank { "Une nouvelle version est disponible." }
+
     /** Vrai si la release est plus récente que la version installée. */
     fun isNewer(release: Release, installedVersionCode: Long) = release.versionCode > installedVersionCode
 

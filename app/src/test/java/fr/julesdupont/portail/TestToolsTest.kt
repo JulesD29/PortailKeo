@@ -47,6 +47,13 @@ class TestToolsTest {
     }
 
     @Test
+    fun `revoir quoi de neuf`() {
+        Prefs(app).lastSeenWhatsNew = WhatsNew.CURRENT
+        TestTools.resetWhatsNew(app)
+        assertEquals(0, Prefs(app).lastSeenWhatsNew)
+    }
+
+    @Test
     fun `reinitialiser permet de retester le meme jour`() {
         TestSupport.configuredPrefs(countdown = 0)
         TestTools.simulateArrival(app)

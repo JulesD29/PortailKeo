@@ -27,15 +27,23 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
 ### Checklist de tests fonctionnels avant de fusionner dans `main`
-- [ ] Réglages : enregistrer, fermer, rouvrir → tout est conservé ; « ✓ Zone active »
+- [ ] Écran principal : la carte d'état change selon la situation (actif, pause, appelé aujourd'hui,
+      désactivé, autorisations manquantes) ; clair et sombre lisibles
+- [ ] Réglages : modifier, fermer, rouvrir → tout est conservé sans bouton « Enregistrer » ; « ✓ Zone active »
 - [ ] Autorisations : les ✓ s'affichent après les avoir accordées
 - [ ] « Choisir sur la carte » : la carte s'ouvre sur la position enregistrée, les 2 cercles suivent
-      le viseur et les curseurs ; « Valider » remplit coordonnées et rayons ; « Enregistrer » les applique
+      le viseur et les curseurs ; « Valider » enregistre coordonnées et rayons
 - [ ] Assistant (Outils de test › Réinitialiser l'assistant) : les 6 étapes s'enchaînent, « Suivant »
       reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'automatisation
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
-- [ ] « Tester l'appel maintenant » appelle bien le numéro
+- [ ] « Ouvrir le portail maintenant » appelle bien le numéro
+- [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
+      l'état change après une pause / un appel
+- [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
+      « Ok Google, ouvre Portail test » appelle ; désactiver → l'icône disparaît
+- [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
+- [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
 - [ ] Simuler l'arrivée hors plage horaire : pas d'appel, raison dans le journal
@@ -88,6 +96,11 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `QrCodeTest` | Le QR code généré se relit à l'identique |
 | `ConfigImportTest` | Import : réglages appliqués, activation/pause conservées ; assistant ; réinitialisation |
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
+| `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
+| `HistoryTest` | Historique des arrivées : limite, semaine en cours, heure moyenne, résumé |
+| `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
+| `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
+| `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements
@@ -98,3 +111,8 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 4. L'heure passe par `AppClock` et les appels par `CallHelper.placer` : les tests les remplacent
    (voir `TestSupport`) pour ne jamais dépendre de l'heure réelle ni passer de vrai appel.
 5. On ne fusionne dans `main` que si **Tests** est vert.
+
+## Maintenance
+- **Dependabot** (`.github/dependabot.yml`) ouvre chaque mois une pull request vers `develop` quand une
+  action GitHub (checkout, setup-java…) a une nouvelle version : vérifier que **Tests** passe, puis fusionner.
+- Les constructions tournent sur `ubuntu-24.04` (image figée) avec le cache Gradle.

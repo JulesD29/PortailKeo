@@ -87,6 +87,16 @@ class Prefs(context: Context) {
         get() = sp.getString("lastUpdateCheck", "") ?: ""
         set(v) = sp.edit().putString("lastUpdateCheck", v).apply()
 
+    /** Édition des nouveautés déjà présentées (voir WhatsNew). */
+    var lastSeenWhatsNew: Int
+        get() = sp.getInt("lastSeenWhatsNew", 0)
+        set(v) = sp.edit().putInt("lastSeenWhatsNew", v).apply()
+
+    /** Appels automatiques passés (voir History). */
+    var history: String
+        get() = sp.getString("history", "") ?: ""
+        set(v) = sp.edit().putString("history", v).apply()
+
     val logText: String get() = sp.getString("log", "") ?: ""
 
     @Synchronized

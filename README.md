@@ -42,7 +42,9 @@ and at the times you choose. The app interface is in French.
 | ⏱️ **Countdown** | "Calling the gate in 5 s" notification with **Cancel** and **Call now**. |
 | 📅 **Schedule** | Active days, time window, at most one automatic call per day. |
 | 🏖️ **Pause & public holidays** | Pause until a given date; no call on French public holidays. |
-| 📲 **Manual call** | **Appeler Garage** Quick Settings tile and a launcher shortcut (long-press the icon). |
+| 📲 **Manual call** | **Appeler Garage** Quick Settings tile, home-screen widget and a launcher shortcut. |
+| 🎙️ **Voice command** | "Ok Google, ouvre Portail" calls the gate — handy while driving (optional). |
+| 📊 **History** | Calls this week, average arrival time and latest calls. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
 | 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the app. |
 
@@ -79,12 +81,12 @@ The same settings are available afterwards on the main screen:
 4. *(the radii can also be typed in directly)*
 5. **Compte à rebours** — seconds before the call (**0** = call immediately).
 6. **Quand** — days and time window (Mon–Fri, 07:00–10:00 by default).
-7. Turn on **Automatisation activée**, then tap **Enregistrer**.
-   The line below should read **✓ Zone active**.
+7. Turn on **Appel automatique à l'arrivée** in the status card at the top. Every change is saved
+   immediately; the *Portail* card should read **✓ Zone active**.
 8. **Accorder les autorisations** — phone calls, notifications, then location → **Allow all the time**.
 9. **Désactiver l'optimisation batterie** — strongly recommended. On Samsung, Xiaomi, Huawei or
    Oppo, also set *Settings › Apps › Portail Keo › Battery* to **Unrestricted**.
-10. **Tester l'appel maintenant** to check that the call goes through.
+10. **Ouvrir le portail maintenant** to check that the call goes through.
 
 > [!IMPORTANT]
 > The gate must recognise **your** phone number. If it is not registered with the gate
@@ -103,6 +105,12 @@ call will be made that day.
 - **Shortcut**: long-press the app icon › **Ouvrir le portail** (you can drag it to your home screen).
 
 The tile and the shortcut always work, even when paused or outside the time window.
+
+### Voice command
+Turn on **Commande vocale**: a **Portail** icon is added to your apps. Voice assistants open apps by
+name, so **"Ok Google, ouvre Portail"** calls the gate straight away. For an exact phrase such as
+*"ouvre le portail"*, create a Google routine (Google Home › Automations › Personal › *When I say…*
+→ custom command *"ouvre Portail"*); the in-app **Dire exactement « ouvre le portail »** button explains it.
 
 ### Pause and public holidays
 - **Mettre en pause…**: no automatic call until the chosen date (inclusive). **Reprendre** cancels it.
@@ -184,6 +192,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── SetupActivity.kt       First-launch wizard (steps in SetupWizard.kt)
 ├── ShareActivity.kt       QR code of the current setup
 ├── ConfigShare.kt         QR link format, import / export
+├── Dashboard.kt           Status card logic (state, next time window)
 ├── GeofenceManager.kt     Registers the gate and approach zones
 ├── GeofenceReceiver.kt    Handles zone entry / exit
 ├── PortalService.kt       Precise GPS on approach + countdown (foreground service)

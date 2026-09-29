@@ -17,6 +17,7 @@
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
     <application
+        android:name=".PortalApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"
@@ -69,6 +70,21 @@
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <!-- Commande vocale : icône « Portail » qui appelle directement (« Ok Google, ouvre Portail »).
+             Désactivée par défaut, activée depuis les réglages (VoiceCommand). -->
+        <activity-alias
+            android:name=".VoiceLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/voice_label"
+            android:targetActivity=".CallActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
         <!-- Tuile « Portail » des réglages rapides -->
         <service
             android:name=".PortalTileService"
@@ -91,6 +107,19 @@
             android:name=".PortalService"
             android:exported="false"
             android:foregroundServiceType="location" />
+
+        <!-- Widget d'écran d'accueil -->
+        <receiver
+            android:name=".PortalWidget"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/portal_widget_info" />
+        </receiver>
 
         <!-- Résultat de l'installation d'une mise à jour -->
         <receiver

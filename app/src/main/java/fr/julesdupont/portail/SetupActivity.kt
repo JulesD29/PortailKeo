@@ -97,6 +97,7 @@ class SetupActivity : AppCompatActivity() {
     private fun render() {
         if (!::b.isInitialized) return
         b.txtProgress.text = SetupWizard.progress(step)
+        b.progress.setProgressCompat((step.ordinal + 1) * 100 / SetupWizard.steps.size, true)
         b.txtTitle.text = step.title
         val pages = mapOf(
             Step.WELCOME to b.pageWelcome, Step.PHONE to b.pagePhone, Step.LOCATION to b.pageLocation,
@@ -158,6 +159,7 @@ class SetupActivity : AppCompatActivity() {
     private fun finishSetup() {
         prefs.enabled = true
         prefs.setupDone = true
+        prefs.lastSeenWhatsNew = WhatsNew.CURRENT // nouvelle installation : rien de « nouveau » à présenter
         prefs.log("Assistant terminé, automatisation activée")
         GeofenceManager.register(this)
         startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))

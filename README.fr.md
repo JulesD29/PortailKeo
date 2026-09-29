@@ -42,7 +42,9 @@ les jours et aux heures que vous choisissez.
 | ⏱️ **Compte à rebours** | Notification « Appel du portail dans 5 s » avec **Annuler** et **Appeler maintenant**. |
 | 📅 **Horaires** | Jours actifs, plage horaire, un seul appel automatique par jour. |
 | 🏖️ **Pause et jours fériés** | Pause jusqu'à une date ; pas d'appel les jours fériés français. |
-| 📲 **Appel manuel** | Tuile **Appeler Garage** dans les réglages rapides et raccourci (appui long sur l'icône). |
+| 📲 **Appel manuel** | Tuile **Appeler Garage**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
+| 🎙️ **Commande vocale** | « Ok Google, ouvre Portail » appelle le portail, pratique en conduisant (facultatif). |
+| 📊 **Historique** | Appels de la semaine, heure d'arrivée moyenne et derniers appels. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
 | 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'app. |
 
@@ -80,12 +82,12 @@ Les mêmes réglages restent ensuite disponibles sur l'écran principal :
 4. *(les rayons peuvent aussi être saisis directement)*
 5. **Compte à rebours** : secondes avant l'appel (**0** = appel immédiat).
 6. **Quand** : jours et plage horaire (lun–ven, 7h00–10h00 par défaut).
-7. Activez **Automatisation activée**, puis touchez **Enregistrer**.
-   La ligne en dessous doit afficher **✓ Zone active**.
+7. Activez **Appel automatique à l'arrivée** dans la carte d'état en haut. Chaque modification est
+   enregistrée immédiatement ; la carte *Portail* doit afficher **✓ Zone active**.
 8. **Accorder les autorisations** : appels, notifications, puis localisation › **Toujours autoriser**.
 9. **Désactiver l'optimisation batterie** : fortement conseillé. Sur Samsung, Xiaomi, Huawei ou
    Oppo, mettez aussi *Paramètres › Applis › Portail Keo › Batterie* sur **Sans restriction**.
-10. **Tester l'appel maintenant** pour vérifier que l'appel part bien.
+10. **Ouvrir le portail maintenant** pour vérifier que l'appel part bien.
 
 > [!IMPORTANT]
 > Le portail doit reconnaître **votre** numéro. S'il n'est pas enregistré auprès du système
@@ -105,6 +107,13 @@ automatique ne sera passé ce jour-là.
   sur l'écran d'accueil).
 
 La tuile et le raccourci fonctionnent toujours, même en pause ou hors de la plage horaire.
+
+### Commande vocale
+Activez **Commande vocale** : une icône **Portail** s'ajoute à vos applis. Les assistants vocaux ouvrent
+les applis par leur nom, donc **« Ok Google, ouvre Portail »** appelle tout de suite le portail. Pour une
+phrase exacte comme *« ouvre le portail »*, créez une routine Google (Google Home › Automatisations ›
+Personnel › *Quand je dis…* → commande personnalisée *« ouvre Portail »*) ; le bouton
+**Dire exactement « ouvre le portail »** de l'app l'explique.
 
 ### Pause et jours fériés
 - **Mettre en pause…** : aucun appel automatique jusqu'à la date choisie (incluse).
@@ -190,6 +199,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── SetupActivity.kt       Assistant de premier lancement (étapes dans SetupWizard.kt)
 ├── ShareActivity.kt       QR code de la configuration
 ├── ConfigShare.kt         Format du lien QR, import / export
+├── Dashboard.kt           Logique de la carte d'état (état, prochain créneau)
 ├── GeofenceManager.kt     Enregistre la zone du portail et la zone d'approche
 ├── GeofenceReceiver.kt    Gère les entrées / sorties de zone
 ├── PortalService.kt       GPS précis à l'approche + compte à rebours (service de premier plan)

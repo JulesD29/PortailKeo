@@ -33,8 +33,12 @@ object CallHelper {
         }
         return try {
             placer(ctx, Uri.fromParts("tel", number, null))
-            if (automatic) prefs.lastCallDate = AppClock.today().toString()
+            if (automatic) {
+                prefs.lastCallDate = AppClock.today().toString()
+                prefs.history = History.add(prefs.history, AppClock.now())
+            }
             prefs.log(if (automatic) "Appel automatique lancé vers $number" else "Appel manuel lancé vers $number")
+            PortalWidget.refresh(ctx)
             true
         } catch (e: Exception) {
             prefs.log("Échec de l'appel : ${e.javaClass.simpleName} ${e.message ?: ""}")

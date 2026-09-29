@@ -6,4 +6,5 @@
     <string name="shortcut_short">Portail (test)</string>
     <string name="shortcut_long">Appeler le portail (version de test)</string>
     <color name="ic_bg">#E8710A</color>
+    <string name="voice_label">Portail test</string>
 </resources>
