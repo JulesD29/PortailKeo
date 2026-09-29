@@ -27,15 +27,17 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
 ### Checklist de tests fonctionnels avant de fusionner dans `main`
-- [ ] Réglages : enregistrer, fermer, rouvrir → tout est conservé ; « ✓ Zone active »
+- [ ] Écran principal : la carte d'état change selon la situation (actif, pause, appelé aujourd'hui,
+      désactivé, autorisations manquantes) ; clair et sombre lisibles
+- [ ] Réglages : modifier, fermer, rouvrir → tout est conservé sans bouton « Enregistrer » ; « ✓ Zone active »
 - [ ] Autorisations : les ✓ s'affichent après les avoir accordées
 - [ ] « Choisir sur la carte » : la carte s'ouvre sur la position enregistrée, les 2 cercles suivent
-      le viseur et les curseurs ; « Valider » remplit coordonnées et rayons ; « Enregistrer » les applique
+      le viseur et les curseurs ; « Valider » enregistre coordonnées et rayons
 - [ ] Assistant (Outils de test › Réinitialiser l'assistant) : les 6 étapes s'enchaînent, « Suivant »
       reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'automatisation
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
-- [ ] « Tester l'appel maintenant » appelle bien le numéro
+- [ ] « Ouvrir le portail maintenant » appelle bien le numéro
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
 - [ ] Simuler l'arrivée hors plage horaire : pas d'appel, raison dans le journal
@@ -88,6 +90,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `QrCodeTest` | Le QR code généré se relit à l'identique |
 | `ConfigImportTest` | Import : réglages appliqués, activation/pause conservées ; assistant ; réinitialisation |
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
+| `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

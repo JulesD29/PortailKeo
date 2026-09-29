@@ -79,12 +79,12 @@ The same settings are available afterwards on the main screen:
 4. *(the radii can also be typed in directly)*
 5. **Compte à rebours** — seconds before the call (**0** = call immediately).
 6. **Quand** — days and time window (Mon–Fri, 07:00–10:00 by default).
-7. Turn on **Automatisation activée**, then tap **Enregistrer**.
-   The line below should read **✓ Zone active**.
+7. Turn on **Appel automatique à l'arrivée** in the status card at the top. Every change is saved
+   immediately; the *Portail* card should read **✓ Zone active**.
 8. **Accorder les autorisations** — phone calls, notifications, then location → **Allow all the time**.
 9. **Désactiver l'optimisation batterie** — strongly recommended. On Samsung, Xiaomi, Huawei or
    Oppo, also set *Settings › Apps › Portail Keo › Battery* to **Unrestricted**.
-10. **Tester l'appel maintenant** to check that the call goes through.
+10. **Ouvrir le portail maintenant** to check that the call goes through.
 
 > [!IMPORTANT]
 > The gate must recognise **your** phone number. If it is not registered with the gate
@@ -184,6 +184,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── SetupActivity.kt       First-launch wizard (steps in SetupWizard.kt)
 ├── ShareActivity.kt       QR code of the current setup
 ├── ConfigShare.kt         QR link format, import / export
+├── Dashboard.kt           Status card logic (state, next time window)
 ├── GeofenceManager.kt     Registers the gate and approach zones
 ├── GeofenceReceiver.kt    Handles zone entry / exit
 ├── PortalService.kt       Precise GPS on approach + countdown (foreground service)

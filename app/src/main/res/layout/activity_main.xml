@@ -1,400 +1,533 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium" />
-
-        <TextView
-            android:id="@+id/testBanner"
+        app:liftOnScroll="true">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="#33E8710A"
-            android:padding="12dp"
-            android:text="VERSION DE TEST — réglages séparés de l'app normale. Pour tester l'appel automatique, désactivez l'automatisation dans l'app normale, sinon les deux appelleront. Utilisez de préférence un autre numéro que celui du portail."
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:visibility="gone" />
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/app_name" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchEnabled"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Automatisation activée"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <!-- Numéro -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Numéro du portail">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="phone" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Zone -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Zone"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Coordonnées (lat, lng)"
-            app:helperText="Collez-les depuis Google Maps (appui long sur le portail)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editCoords"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnMap"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Choisir sur la carte" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnHere"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Utiliser ma position actuelle" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Rayon (mètres)"
-            app:helperText="200 à 400 m conseillé pour une détection fiable">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editRadius"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchTwoStage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="GPS précis à l'approche (recommandé)" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/layoutApproach"
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="Zone d'approche (mètres)"
-            app:helperText="Le GPS précis s'active dans cette zone jusqu'à l'arrivée (20 min max)">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editApproach"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:hint="Compte à rebours avant l'appel (secondes)"
-            app:helperText="Notification avec « Annuler ». 0 = appel immédiat">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/editCountdown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Horaires -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Quand"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipDays"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStart"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEnd"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp" />
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Un seul appel automatique par jour."
-            android:textAppearance="?attr/textAppearanceBodySmall" />
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switchHolidays"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Pas d'appel les jours fériés" />
-
-        <!-- Pause -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Pause (congés, télétravail…)"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <TextView
-            android:id="@+id/txtPause"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnPause"
-                style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                android:text="Mettre en pause…" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnResume"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                android:text="Reprendre" />
-        </LinearLayout>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Enregistrer" />
-
-        <TextView
-            android:id="@+id/txtZoneStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <!-- Permissions -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Autorisations"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <TextView
-            android:id="@+id/txtPerms"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:lineSpacingExtra="4dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnPerms"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Accorder les autorisations" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBattery"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Désactiver l'optimisation batterie" />
-
-        <!-- Test + journal -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnTest"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Tester l'appel maintenant" />
-
-        <!-- Outils de la version de test -->
-        <LinearLayout
-            android:id="@+id/testTools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:paddingHorizontal="16dp"
+            android:paddingBottom="32dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Outils de test"
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-            <TextView
+                android:id="@+id/testBanner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Simule les zones sans se déplacer. Les règles (jours, horaires, pause, 1 appel/jour) s'appliquent comme en vrai : le journal indique pourquoi un appel ne part pas."
-                android:textAppearance="?attr/textAppearanceBodySmall" />
+                android:layout_marginTop="8dp"
+                android:background="#33E8710A"
+                android:padding="12dp"
+                android:text="VERSION DE TEST — réglages séparés de l'app normale. Pour tester l'appel automatique, désactivez l'automatisation dans l'app normale, sinon les deux appelleront."
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:visibility="gone" />
 
+            <!-- ===== État ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardStatus"
+                style="@style/SectionCard"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="28dp"
+                app:contentPadding="20dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <ImageView
+                            android:id="@+id/imgStatus"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_check_circle" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/txtStatusTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+                            <TextView
+                                android:id="@+id/txtStatusSubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textAppearance="?attr/textAppearanceBodyMedium" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchEnabled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Appel automatique à l'arrivée"
+                        android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+                    <TextView
+                        android:id="@+id/txtLastEvent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:alpha="0.8"
+                        android:textAppearance="?attr/textAppearanceBodySmall" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Action principale ===== -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSimArrival"
-                style="@style/Widget.Material3.Button.TonalButton"
+                android:id="@+id/btnOpenGate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Simuler l'arrivée au portail" />
+                android:layout_height="64dp"
+                android:layout_marginTop="12dp"
+                android:text="Ouvrir le portail maintenant"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                app:cornerRadius="32dp"
+                app:icon="@drawable/ic_tile_phone"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSimApproach"
-                style="@style/Widget.Material3.Button.TonalButton"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Simuler l'entrée dans la zone d'approche" />
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPause"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Mettre en pause…"
+                    app:icon="@drawable/ic_pause" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnResume"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Reprendre"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_play" />
+            </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnResetToday"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Réinitialiser l'appel du jour" />
+            <!-- ===== Alerte autorisations (seulement si besoin) ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPerms"
+                style="@style/SectionCard"
+                android:visibility="gone"
+                app:cardBackgroundColor="?attr/colorErrorContainer">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_warning"
+                        android:drawableTint="?attr/colorOnErrorContainer"
+                        android:text="À régler pour que l'app fonctionne"
+                        android:textColor="?attr/colorOnErrorContainer" />
+                    <TextView
+                        android:id="@+id/txtPerms"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:lineSpacingExtra="4dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnErrorContainer" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPerms"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="Autoriser" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBattery"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Batterie" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnResetSetup"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Réinitialiser l'assistant (effacer tous les réglages)" />
+            <!-- ===== Portail ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_location"
+                        android:text="Portail" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layoutPhone"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="Numéro du portail"
+                        app:startIconDrawable="@drawable/ic_tile_phone">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <TextView
+                        android:id="@+id/txtZoneSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                    <TextView
+                        android:id="@+id/txtZoneStatus"
+                        style="@style/SectionHint" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnMap"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:text="Sur la carte"
+                            app:icon="@drawable/ic_map" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnHere"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:text="Ici"
+                            app:icon="@drawable/ic_my_location" />
+                    </LinearLayout>
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchTwoStage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="GPS précis à l'approche (recommandé)" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAdvanced"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Saisie manuelle ▾" />
+
+                    <LinearLayout
+                        android:id="@+id/layoutAdvanced"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/layoutCoords"
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Coordonnées (lat, lng)"
+                            app:helperText="Collez-les depuis Google Maps (appui long sur le portail)">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/editCoords"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/layoutRadius"
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="6dp"
+                                android:layout_weight="1"
+                                android:hint="Zone portail (m)">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/editRadius"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="number" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:id="@+id/layoutApproach"
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_weight="1"
+                                android:hint="Approche (m)">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/editApproach"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="number" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Horaires ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_schedule"
+                        android:text="Quand appeler" />
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipDays"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnStart"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnEnd"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchHolidays"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Pas d'appel les jours fériés" />
+                    <TextView
+                        android:id="@+id/txtPause"
+                        style="@style/SectionHint"
+                        android:text="Un seul appel automatique par jour." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Appel ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_timer"
+                        android:text="Compte à rebours" />
+                    <TextView
+                        android:id="@+id/txtCountdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderCountdown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="Compte à rebours avant l'appel"
+                        android:stepSize="1"
+                        android:value="5"
+                        android:valueFrom="0"
+                        android:valueTo="30" />
+                    <TextView
+                        style="@style/SectionHint"
+                        android:layout_marginTop="0dp"
+                        android:text="Une notification permet d'annuler avant l'appel. La tuile et le raccourci appellent sans délai." />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Partager ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_share"
+                        android:text="Partager avec un collègue" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnShareQr"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Afficher mon QR code"
+                        app:icon="@drawable/ic_qr_code" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnScanQr"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:text="Importer" />
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnWizard"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:text="Assistant" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Journal ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_history"
+                        android:text="Journal" />
+                    <TextView
+                        android:id="@+id/txtLog"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="monospace"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textIsSelectable="true"
+                        android:textSize="12sp" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnLogMore"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tout afficher" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== Outils de test (version de test uniquement) ===== -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/testTools"
+                style="@style/SectionCard"
+                android:visibility="gone"
+                app:cardBackgroundColor="#33E8710A">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_build"
+                        android:text="Outils de test" />
+                    <TextView
+                        style="@style/SectionHint"
+                        android:text="Simule les zones sans se déplacer. Les règles (jours, horaires, pause, 1 appel/jour) s'appliquent comme en vrai : le journal indique pourquoi un appel ne part pas." />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSimArrival"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Simuler l'arrivée au portail" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSimApproach"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Simuler l'entrée dans la zone d'approche" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnResetToday"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Réinitialiser l'appel du jour" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnResetSetup"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Réinitialiser l'assistant (effacer tous les réglages)" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ===== À propos ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_info"
+                        android:text="À propos" />
+                    <TextView
+                        android:id="@+id/txtVersion"
+                        style="@style/SectionHint"
+                        android:layout_marginTop="8dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnUpdate"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Rechercher une mise à jour"
+                        app:icon="@drawable/ic_download" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-
-        <!-- Partage -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Partager avec un collègue"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnShareQr"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Partager ma configuration (QR code)" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnScanQr"
-            style="@style/Widget.Material3.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Importer une configuration (scanner)" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnWizard"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Relancer l'assistant de configuration" />
-
-        <!-- Mises à jour -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Mise à jour"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <TextView
-            android:id="@+id/txtVersion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="?attr/textAppearanceBodyMedium" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnUpdate"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rechercher une mise à jour" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Journal"
-            android:textAppearance="?attr/textAppearanceTitleMedium" />
-
-        <TextView
-            android:id="@+id/txtLog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:fontFamily="monospace"
-            android:textIsSelectable="true"
-            android:textSize="12sp" />
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

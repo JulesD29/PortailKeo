@@ -41,7 +41,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="Ma position"
-            android:src="@drawable/ic_notif" />
+            android:src="@drawable/ic_my_location" />
     </FrameLayout>
 
     <LinearLayout
