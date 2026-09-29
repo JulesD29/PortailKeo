@@ -5,8 +5,9 @@ object SetupWizard {
     enum class Step(val title: String) {
         WELCOME("Bienvenue"),
         PHONE("Numéro du portail"),
-        LOCATION("Position du portail"),
+        // Autorisations avant la carte : « Ma position » sur la carte a besoin de la localisation.
         PERMISSIONS("Autorisations"),
+        LOCATION("Position du portail"),
         BATTERY("Batterie"),
         TEST("Test et activation"),
     }
@@ -39,8 +40,8 @@ object SetupWizard {
     /** Première étape encore à faire (après un import par QR code, par exemple). */
     fun resumeStep(s: State): Step = when {
         !s.phoneOk -> Step.PHONE
-        !s.locationOk -> Step.LOCATION
         !s.permissionsOk -> Step.PERMISSIONS
+        !s.locationOk -> Step.LOCATION
         !s.batteryOk -> Step.BATTERY
         else -> Step.TEST
     }

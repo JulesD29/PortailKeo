@@ -36,7 +36,7 @@ les jours et aux heures que vous choisissez.
 | | |
 |---|---|
 | 🗺️ **Choix sur la carte** | Placer le portail sur une carte OpenStreetMap et voir les deux zones sous forme de cercles en les réglant. |
-| 🧭 **Assistant de configuration** | Au premier lancement : numéro, carte, autorisations, batterie et appel de test, étape par étape. |
+| 🧭 **Assistant de configuration** | Au premier lancement : numéro, autorisations, carte, batterie et appel de test, étape par étape. |
 | 🔗 **Partage par QR code** | Affichez votre configuration en QR code ; un collègue le scanne et tout est rempli. |
 | 📍 **Appel automatique à l'arrivée** | Détection en deux temps : une grande zone d'approche (2 km par défaut) active un GPS précis, la zone du portail déclenche l'appel. |
 | ⏱️ **Compte à rebours** | Notification « Appel du portail dans 5 s » avec **Annuler** et **Appeler maintenant**. |

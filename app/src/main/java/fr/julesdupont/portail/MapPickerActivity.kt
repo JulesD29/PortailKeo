@@ -65,6 +65,12 @@ class MapPickerActivity : AppCompatActivity() {
         }
     }
 
+    private val locationPermLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions()) {
+            if (Perms.fineLocation(this)) centerOnMyPosition(animate = true)
+            else Toast.makeText(this, "Sans localisation, déplacez la carte à la main jusqu'au portail", Toast.LENGTH_LONG).show()
+        }
+
     private lateinit var b: ActivityMapPickerBinding
     private var twoStage = true
     private val gateCircle = Polygon()
@@ -170,7 +176,9 @@ class MapPickerActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun centerOnMyPosition(animate: Boolean) {
         if (!Perms.fineLocation(this)) {
-            Toast.makeText(this, "Autorisez la localisation pour utiliser votre position", Toast.LENGTH_LONG).show()
+            locationPermLauncher.launch(arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ))
             return
         }
         LocationServices.getFusedLocationProviderClient(this)

@@ -36,7 +36,7 @@ and at the times you choose. The app interface is in French.
 | | |
 |---|---|
 | 🗺️ **Map picker** | Place the gate on an OpenStreetMap map and see both zones as circles while adjusting them. |
-| 🧭 **Setup wizard** | First launch walks you through number, map, permissions, battery and a test call. |
+| 🧭 **Setup wizard** | First launch walks you through number, permissions, map, battery and a test call. |
 | 🔗 **Share by QR code** | Show your setup as a QR code; a colleague scans it and everything is filled in. |
 | 📍 **Automatic call on arrival** | Two-stage detection: a large approach zone (2 km by default) switches on precise GPS, the gate zone triggers the call. |
 | ⏱️ **Countdown** | "Calling the gate in 5 s" notification with **Cancel** and **Call now**. |

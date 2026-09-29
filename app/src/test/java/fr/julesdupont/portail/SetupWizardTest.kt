@@ -14,12 +14,13 @@ class SetupWizardTest {
 
     @Test
     fun `ordre des etapes`() {
-        assertEquals(listOf(Step.WELCOME, Step.PHONE, Step.LOCATION, Step.PERMISSIONS, Step.BATTERY, Step.TEST), SetupWizard.steps)
+        assertEquals(listOf(Step.WELCOME, Step.PHONE, Step.PERMISSIONS, Step.LOCATION, Step.BATTERY, Step.TEST), SetupWizard.steps)
         assertEquals(Step.PHONE, SetupWizard.next(Step.WELCOME))
         assertNull(SetupWizard.next(Step.TEST))
         assertNull(SetupWizard.previous(Step.WELCOME))
         assertTrue(SetupWizard.isLast(Step.TEST))
-        assertEquals("Étape 3/6", SetupWizard.progress(Step.LOCATION))
+        assertEquals("Étape 3/6", SetupWizard.progress(Step.PERMISSIONS))
+        assertEquals("Étape 4/6", SetupWizard.progress(Step.LOCATION))
     }
 
     @Test
@@ -43,9 +44,15 @@ class SetupWizardTest {
     }
 
     @Test
+    fun `autorisations demandees avant la carte`() =
+        assertTrue(SetupWizard.steps.indexOf(Step.PERMISSIONS) < SetupWizard.steps.indexOf(Step.LOCATION))
+
+    @Test
     fun `reprise a la premiere etape non faite apres un import`() {
         assertEquals(Step.PHONE, SetupWizard.resumeStep(nothing))
+        // Import par QR code : numéro et position remplis → on reprend aux autorisations.
         assertEquals(Step.PERMISSIONS, SetupWizard.resumeStep(nothing.copy(phoneOk = true, locationOk = true)))
+        assertEquals(Step.LOCATION, SetupWizard.resumeStep(nothing.copy(phoneOk = true, permissionsOk = true)))
         assertEquals(Step.BATTERY, SetupWizard.resumeStep(all.copy(batteryOk = false)))
         assertEquals(Step.TEST, SetupWizard.resumeStep(all))
     }
