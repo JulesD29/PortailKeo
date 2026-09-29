@@ -111,3 +111,8 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 4. L'heure passe par `AppClock` et les appels par `CallHelper.placer` : les tests les remplacent
    (voir `TestSupport`) pour ne jamais dépendre de l'heure réelle ni passer de vrai appel.
 5. On ne fusionne dans `main` que si **Tests** est vert.
+
+## Maintenance
+- **Dependabot** (`.github/dependabot.yml`) ouvre chaque mois une pull request vers `develop` quand une
+  action GitHub (checkout, setup-java…) a une nouvelle version : vérifier que **Tests** passe, puis fusionner.
+- Les constructions tournent sur `ubuntu-24.04` (image figée) avec le cache Gradle.
