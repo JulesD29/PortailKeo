@@ -34,7 +34,17 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleBeta --no-daemon
+        run: |
+          chmod +x gradlew
+          set -o pipefail
+          ./gradlew testDebugUnitTest assembleBeta --no-daemon 2>&1 | tee build.log
+      # En cas d'échec : erreurs de compilation / tests visibles dans les annotations de l'exécution.
+      - name: Erreurs de compilation
+        if: failure()
+        run: |
+          grep -E '^e: |error:|\.kt:[0-9]+|FAILED|What went wrong' -A2 build.log | head -40 | while IFS= read -r line; do
+            [ -n "$line" ] && echo "::error title=Build::${line}"
+          done || true
       - name: Résumé des tests
         if: always()
         run: |
