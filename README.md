@@ -134,12 +134,13 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Notifications | Approach, countdown, update and error notifications |
 | Battery optimisation exemption | Keep Android from putting the app to sleep |
 | Install apps | Install updates downloaded from GitHub |
-| Internet | Check for and download updates |
+| Internet | Check for and download updates, load the map |
 
 ## Privacy
 
 - Your number, coordinates, settings and log **stay on your phone**; nothing is sent anywhere.
-- The app's only network access is to the GitHub API to check for updates.
+- Network access: the GitHub API (updates) and OpenStreetMap map tiles, only while the map is open.
+  Your position is never sent; only the map area being displayed is downloaded.
 - No accounts, no analytics, no ads.
 
 ## Troubleshooting

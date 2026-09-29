@@ -139,13 +139,14 @@ installer des applis.
 | Notifications | Approche, compte à rebours, mises à jour et erreurs |
 | Exemption d'optimisation batterie | Empêcher Android de mettre l'app en veille |
 | Installation d'applis | Installer les mises à jour téléchargées depuis GitHub |
-| Internet | Rechercher et télécharger les mises à jour |
+| Internet | Rechercher et télécharger les mises à jour, afficher la carte |
 
 ## Confidentialité
 
 - Votre numéro, vos coordonnées, vos réglages et le journal **restent sur votre téléphone** ;
   rien n'est envoyé nulle part.
-- Le seul accès réseau de l'app est l'API GitHub, pour chercher les mises à jour.
+- Accès réseau : l'API GitHub (mises à jour) et les fonds de carte OpenStreetMap, seulement quand la carte est ouverte.
+  Votre position n'est jamais envoyée ; seule la zone de carte affichée est téléchargée.
 - Pas de compte, pas de statistiques, pas de publicité.
 
 ## Dépannage
