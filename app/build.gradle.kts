@@ -77,6 +77,8 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    // Carte OpenStreetMap (sans clé ni compte Google)
+    implementation("org.osmdroid:osmdroid-android:6.1.20")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")

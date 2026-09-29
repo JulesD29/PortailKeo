@@ -37,6 +37,15 @@ class MainActivity : AppCompatActivity() {
             if (Perms.fineLocation(this) && !Perms.backgroundLocation(this)) askBackgroundLocation()
         }
 
+    private val mapLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val s = MapPickerActivity.parseResult(result.data) ?: return@registerForActivityResult
+            b.editCoords.setText(Coords.format(s.lat, s.lng))
+            b.editRadius.setText(s.radius.toString())
+            if (b.switchTwoStage.isChecked) b.editApproach.setText(s.approach.toString())
+            toast("Position choisie. Touchez « Enregistrer » pour l'appliquer.")
+        }
+
     private val bgPermLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             refreshStatus()
@@ -61,6 +70,7 @@ class MainActivity : AppCompatActivity() {
         b.btnStart.setOnClickListener { pickTime(start) { start = it; updateTimeButtons() } }
         b.btnEnd.setOnClickListener { pickTime(end) { end = it; updateTimeButtons() } }
         b.btnHere.setOnClickListener { useCurrentLocation() }
+        b.btnMap.setOnClickListener { openMap() }
         b.btnSave.setOnClickListener { save() }
         b.btnPerms.setOnClickListener { requestPermissions() }
         b.btnBattery.setOnClickListener { requestBatteryExemption() }
@@ -181,6 +191,14 @@ class MainActivity : AppCompatActivity() {
         TimePickerDialog(this, { _, h, m -> onPicked(h * 60 + m) }, current / 60, current % 60, true).show()
     }
 
+    private fun openMap() {
+        val radius = b.editRadius.text?.toString()?.toIntOrNull() ?: prefs.radius
+        val approach = b.editApproach.text?.toString()?.toIntOrNull() ?: prefs.approachRadius
+        mapLauncher.launch(MapPickerActivity.intent(
+            this, Coords.parse(b.editCoords.text?.toString().orEmpty()), radius, approach, b.switchTwoStage.isChecked
+        ))
+    }
+
     private fun pickPauseDate() {
         val today = LocalDate.now()
         val dialog = DatePickerDialog(this, { _, y, m, d ->
@@ -206,10 +224,9 @@ class MainActivity : AppCompatActivity() {
         when {
             phone.isEmpty() -> return toast("Indiquez le numéro du portail")
             coords == null -> return toast("Coordonnées invalides (ex. 48.856600, 2.352200)")
-            radius == null || radius < 50 || radius > 5000 -> return toast("Rayon entre 50 et 5000 m")
+            Zones.validationError(radius, approach, twoStage) != null ->
+                return toast(Zones.validationError(radius, approach, twoStage)!!)
             days.isEmpty() -> return toast("Choisissez au moins un jour")
-            twoStage && (approach == null || approach < radius!! + 300 || approach > 20000) ->
-                return toast("Zone d'approche : au moins ${radius!! + 300} m et au plus 20 000 m")
             countdown == null || countdown < 0 || countdown > 60 -> return toast("Compte à rebours entre 0 et 60 s")
         }
         prefs.phone = phone

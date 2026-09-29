@@ -29,6 +29,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 ### Checklist de tests fonctionnels avant de fusionner dans `main`
 - [ ] Réglages : enregistrer, fermer, rouvrir → tout est conservé ; « ✓ Zone active »
 - [ ] Autorisations : les ✓ s'affichent après les avoir accordées
+- [ ] « Choisir sur la carte » : la carte s'ouvre sur la position enregistrée, les 2 cercles suivent
+      le viseur et les curseurs ; « Valider » remplit coordonnées et rayons ; « Enregistrer » les applique
 - [ ] « Tester l'appel maintenant » appelle bien le numéro
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
@@ -76,6 +78,8 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
 | `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant |
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
+| `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
+| `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

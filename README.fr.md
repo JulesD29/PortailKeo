@@ -35,6 +35,7 @@ les jours et aux heures que vous choisissez.
 
 | | |
 |---|---|
+| 🗺️ **Choix sur la carte** | Placer le portail sur une carte OpenStreetMap et voir les deux zones sous forme de cercles en les réglant. |
 | 📍 **Appel automatique à l'arrivée** | Détection en deux temps : une grande zone d'approche (2 km par défaut) active un GPS précis, la zone du portail déclenche l'appel. |
 | ⏱️ **Compte à rebours** | Notification « Appel du portail dans 5 s » avec **Annuler** et **Appeler maintenant**. |
 | 📅 **Horaires** | Jours actifs, plage horaire, un seul appel automatique par jour. |
@@ -65,11 +66,12 @@ Après cette première installation, les mises à jour sont proposées **dans l'
 Ouvrez **Portail Keo** et remplissez l'écran de haut en bas :
 
 1. **Numéro du portail** : le numéro qui ouvre le portail.
-2. **Coordonnées** : dans Google Maps, appui long sur le portail, touchez les coordonnées
-   affichées en haut pour les copier, puis collez-les. Ou touchez **Utiliser ma position
-   actuelle** devant le portail.
-3. **Rayon** : taille de la zone du portail, **200 à 400 m** conseillés.
-4. **GPS précis à l'approche** : laissez-le activé ; zone d'approche de **2000 m** par défaut.
+2. **Choisir sur la carte** : déplacez la carte pour mettre le viseur sur le portail et réglez les
+   deux cercles avec les curseurs : bleu = zone du portail (appel, **200 à 400 m** conseillés),
+   orange = zone d'approche (GPS précis, **2 km** par défaut). Touchez **Valider**.
+   *Autres possibilités :* coller des coordonnées copiées dans Google Maps, ou **Utiliser ma position actuelle** devant le portail.
+3. **GPS précis à l'approche** : laissez-le activé.
+4. *(les rayons peuvent aussi être saisis directement)*
 5. **Compte à rebours** : secondes avant l'appel (**0** = appel immédiat).
 6. **Quand** : jours et plage horaire (lun–ven, 7h00–10h00 par défaut).
 7. Activez **Automatisation activée**, puis touchez **Enregistrer**.
@@ -176,6 +178,8 @@ Ou ouvrez le dossier dans Android Studio et cliquez sur ▶ **Run**.
 ```
 app/src/main/java/fr/julesdupont/portail/
 ├── MainActivity.kt        Écran de réglages
+├── MapPickerActivity.kt   Choix sur la carte (OpenStreetMap / osmdroid)
+├── Zones.kt               Règles de taille des zones
 ├── GeofenceManager.kt     Enregistre la zone du portail et la zone d'approche
 ├── GeofenceReceiver.kt    Gère les entrées / sorties de zone
 ├── PortalService.kt       GPS précis à l'approche + compte à rebours (service de premier plan)

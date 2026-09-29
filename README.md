@@ -35,6 +35,7 @@ and at the times you choose. The app interface is in French.
 
 | | |
 |---|---|
+| 🗺️ **Map picker** | Place the gate on an OpenStreetMap map and see both zones as circles while adjusting them. |
 | 📍 **Automatic call on arrival** | Two-stage detection: a large approach zone (2 km by default) switches on precise GPS, the gate zone triggers the call. |
 | ⏱️ **Countdown** | "Calling the gate in 5 s" notification with **Cancel** and **Call now**. |
 | 📅 **Schedule** | Active days, time window, at most one automatic call per day. |
@@ -64,10 +65,12 @@ After this first install, updates are offered **inside the app** (see [Automatic
 Open **Portail Keo** and fill in the screen from top to bottom:
 
 1. **Numéro du portail** — the number that opens the gate.
-2. **Coordonnées** — in Google Maps, long-press the gate, tap the coordinates shown at the
-   top to copy them, then paste. Or tap **Utiliser ma position actuelle** while standing at the gate.
-3. **Rayon** — gate zone radius, **200–400 m** recommended.
-4. **GPS précis à l'approche** — leave it on; approach zone **2000 m** by default.
+2. **Choisir sur la carte** — move the map until the crosshair is on the gate and adjust the two
+   circles with the sliders: blue = gate zone (call, **200–400 m** recommended), orange = approach
+   zone (precise GPS, **2 km** by default). Tap **Valider**.
+   *Alternatives:* paste coordinates copied from Google Maps, or **Utiliser ma position actuelle** at the gate.
+3. **GPS précis à l'approche** — leave it on.
+4. *(the radii can also be typed in directly)*
 5. **Compte à rebours** — seconds before the call (**0** = call immediately).
 6. **Quand** — days and time window (Mon–Fri, 07:00–10:00 by default).
 7. Turn on **Automatisation activée**, then tap **Enregistrer**.
@@ -169,6 +172,8 @@ Or open the folder in Android Studio and click ▶ **Run**.
 ```
 app/src/main/java/fr/julesdupont/portail/
 ├── MainActivity.kt        Settings screen
+├── MapPickerActivity.kt   Map picker (OpenStreetMap / osmdroid)
+├── Zones.kt               Zone size rules
 ├── GeofenceManager.kt     Registers the gate and approach zones
 ├── GeofenceReceiver.kt    Handles zone entry / exit
 ├── PortalService.kt       Precise GPS on approach + countdown (foreground service)
