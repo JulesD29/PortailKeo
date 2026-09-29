@@ -19,7 +19,8 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 
 ## Version de test
 - Build type `beta` : `fr.julesdupont.portail.test`, nom « Portail Keo (test) », icône orange
-  (`app/src/beta/res`), `BuildConfig.TEST_BUILD = true` → `TestTools` visibles, pas de mise à jour auto.
+  (`app/src/beta/res`), `BuildConfig.TEST_BUILD = true` → `TestTools` visibles ; mises à jour sur demande
+  depuis la pré-release `test` (nom « Test 1.N » = versionCode), jamais automatiques.
 - Publiée à chaque push sur develop en pré-release `test` (asset `PortailKeo-test.apk`).
 - Nouvelle fonctionnalité → ajouter si utile un outil de simulation dans `TestTools` + une ligne
   dans la checklist de tests fonctionnels de `CONTRIBUTING.md`.

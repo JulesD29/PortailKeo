@@ -43,7 +43,10 @@ object Updater {
 
     /** Dernière release publiée (appel bloquant), ou null s'il n'y en a pas. */
     private fun fetchLatest(): Release? {
-        val c = open("https://api.github.com/repos/$REPO/releases/latest")
+        // App normale : dernière Release publiée depuis main.
+        // Version de test : pré-release « test » publiée depuis develop.
+        val path = if (TestTools.enabled) "releases/tags/test" else "releases/latest"
+        val c = open("https://api.github.com/repos/$REPO/$path")
         c.setRequestProperty("Accept", "application/vnd.github+json")
         try {
             if (c.responseCode == 404) return null
@@ -54,11 +57,16 @@ object Updater {
         }
     }
 
-    /** Lit la réponse JSON de l'API GitHub « releases/latest ». Null si pas d'APK ou tag invalide. */
+    /**
+     * Lit la réponse JSON de l'API GitHub. Numéro de version : chiffres du tag (« v12 »),
+     * sinon dernier nombre du nom (« Test 1.15 » pour la version de test). Null si pas d'APK ou pas de numéro.
+     */
     fun parseRelease(body: String): Release? {
         val json = JSONObject(body)
         val tag = json.getString("tag_name")
-        val code = tag.filter { it.isDigit() }.toLongOrNull() ?: return null
+        val code = tag.filter { it.isDigit() }.toLongOrNull()
+            ?: Regex("\\d+").findAll(json.optString("name")).lastOrNull()?.value?.toLongOrNull()
+            ?: return null
         val assets = json.optJSONArray("assets") ?: return null
         var apk: String? = null
         for (i in 0 until assets.length()) {
@@ -75,9 +83,13 @@ object Updater {
     fun isNewer(release: Release, installedVersionCode: Long) = release.versionCode > installedVersionCode
 
     /** Cherche une version plus récente que celle installée ; callback sur le thread principal. */
-    fun check(ctx: Context, callback: (Result<Release?>) -> Unit) {
+    /**
+     * @param interactive true si l'utilisateur a touché « Rechercher une mise à jour ».
+     * La version de test ne cherche que sur demande (pas de vérification automatique).
+     */
+    fun check(ctx: Context, interactive: Boolean = false, callback: (Result<Release?>) -> Unit) {
         val app = ctx.applicationContext
-        if (TestTools.enabled) { // la version de test ne se met jamais à jour toute seule
+        if (TestTools.enabled && !interactive) {
             main.post { callback(Result.success(null)) }
             return
         }

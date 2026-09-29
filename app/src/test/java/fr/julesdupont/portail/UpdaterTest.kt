@@ -31,7 +31,20 @@ class UpdaterTest {
         assertNull(Updater.parseRelease(json("v12", assets = """{"name":"notes.txt","browser_download_url":"x"}""")))
 
     @Test
-    fun `tag sans numero ignore`() = assertNull(Updater.parseRelease(json("latest", assets = apkAsset)))
+    fun `ni tag ni nom numerotes ignore`() =
+        assertNull(Updater.parseRelease(json("latest", name = "Version de test", assets = apkAsset)))
+
+    @Test
+    fun `pre-release de test numerotee par son nom`() {
+        val asset = """{"name":"PortailKeo-test.apk","browser_download_url":"https://example.com/PortailKeo-test.apk"}"""
+        val r = Updater.parseRelease(json("test", name = "Test 1.15", assets = asset))!!
+        assertEquals(15L, r.versionCode)
+        assertEquals("https://example.com/PortailKeo-test.apk", r.apkUrl)
+    }
+
+    @Test
+    fun `le numero du tag est prioritaire sur le nom`() =
+        assertEquals(12L, Updater.parseRelease(json("v12", name = "1.99", assets = apkAsset))!!.versionCode)
 
     @Test
     fun `nom manquant remplace par le tag`() =

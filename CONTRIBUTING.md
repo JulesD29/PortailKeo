@@ -19,8 +19,9 @@ Les tests se lancent automatiquement (onglet **Actions › Tests**) ; rien n'arr
 Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré-release :
 <https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk>
 
-- Elle s'installe **à côté** de la vraie app, avec ses propres réglages ; elle ne se met pas à jour seule
-  (retélécharger le lien pour avoir la dernière version de `develop`).
+- Elle s'installe **à côté** de la vraie app, avec ses propres réglages.
+- **Rechercher une mise à jour** installe la dernière version de `develop` (sur demande uniquement,
+  pas de vérification automatique).
 - **Outils de test** en bas de l'écran : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
 - Pour tester l'appel automatique en conditions réelles, désactiver l'automatisation dans la vraie app
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.

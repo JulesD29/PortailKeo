@@ -203,7 +203,8 @@ app/src/main/java/fr/julesdupont/portail/
 
 Every push to `develop` publishes **Portail Keo (test)** (orange icon) as the `test` pre-release:
 [PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
-It installs next to the real app, has its own settings, no auto-update, and a **test tools**
+It installs next to the real app, has its own settings, updates from `develop` on demand
+(**Rechercher une mise à jour**), and a **test tools**
 section (simulate arrival / approach, reset today's call). See [CONTRIBUTING.md](CONTRIBUTING.md).
 </details>
 

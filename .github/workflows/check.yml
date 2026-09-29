@@ -73,7 +73,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: test
-          name: "Version de test (develop)"
+          name: "Test 1.${{ github.run_number }}"
           prerelease: true
           body_path: notes-test.md
           files: PortailKeo-test.apk

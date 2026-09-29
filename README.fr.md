@@ -210,7 +210,8 @@ app/src/main/java/fr/julesdupont/portail/
 
 Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré-release `test` :
 [PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
-Elle s'installe à côté de la vraie app, a ses propres réglages, pas de mise à jour automatique, et une
+Elle s'installe à côté de la vraie app, a ses propres réglages, se met à jour depuis `develop` sur demande
+(**Rechercher une mise à jour**), et une
 section **Outils de test** (simuler l'arrivée / l'approche, réinitialiser l'appel du jour).
 Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 </details>

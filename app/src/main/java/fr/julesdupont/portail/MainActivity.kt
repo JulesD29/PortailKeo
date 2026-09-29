@@ -103,7 +103,6 @@ class MainActivity : AppCompatActivity() {
         if (!TestTools.enabled) return
         b.testBanner.visibility = android.view.View.VISIBLE
         b.testTools.visibility = android.view.View.VISIBLE
-        b.btnUpdate.visibility = android.view.View.GONE
         b.btnSimArrival.setOnClickListener {
             TestTools.simulateArrival(this)
             toast("Arrivée simulée : voir la notification et le journal")
@@ -125,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkForUpdate(interactive: Boolean) {
         if (interactive) toast("Recherche d'une mise à jour…")
-        Updater.check(this) { result ->
+        Updater.check(this, interactive) { result ->
             if (isFinishing || isDestroyed) return@check
             result.onFailure { if (interactive) toast("Impossible de vérifier : ${it.message}") }
             result.onSuccess { release ->
@@ -315,7 +314,7 @@ class MainActivity : AppCompatActivity() {
         }
         b.btnResume.isEnabled = pause != null
         b.txtVersion.text = "Version installée : ${Updater.currentVersionName(this)}" +
-            if (TestTools.enabled) " (version de test : pas de mise à jour automatique)" else ""
+            if (TestTools.enabled) " (version de test : mises à jour depuis develop, sur demande)" else ""
     }
 
     // ---------- Test ----------
