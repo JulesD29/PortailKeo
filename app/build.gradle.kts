@@ -27,6 +27,9 @@ android {
         versionCode = build
         versionName = "1.$build"
         buildConfigField("boolean", "TEST_BUILD", "false")
+        // Lien des QR codes de configuration (portailkeo://config?...)
+        buildConfigField("String", "QR_SCHEME", "\"portailkeo\"")
+        manifestPlaceholders["qrScheme"] = "portailkeo"
     }
 
     signingConfigs {
@@ -53,6 +56,8 @@ android {
             applicationIdSuffix = ".test"
             versionNameSuffix = "-test"
             buildConfigField("boolean", "TEST_BUILD", "true")
+            buildConfigField("String", "QR_SCHEME", "\"portailkeo-test\"")
+            manifestPlaceholders["qrScheme"] = "portailkeo-test"
             matchingFallbacks += listOf("release")
         }
     }
@@ -79,6 +84,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.3.0")
     // Carte OpenStreetMap (sans clé ni compte Google)
     implementation("org.osmdroid:osmdroid-android:6.1.20")
+    // QR codes : génération (ZXing) et scan (Google Play Services, sans autorisation caméra)
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.robolectric:robolectric:4.14.1")

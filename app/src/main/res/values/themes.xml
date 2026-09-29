@@ -3,4 +3,15 @@
         <item name="colorPrimary">#1F6FEB</item>
     </style>
     <color name="ic_bg">#1F6FEB</color>
+    <style name="SetupPage">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:visibility">gone</item>
+    </style>
+    <style name="SetupText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
+    </style>
 </resources>

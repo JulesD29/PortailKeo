@@ -25,6 +25,11 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 - Nouvelle fonctionnalité → ajouter si utile un outil de simulation dans `TestTools` + une ligne
   dans la checklist de tests fonctionnels de `CONTRIBUTING.md`.
 
+## Écrans
+- Premier lancement : `SetupActivity` (étapes dans `SetupWizard`, logique pure) si `!prefs.setupDone`.
+- Partage : `ShareActivity` (QR via `QrCode`/ZXing), import `ConfigImport` (scanner Play Services) →
+  lien `portailkeo://config?...` (`ConfigShare`, schéma `portailkeo-test` pour la version de test).
+
 ## Build
 - Pas de SDK Android sur le PC : la compilation et les tests tournent sur GitHub Actions.
 - `check.yml` (Tests) : push sur develop/feature, PR. `build.yml` (Release APK) : push sur main.

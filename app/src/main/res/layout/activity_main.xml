@@ -320,7 +320,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Réinitialiser l'appel du jour" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnResetSetup"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Réinitialiser l'assistant (effacer tous les réglages)" />
         </LinearLayout>
+
+        <!-- Partage -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Partager avec un collègue"
+            android:textAppearance="?attr/textAppearanceTitleMedium" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnShareQr"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Partager ma configuration (QR code)" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnScanQr"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Importer une configuration (scanner)" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnWizard"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Relancer l'assistant de configuration" />
 
         <!-- Mises à jour -->
         <TextView

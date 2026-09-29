@@ -36,6 +36,8 @@ les jours et aux heures que vous choisissez.
 | | |
 |---|---|
 | 🗺️ **Choix sur la carte** | Placer le portail sur une carte OpenStreetMap et voir les deux zones sous forme de cercles en les réglant. |
+| 🧭 **Assistant de configuration** | Au premier lancement : numéro, carte, autorisations, batterie et appel de test, étape par étape. |
+| 🔗 **Partage par QR code** | Affichez votre configuration en QR code ; un collègue le scanne et tout est rempli. |
 | 📍 **Appel automatique à l'arrivée** | Détection en deux temps : une grande zone d'approche (2 km par défaut) active un GPS précis, la zone du portail déclenche l'appel. |
 | ⏱️ **Compte à rebours** | Notification « Appel du portail dans 5 s » avec **Annuler** et **Appeler maintenant**. |
 | 📅 **Horaires** | Jours actifs, plage horaire, un seul appel automatique par jour. |
@@ -63,7 +65,11 @@ Après cette première installation, les mises à jour sont proposées **dans l'
 
 ## Configuration
 
-Ouvrez **Portail Keo** et remplissez l'écran de haut en bas :
+Au premier lancement, un **assistant** vous guide étape par étape. Un collègue utilise déjà l'app ?
+Sur son téléphone : *Partager ma configuration (QR code)* ; sur le vôtre : **Scanner la configuration
+d'un collègue** — il ne reste que les autorisations à accorder.
+
+Les mêmes réglages restent ensuite disponibles sur l'écran principal :
 
 1. **Numéro du portail** : le numéro qui ouvre le portail.
 2. **Choisir sur la carte** : déplacez la carte pour mettre le viseur sur le portail et réglez les
@@ -181,6 +187,9 @@ app/src/main/java/fr/julesdupont/portail/
 ├── MainActivity.kt        Écran de réglages
 ├── MapPickerActivity.kt   Choix sur la carte (OpenStreetMap / osmdroid)
 ├── Zones.kt               Règles de taille des zones
+├── SetupActivity.kt       Assistant de premier lancement (étapes dans SetupWizard.kt)
+├── ShareActivity.kt       QR code de la configuration
+├── ConfigShare.kt         Format du lien QR, import / export
 ├── GeofenceManager.kt     Enregistre la zone du portail et la zone d'approche
 ├── GeofenceReceiver.kt    Gère les entrées / sorties de zone
 ├── PortalService.kt       GPS précis à l'approche + compte à rebours (service de premier plan)

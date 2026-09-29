@@ -31,6 +31,10 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Autorisations : les ✓ s'affichent après les avoir accordées
 - [ ] « Choisir sur la carte » : la carte s'ouvre sur la position enregistrée, les 2 cercles suivent
       le viseur et les curseurs ; « Valider » remplit coordonnées et rayons ; « Enregistrer » les applique
+- [ ] Assistant (Outils de test › Réinitialiser l'assistant) : les 6 étapes s'enchaînent, « Suivant »
+      reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'automatisation
+- [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
+      « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
 - [ ] « Tester l'appel maintenant » appelle bien le numéro
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
@@ -80,6 +84,10 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
 | `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
 | `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
+| `ConfigShareTest` | Format du lien de configuration (QR), aller-retour, liens invalides refusés |
+| `QrCodeTest` | Le QR code généré se relit à l'identique |
+| `ConfigImportTest` | Import : réglages appliqués, activation/pause conservées ; assistant ; réinitialisation |
+| `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

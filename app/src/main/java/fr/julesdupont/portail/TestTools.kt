@@ -23,6 +23,11 @@ object TestTools {
         GeofenceReceiver.handleTransition(ctx, Geofence.GEOFENCE_TRANSITION_ENTER, listOf(GeofenceManager.APPROACH_ID))
     }
 
+    /** Efface tous les réglages : l'app redémarre comme au premier lancement (assistant). */
+    fun resetSetup(ctx: Context) {
+        ctx.getSharedPreferences("portail", Context.MODE_PRIVATE).edit().clear().commit()
+    }
+
     /** Oublie l'appel automatique du jour, pour pouvoir retester tout de suite. */
     fun resetToday(ctx: Context) {
         val p = Prefs(ctx)

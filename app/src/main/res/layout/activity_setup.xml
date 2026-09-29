@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/txtProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceLabelLarge" />
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_weight="1">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- 1. Bienvenue -->
+            <LinearLayout android:id="@+id/pageWelcome" style="@style/SetupPage">
+                <TextView style="@style/SetupText"
+                    android:text="Portail Keo appelle le numéro du portail pour vous quand vous arrivez, les jours et aux heures choisis.\n\nQuelques étapes suffisent : le numéro, la position du portail, les autorisations et un test." />
+                <TextView style="@style/SetupText"
+                    android:layout_marginTop="16dp"
+                    android:text="Un collègue utilise déjà l'app ? Demandez-lui d'afficher son QR code (Réglages › Partager ma configuration) et scannez-le : tout sera rempli." />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnScan"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Scanner la configuration d'un collègue" />
+            </LinearLayout>
+
+            <!-- 2. Numéro -->
+            <LinearLayout android:id="@+id/pagePhone" style="@style/SetupPage">
+                <TextView style="@style/SetupText"
+                    android:text="Le numéro à appeler pour ouvrir le portail." />
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="Numéro du portail">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="phone" />
+                </com.google.android.material.textfield.TextInputLayout>
+                <TextView style="@style/SetupText"
+                    android:layout_marginTop="12dp"
+                    android:text="Important : votre propre numéro de téléphone doit être autorisé par le système du portail, sinon l'appel partira mais le portail ne s'ouvrira pas." />
+            </LinearLayout>
+
+            <!-- 3. Position -->
+            <LinearLayout android:id="@+id/pageLocation" style="@style/SetupPage">
+                <TextView style="@style/SetupText"
+                    android:text="Placez le portail sur la carte. Le cercle bleu déclenche l'appel ; dans le cercle orange, le GPS précis s'active pour ne pas appeler trop tard." />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMap"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Choisir sur la carte" />
+                <TextView
+                    android:id="@+id/txtLocation"
+                    style="@style/SetupText"
+                    android:layout_marginTop="12dp" />
+            </LinearLayout>
+
+            <!-- 4. Autorisations -->
+            <LinearLayout android:id="@+id/pagePermissions" style="@style/SetupPage">
+                <TextView style="@style/SetupText"
+                    android:text="L'app a besoin de votre position même quand elle est fermée (choisissez « Toujours autoriser ») et du droit de passer des appels." />
+                <TextView
+                    android:id="@+id/txtPerms"
+                    style="@style/SetupText"
+                    android:layout_marginTop="12dp"
+                    android:lineSpacingExtra="6dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPerms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Accorder les autorisations" />
+            </LinearLayout>
+
+            <!-- 5. Batterie -->
+            <LinearLayout android:id="@+id/pageBattery" style="@style/SetupPage">
+                <TextView style="@style/SetupText"
+                    android:text="Pour qu'Android ne mette pas l'app en veille, désactivez l'optimisation de la batterie. Fortement conseillé.\n\nSur Samsung, Xiaomi, Huawei ou Oppo, mettez aussi l'app en « Sans restriction » dans Paramètres › Applis › Batterie." />
+                <TextView
+                    android:id="@+id/txtBattery"
+                    style="@style/SetupText"
+                    android:layout_marginTop="12dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBattery"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Désactiver l'optimisation batterie" />
+            </LinearLayout>
+
+            <!-- 6. Test -->
+            <LinearLayout android:id="@+id/pageTest" style="@style/SetupPage">
+                <TextView style="@style/SetupText"
+                    android:text="Vérifiez que l'appel part bien, puis activez l'automatisation." />
+                <TextView
+                    android:id="@+id/txtTestSummary"
+                    style="@style/SetupText"
+                    android:layout_marginTop="12dp" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTestCall"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Tester l'appel maintenant" />
+            </LinearLayout>
+        </FrameLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBack"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Précédent" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</LinearLayout>

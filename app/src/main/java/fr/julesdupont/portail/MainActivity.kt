@@ -54,9 +54,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefs = Prefs(this)
+        // Premier lancement : assistant (sauf si l'app est ouverte par un QR code de configuration).
+        if (!prefs.setupDone && configLink(intent) == null) {
+            startActivity(SetupActivity.intent(this))
+            finish()
+            return
+        }
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
-        prefs = Prefs(this)
 
         dayLabels.forEachIndexed { i, label ->
             b.chipDays.addView(Chip(this).apply {
@@ -77,6 +83,13 @@ class MainActivity : AppCompatActivity() {
         b.btnTest.setOnClickListener { testCall() }
         b.switchTwoStage.setOnCheckedChangeListener { _, checked -> b.layoutApproach.isEnabled = checked }
         b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
+        b.btnShareQr.setOnClickListener {
+            if (!prefs.hasLocation || prefs.phone.isBlank()) toast("Enregistrez d'abord le numéro et la position")
+            else startActivity(Intent(this, ShareActivity::class.java))
+        }
+        b.btnScanQr.setOnClickListener { ConfigImport.scan(this) { importConfig(it) } }
+        b.btnWizard.setOnClickListener { startActivity(SetupActivity.intent(this)) }
+        configLink(intent)?.let { importConfig(it) }
         setupTestTools()
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
@@ -97,14 +110,36 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        if (!::b.isInitialized) return
+        configLink(intent)?.let { importConfig(it) }
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
     }
 
     override fun onResume() {
         super.onResume()
+        if (!::b.isInitialized) return
         refreshStatus()
         applyGeofence(silent = true)
         if (prefs.lastUpdateCheck != LocalDate.now().toString()) checkForUpdate(interactive = false)
+    }
+
+    // ---------- Partage par QR code ----------
+
+    private fun configLink(i: Intent?): String? =
+        i?.data?.takeIf { i.action == Intent.ACTION_VIEW && it.host == "config" }?.toString()
+
+    private fun importConfig(text: String) {
+        ConfigImport.confirmAndApply(this, text) {
+            loadForm()
+            applyGeofence(silent = true)
+            if (!prefs.setupDone) {
+                startActivity(SetupActivity.intent(this, resume = true))
+                finish()
+            } else {
+                toast("Configuration importée")
+                refreshStatus()
+            }
+        }
     }
 
     // ---------- Version de test ----------
@@ -122,6 +157,13 @@ class MainActivity : AppCompatActivity() {
             TestTools.simulateApproach(this)
             toast("Approche simulée : le GPS précis mesure la distance réelle")
             refreshStatus()
+        }
+        b.btnResetSetup.setOnClickListener {
+            prefs.enabled = false
+            GeofenceManager.register(this) // retire les zones avant d'effacer
+            TestTools.resetSetup(this)
+            startActivity(SetupActivity.intent(this))
+            finish()
         }
         b.btnResetToday.setOnClickListener {
             TestTools.resetToday(this)

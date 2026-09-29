@@ -74,6 +74,14 @@ class Prefs(context: Context) {
         get() = sp.getInt("countdown", 5)
         set(v) = sp.edit().putInt("countdown", v).apply()
 
+    /**
+     * Assistant de premier lancement terminé. Par défaut : vrai si l'app est déjà configurée
+     * (installations existantes : pas d'assistant).
+     */
+    var setupDone: Boolean
+        get() = sp.getBoolean("setupDone", hasLocation && phone.isNotBlank())
+        set(v) = sp.edit().putBoolean("setupDone", v).apply()
+
     /** Date (yyyy-MM-dd) de la dernière recherche de mise à jour réussie. */
     var lastUpdateCheck: String
         get() = sp.getString("lastUpdateCheck", "") ?: ""

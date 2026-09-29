@@ -36,6 +36,8 @@ and at the times you choose. The app interface is in French.
 | | |
 |---|---|
 | 🗺️ **Map picker** | Place the gate on an OpenStreetMap map and see both zones as circles while adjusting them. |
+| 🧭 **Setup wizard** | First launch walks you through number, map, permissions, battery and a test call. |
+| 🔗 **Share by QR code** | Show your setup as a QR code; a colleague scans it and everything is filled in. |
 | 📍 **Automatic call on arrival** | Two-stage detection: a large approach zone (2 km by default) switches on precise GPS, the gate zone triggers the call. |
 | ⏱️ **Countdown** | "Calling the gate in 5 s" notification with **Cancel** and **Call now**. |
 | 📅 **Schedule** | Active days, time window, at most one automatic call per day. |
@@ -62,7 +64,11 @@ After this first install, updates are offered **inside the app** (see [Automatic
 
 ## Setup
 
-Open **Portail Keo** and fill in the screen from top to bottom:
+On first launch an **assistant** guides you step by step. A colleague already uses the app?
+On their phone: *Partager ma configuration (QR code)*; on yours: **Scanner la configuration d'un
+collègue** — only the permissions are left to grant.
+
+The same settings are available afterwards on the main screen:
 
 1. **Numéro du portail** — the number that opens the gate.
 2. **Choisir sur la carte** — move the map until the crosshair is on the gate and adjust the two
@@ -175,6 +181,9 @@ app/src/main/java/fr/julesdupont/portail/
 ├── MainActivity.kt        Settings screen
 ├── MapPickerActivity.kt   Map picker (OpenStreetMap / osmdroid)
 ├── Zones.kt               Zone size rules
+├── SetupActivity.kt       First-launch wizard (steps in SetupWizard.kt)
+├── ShareActivity.kt       QR code of the current setup
+├── ConfigShare.kt         QR link format, import / export
 ├── GeofenceManager.kt     Registers the gate and approach zones
 ├── GeofenceReceiver.kt    Handles zone entry / exit
 ├── PortalService.kt       Precise GPS on approach + countdown (foreground service)
