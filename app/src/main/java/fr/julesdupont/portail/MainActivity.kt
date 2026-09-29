@@ -238,6 +238,13 @@ class MainActivity : AppCompatActivity() {
             if (fromUser) prefs.countdownSeconds = value.toInt()
         }
 
+        b.switchVoice.setOnCheckedChangeListener { _, checked ->
+            if (loading) return@setOnCheckedChangeListener
+            VoiceCommand.setEnabled(this, checked)
+            refreshStatus()
+            if (checked) snack("Dites « Ok Google, ouvre ${VoiceCommand.spokenName(this)} » (l'icône peut mettre un instant à apparaître)")
+        }
+        b.btnVoiceHelp.setOnClickListener { showVoiceRoutineHelp() }
         b.btnShareQr.setOnClickListener {
             if (!prefs.hasLocation || prefs.phone.isBlank()) snack("Renseignez d'abord le numéro et la position")
             else startActivity(Intent(this, ShareActivity::class.java))
@@ -377,9 +384,29 @@ class MainActivity : AppCompatActivity() {
         b.btnEnd.text = "À ${Rules.fmt(prefs.endMinutes)}"
         val countdown = prefs.countdownSeconds.coerceIn(0, 30)
         b.sliderCountdown.value = countdown.toFloat()
+        b.switchVoice.isChecked = VoiceCommand.isEnabled(this)
         b.txtCountdown.text = countdownLabel(countdown)
         loading = false
         refreshStatus()
+    }
+
+    /** Routine Google pour une phrase exacte (« Ok Google, ouvre le portail »). */
+    private fun showVoiceRoutineHelp() {
+        val name = VoiceCommand.spokenName(this)
+        MaterialAlertDialogBuilder(this)
+            .setIcon(R.drawable.ic_mic)
+            .setTitle("Dire « ouvre le portail »")
+            .setMessage(
+                "Avec la commande vocale activée, « Ok Google, ouvre $name » fonctionne directement.\n\n" +
+                "Pour une phrase à vous, créez une routine Google :\n" +
+                "1. App Google Home › Automatisations › + › Personnel\n" +
+                "2. Déclencheur : « Quand je dis à Google… » → « ouvre le portail »\n" +
+                "3. Action : « Ajouter une commande personnalisée » → « ouvre $name »\n" +
+                "4. Enregistrer.\n\n" +
+                "Si le téléphone est verrouillé, l'assistant peut vous demander de le déverrouiller."
+            )
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     private fun countdownLabel(s: Int) =
@@ -553,6 +580,12 @@ class MainActivity : AppCompatActivity() {
         b.txtLog.text = (if (logExpanded) lines else lines.take(5)).joinToString("\n").ifEmpty { "—" }
         b.btnLogMore.visibility = if (lines.size > 5) View.VISIBLE else View.GONE
         b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${lines.size})"
+
+        val voiceName = VoiceCommand.spokenName(this)
+        b.switchVoice.text = "« Ok Google, ouvre $voiceName »"
+        b.txtVoiceHint.text = if (VoiceCommand.isEnabled(this))
+            "Activée : une icône « $voiceName » est dans vos applis. La dire à l'assistant appelle le portail sans délai."
+        else "Ajoute une icône « $voiceName » à vos applis, que l'assistant vocal peut ouvrir. Pratique en conduisant."
 
         val calls = History.parse(prefs.history)
         b.txtHistorySummary.text = History.summary(calls, AppClock.today())

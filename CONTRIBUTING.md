@@ -40,6 +40,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] « Ouvrir le portail maintenant » appelle bien le numéro
 - [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
       l'état change après une pause / un appel
+- [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
+      « Ok Google, ouvre Portail test » appelle ; désactiver → l'icône disparaît
 - [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
 - [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
@@ -98,6 +100,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `HistoryTest` | Historique des arrivées : limite, semaine en cours, heure moyenne, résumé |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
+| `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

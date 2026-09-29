@@ -13,7 +13,8 @@ class WhatsNewTest {
     fun `seulement les nouveautes non vues`() {
         val shown = WhatsNew.toShow(1)
         assertTrue(shown.isNotEmpty())
-        assertTrue(shown.all { it.edition == 2 })
+        assertTrue(shown.all { it.edition >= 2 })
+        assertTrue(WhatsNew.toShow(2).all { it.edition == 3 })
     }
 
     @Test

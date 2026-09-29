@@ -43,6 +43,7 @@ les jours et aux heures que vous choisissez.
 | 📅 **Horaires** | Jours actifs, plage horaire, un seul appel automatique par jour. |
 | 🏖️ **Pause et jours fériés** | Pause jusqu'à une date ; pas d'appel les jours fériés français. |
 | 📲 **Appel manuel** | Tuile **Appeler Garage**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
+| 🎙️ **Commande vocale** | « Ok Google, ouvre Portail » appelle le portail, pratique en conduisant (facultatif). |
 | 📊 **Historique** | Appels de la semaine, heure d'arrivée moyenne et derniers appels. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
 | 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'app. |
@@ -106,6 +107,13 @@ automatique ne sera passé ce jour-là.
   sur l'écran d'accueil).
 
 La tuile et le raccourci fonctionnent toujours, même en pause ou hors de la plage horaire.
+
+### Commande vocale
+Activez **Commande vocale** : une icône **Portail** s'ajoute à vos applis. Les assistants vocaux ouvrent
+les applis par leur nom, donc **« Ok Google, ouvre Portail »** appelle tout de suite le portail. Pour une
+phrase exacte comme *« ouvre le portail »*, créez une routine Google (Google Home › Automatisations ›
+Personnel › *Quand je dis…* → commande personnalisée *« ouvre Portail »*) ; le bouton
+**Dire exactement « ouvre le portail »** de l'app l'explique.
 
 ### Pause et jours fériés
 - **Mettre en pause…** : aucun appel automatique jusqu'à la date choisie (incluse).

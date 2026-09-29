@@ -391,6 +391,32 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- ===== Commande vocale ===== -->
+            <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView style="@style/SectionTitle"
+                        android:drawableStart="@drawable/ic_mic"
+                        android:text="Commande vocale" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchVoice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" />
+                    <TextView
+                        android:id="@+id/txtVoiceHint"
+                        style="@style/SectionHint" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVoiceHelp"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dire exactement « ouvre le portail »" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- ===== Partager ===== -->
             <com.google.android.material.card.MaterialCardView style="@style/SectionCard">
                 <LinearLayout
