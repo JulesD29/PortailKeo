@@ -327,6 +327,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(SetupActivity.intent(this))
             finish()
         }
+        b.btnSimArrivalLocked.setOnClickListener {
+            TestTools.simulateArrivalDelayed(this, 20)
+            snack("Verrouillez le téléphone maintenant : l'appel partira dans 20 s")
+            refreshStatus()
+        }
         b.btnResetWhatsNew.setOnClickListener {
             TestTools.resetWhatsNew(this)
             showWhatsNewIfNeeded()
@@ -493,6 +498,9 @@ class MainActivity : AppCompatActivity() {
             basePermLauncher.launch(Perms.basePermissions())
         } else if (!Perms.backgroundLocation(this)) {
             askBackgroundLocation()
+        } else if (!Perms.fullScreen(this) && Build.VERSION.SDK_INT >= 34) {
+            snack("Autorisez les notifications plein écran pour appeler téléphone verrouillé")
+            startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:$packageName")))
         } else {
             toast("Toutes les autorisations sont accordées")
         }
@@ -569,12 +577,13 @@ class MainActivity : AppCompatActivity() {
             if (!Perms.notifications(this@MainActivity)) add("• Notifications (compte à rebours)")
             if (Perms.call(this@MainActivity) && !Perms.callControl(this@MainActivity))
                 add("• Gestion des appels (nouvel essai, raccrochage auto)")
+            if (!Perms.fullScreen(this@MainActivity)) add("• Notifications plein écran (appel téléphone verrouillé)")
             if (!Perms.batteryUnrestricted(this@MainActivity)) add("• Optimisation batterie à désactiver (conseillé)")
         }
         b.cardPerms.visibility = if (missing.isEmpty()) View.GONE else View.VISIBLE
         b.txtPerms.text = missing.joinToString("\n")
         b.btnPerms.visibility =
-            if (permsOk && Perms.notifications(this) && Perms.callControl(this)) View.GONE else View.VISIBLE
+            if (permsOk && Perms.notifications(this) && Perms.callControl(this) && Perms.fullScreen(this)) View.GONE else View.VISIBLE
         b.btnBattery.visibility = if (Perms.batteryUnrestricted(this)) View.GONE else View.VISIBLE
 
         b.txtZoneSummary.text = if (prefs.hasLocation) {

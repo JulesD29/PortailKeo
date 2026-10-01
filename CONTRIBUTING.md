@@ -38,6 +38,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
 - [ ] « Ouvrir le portail maintenant » appelle bien le numéro
+- [ ] Téléphone verrouillé : « Simuler l'arrivée dans 20 s », verrouiller ; l'écran s'allume, l'appel sonne ;
+      journal « Téléphone verrouillé… » puis « Appel lancé depuis l'écran verrouillé » puis « Appel en cours (essai 1) »
 - [ ] Appel automatique (Simuler l'arrivée) : notification « Appel du portail en cours », raccrochage après le délai
       réglé ; journal « Appel en cours (essai 1) » puis « Raccroché automatiquement… »
 - [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
@@ -104,6 +106,8 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
 | `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, abandon après 3 essais, délai de raccrochage |
+| `CallLaunchTest` | Appel direct ou via l'écran verrouillé selon l'état du téléphone |
+| `CallActivityTest` | Écran d'appel : appel automatique (verrouillé), pas de double appel, appel manuel |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

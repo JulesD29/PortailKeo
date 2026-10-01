@@ -17,6 +17,16 @@ object TestTools {
         GeofenceReceiver.handleTransition(ctx, Geofence.GEOFENCE_TRANSITION_ENTER, listOf(GeofenceManager.GEOFENCE_ID))
     }
 
+    /**
+     * Arrivée simulée avec un compte à rebours de [seconds] s : le temps de verrouiller le téléphone,
+     * pour reproduire un appel automatique téléphone verrouillé.
+     */
+    fun simulateArrivalDelayed(ctx: Context, seconds: Int = 20) {
+        val p = Prefs(ctx)
+        p.log("[TEST] Arrivée simulée dans $seconds s : verrouillez le téléphone")
+        AutoCall.attempt(ctx, "[TEST] Arrivée simulée (différée)", countdownSeconds = seconds)
+    }
+
     /** Comme une entrée réelle dans la zone d'approche : démarre le GPS précis. */
     fun simulateApproach(ctx: Context) {
         Prefs(ctx).log("[TEST] Approche simulée")

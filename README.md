@@ -145,6 +145,7 @@ The first time, Android asks you to allow Portail Keo to install apps.
 |---|---|
 | Location — *Allow all the time* | Detect your arrival while the app is closed |
 | Phone calls | Place the call directly, without opening the dialer |
+| Full-screen notifications | Show the call screen over the lock screen when the phone is locked |
 | Manage calls (phone state, end calls) | Check the call is ringing (retry if it dropped) and hang up automatically |
 | Notifications | Approach, countdown, update and error notifications |
 | Battery optimisation exemption | Keep Android from putting the app to sleep |

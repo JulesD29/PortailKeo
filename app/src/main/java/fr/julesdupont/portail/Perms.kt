@@ -26,6 +26,9 @@ object Perms {
     fun notifications(ctx: Context) =
         if (Build.VERSION.SDK_INT >= 33) granted(ctx, Manifest.permission.POST_NOTIFICATIONS) else true
 
+    /** Écran d'appel par-dessus l'écran verrouillé (notifications plein écran, Android 14+). */
+    fun fullScreen(ctx: Context) = CallLaunch.defaultFullScreen(ctx)
+
     fun batteryUnrestricted(ctx: Context): Boolean {
         val pm = ctx.getSystemService(PowerManager::class.java)
         return pm.isIgnoringBatteryOptimizations(ctx.packageName)

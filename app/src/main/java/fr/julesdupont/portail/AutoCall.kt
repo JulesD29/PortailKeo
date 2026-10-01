@@ -5,7 +5,7 @@ import android.content.Context
 /** Point d'entrée unique d'un appel automatique (zone du portail ou GPS d'approche). */
 object AutoCall {
     /** Vérifie les règles puis lance le compte à rebours (ou l'appel direct). */
-    fun attempt(ctx: Context, source: String) {
+    fun attempt(ctx: Context, source: String, countdownSeconds: Int? = null) {
         val prefs = Prefs(ctx)
         val refusal = Rules.check(prefs)
         if (refusal != null) {
@@ -14,7 +14,9 @@ object AutoCall {
             return
         }
         prefs.log(source)
-        if (!PortalService.startCountdown(ctx)) callNow(ctx)
+        val started = if (countdownSeconds != null) PortalService.startCountdown(ctx, countdownSeconds)
+                      else PortalService.startCountdown(ctx)
+        if (!started) callNow(ctx)
     }
 
     /**

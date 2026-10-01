@@ -21,6 +21,9 @@ object TestSupport {
         AppClock.now = { now }
         calls.clear()
         CallHelper.placer = { _, uri -> calls += uri.schemeSpecificPart }
+        // Par défaut : téléphone déverrouillé, écran allumé (appel direct).
+        CallLaunch.lockedProbe = { false }
+        CallLaunch.screenOnProbe = { true }
     }
 
     fun tearDown() {
@@ -28,6 +31,7 @@ object TestSupport {
         CallHelper.placer = CallHelper.defaultPlacer
         CallMonitor.inCallProbe = CallMonitor.defaultInCall
         CallMonitor.endCaller = CallMonitor.defaultEndCall
+        CallLaunch.reset()
     }
 
     fun grantCall() = shadowOf(app).grantPermissions(Manifest.permission.CALL_PHONE)

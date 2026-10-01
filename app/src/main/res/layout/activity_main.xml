@@ -552,6 +552,12 @@
                         android:layout_marginTop="8dp"
                         android:text="Simuler l'arrivée au portail" />
                     <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSimArrivalLocked"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Simuler l'arrivée dans 20 s (verrouillez le téléphone)" />
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSimApproach"
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="match_parent"

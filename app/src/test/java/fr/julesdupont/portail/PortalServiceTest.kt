@@ -49,6 +49,44 @@ class PortalServiceTest {
         assertTrue(Prefs(app).logText.contains("Appel annulé"))
     }
 
+    @Test
+    fun `telephone verrouille ecran d'appel puis appel direct si rien ne s'affiche`() {
+        org.robolectric.Shadows.shadowOf(app).grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        CallLaunch.lockedProbe = { true }
+        CallLaunch.fullScreenProbe = { true }
+        Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_COUNTDOWN))
+            .create().startCommand(0, 1)
+        idle(4)
+        assertTrue("pas d'appel direct tout de suite", TestSupport.calls.isEmpty())
+        assertTrue(Prefs(app).logText.contains("Téléphone verrouillé : affichage de l'écran d'appel"))
+        val nm = app.getSystemService(android.app.NotificationManager::class.java)
+        val n = shadowOf(nm).allNotifications.firstOrNull { it.fullScreenIntent != null }
+        assertTrue("notification plein écran publiée", n != null)
+        idle(6)
+        assertEquals("appel direct en secours", listOf(TestSupport.PHONE), TestSupport.calls)
+        assertTrue(Prefs(app).logText.contains("Écran d'appel non affiché : appel direct"))
+    }
+
+    @Test
+    fun `telephone verrouille sans notifications plein ecran appel direct`() {
+        CallLaunch.lockedProbe = { true }
+        CallLaunch.fullScreenProbe = { false }
+        Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_COUNTDOWN))
+            .create().startCommand(0, 1)
+        idle(4)
+        assertEquals(listOf(TestSupport.PHONE), TestSupport.calls)
+    }
+
+    @Test
+    fun `duree du compte a rebours passee dans la demande`() {
+        val i = intent(PortalService.ACTION_COUNTDOWN).putExtra(PortalService.EXTRA_SECONDS, 10)
+        Robolectric.buildService(PortalService::class.java, i).create().startCommand(0, 1)
+        idle(5)
+        assertTrue("toujours en compte à rebours", TestSupport.calls.isEmpty())
+        idle(6)
+        assertEquals(1, TestSupport.calls.size)
+    }
+
     /** Démarre le suivi comme le fait l'app après un appel automatique. */
     private fun monitoredCall(): org.robolectric.android.controller.ServiceController<PortalService> {
         TestSupport.grantCallControl()

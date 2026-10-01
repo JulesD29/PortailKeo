@@ -51,8 +51,17 @@ class PortalService : Service() {
         fun startApproach(ctx: Context) = start(ctx, ACTION_APPROACH)
 
         /** @return false si le compte à rebours est désactivé ou impossible (→ appel direct). */
-        fun startCountdown(ctx: Context): Boolean =
-            Prefs(ctx).countdownSeconds > 0 && start(ctx, ACTION_COUNTDOWN)
+        const val EXTRA_SECONDS = "seconds"
+
+        /** @param seconds durée du compte à rebours (par défaut celle des réglages). */
+        fun startCountdown(ctx: Context, seconds: Int = Prefs(ctx).countdownSeconds): Boolean = seconds > 0 && try {
+            ContextCompat.startForegroundService(ctx,
+                Intent(ctx, PortalService::class.java).setAction(ACTION_COUNTDOWN).putExtra(EXTRA_SECONDS, seconds))
+            true
+        } catch (e: Exception) {
+            Prefs(ctx).log("Service impossible à démarrer : ${e.javaClass.simpleName}")
+            false
+        }
 
         /** Suivi d'un appel automatique qui vient d'être lancé. */
         fun startMonitor(ctx: Context) = start(ctx, ACTION_MONITOR)
@@ -117,7 +126,7 @@ class PortalService : Service() {
     private val tick = object : Runnable {
         override fun run() {
             if (remaining <= 0) {
-                if (!AutoCall.callNow(this@PortalService)) stopSelf()
+                launchCall()
                 return
             }
             show(countdownNotification())
@@ -142,7 +151,7 @@ class PortalService : Service() {
             }
             ACTION_COUNTDOWN -> {
                 goForeground(approachNotification(null))
-                startCountdownInternal()
+                startCountdownInternal(intent.getIntExtra(EXTRA_SECONDS, Prefs(this).countdownSeconds))
             }
             ACTION_CANCEL -> {
                 handler.removeCallbacks(tick)
@@ -157,6 +166,7 @@ class PortalService : Service() {
                 if (!AutoCall.callNow(this)) stopSelf()
             }
             ACTION_MONITOR -> {
+                handler.removeCallbacks(lockedFallback)
                 goForeground(callingNotification())
                 startMonitoring()
             }
@@ -239,12 +249,33 @@ class PortalService : Service() {
 
     // ---------- Compte à rebours ----------
 
-    private fun startCountdownInternal() {
+    private fun startCountdownInternal(seconds: Int) {
         if (inCountdown) return
         inCountdown = true
         stopLocationUpdates()
-        remaining = Prefs(this).countdownSeconds
+        remaining = seconds
         handler.post(tick)
+    }
+
+    /** Fin du compte à rebours : appel direct, ou via l'écran verrouillé si le téléphone est verrouillé. */
+    private fun launchCall() {
+        when (CallLaunch.current(this)) {
+            CallLaunch.Mode.DIRECT -> if (!AutoCall.callNow(this)) stopSelf()
+            CallLaunch.Mode.LOCK_SCREEN -> {
+                Prefs(this).log("Téléphone verrouillé : affichage de l'écran d'appel")
+                Notifier.lockedCall(this)
+                handler.postDelayed(lockedFallback, CallLaunch.FALLBACK_DELAY_MS)
+            }
+        }
+    }
+
+    /** Si l'écran d'appel ne s'est pas affiché, on appelle quand même directement. */
+    private val lockedFallback: Runnable = Runnable {
+        if (Prefs(this).lastCallDate != AppClock.today().toString()) {
+            Prefs(this).log("Écran d'appel non affiché : appel direct")
+            Notifier.cancelLockedCall(this)
+            if (!AutoCall.callNow(this)) stopSelf()
+        }
     }
 
     // ---------- Notifications ----------

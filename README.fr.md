@@ -151,6 +151,7 @@ installer des applis.
 |---|---|
 | Localisation — *Toujours autoriser* | Détecter l'arrivée même quand l'app est fermée |
 | Appels téléphoniques | Passer l'appel directement, sans ouvrir le clavier |
+| Notifications plein écran | Afficher l'écran d'appel par-dessus l'écran verrouillé |
 | Gestion des appels (état du téléphone, raccrocher) | Vérifier que l'appel sonne (rappel s'il s'est coupé) et raccrocher automatiquement |
 | Notifications | Approche, compte à rebours, mises à jour et erreurs |
 | Exemption d'optimisation batterie | Empêcher Android de mettre l'app en veille |
