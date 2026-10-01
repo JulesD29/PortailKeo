@@ -19,6 +19,10 @@ object Perms {
 
     fun call(ctx: Context) = granted(ctx, Manifest.permission.CALL_PHONE)
 
+    /** Vérifier qu'un appel sonne (état du téléphone) et raccrocher automatiquement. */
+    fun callControl(ctx: Context) =
+        granted(ctx, Manifest.permission.READ_PHONE_STATE) && granted(ctx, Manifest.permission.ANSWER_PHONE_CALLS)
+
     fun notifications(ctx: Context) =
         if (Build.VERSION.SDK_INT >= 33) granted(ctx, Manifest.permission.POST_NOTIFICATIONS) else true
 
@@ -33,6 +37,9 @@ object Perms {
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.CALL_PHONE,
+            // Même groupe « Téléphone » que CALL_PHONE : une seule demande à l'utilisateur.
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.ANSWER_PHONE_CALLS,
         )
         if (Build.VERSION.SDK_INT >= 33) list += Manifest.permission.POST_NOTIFICATIONS
         return list.toTypedArray()

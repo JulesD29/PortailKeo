@@ -17,12 +17,16 @@ object AutoCall {
         if (!PortalService.startCountdown(ctx)) callNow(ctx)
     }
 
-    /** Appel immédiat (fin du compte à rebours, ou si le service n'a pas pu démarrer). */
-    fun callNow(ctx: Context) {
+    /**
+     * Appel immédiat (fin du compte à rebours, ou si le service n'a pas pu démarrer),
+     * puis suivi de l'appel : nouvel essai s'il se coupe sans sonner, raccrochage automatique.
+     * @return true si l'appel a été lancé.
+     */
+    fun callNow(ctx: Context): Boolean {
         val prefs = Prefs(ctx)
-        if (prefs.lastCallDate == AppClock.today().toString()) return
-        if (CallHelper.call(ctx, prefs.phone, automatic = true)) {
-            Notifier.info(ctx, "Appel du portail lancé")
-        }
+        if (prefs.lastCallDate == AppClock.today().toString()) return false
+        val ok = CallHelper.call(ctx, prefs.phone, automatic = true)
+        if (ok) PortalService.startMonitor(ctx)
+        return ok
     }
 }

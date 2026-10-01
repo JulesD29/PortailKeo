@@ -36,6 +36,16 @@ class CallHelperTest {
     }
 
     @Test
+    fun `nouvel essai sans doublon dans l'historique`() {
+        TestSupport.grantCall()
+        assertTrue(CallHelper.call(app, "0611", automatic = true))
+        assertTrue(CallHelper.call(app, "0611", automatic = true, retry = true))
+        assertEquals(listOf("0611", "0611"), TestSupport.calls)
+        assertEquals("un seul appel dans l'historique", 1, History.parse(Prefs(app).history).size)
+        assertTrue(Prefs(app).logText.contains("Nouvel essai d'appel vers 0611"))
+    }
+
+    @Test
     fun `sans permission d'appel rien n'est appele`() {
         assertFalse(CallHelper.call(app, "0611", automatic = true))
         assertTrue(TestSupport.calls.isEmpty())

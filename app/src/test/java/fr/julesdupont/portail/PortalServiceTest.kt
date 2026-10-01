@@ -49,6 +49,67 @@ class PortalServiceTest {
         assertTrue(Prefs(app).logText.contains("Appel annulé"))
     }
 
+    /** Démarre le suivi comme le fait l'app après un appel automatique. */
+    private fun monitoredCall(): org.robolectric.android.controller.ServiceController<PortalService> {
+        TestSupport.grantCallControl()
+        val controller = Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_CALL_NOW))
+            .create().startCommand(0, 1)
+        assertEquals(listOf(TestSupport.PHONE), TestSupport.calls)
+        // L'app se demande à elle-même de suivre l'appel (startMonitor) : on livre cette demande.
+        controller.withIntent(intent(PortalService.ACTION_MONITOR)).startCommand(0, 2)
+        return controller
+    }
+
+    @Test
+    fun `appel coupe sans sonner rappel automatique puis abandon`() {
+        CallMonitor.inCallProbe = { false }
+        monitoredCall()
+        idle(9)  // vérification à 6 s, nouvel essai 2 s plus tard
+        assertEquals(2, TestSupport.calls.size)
+        assertTrue(Prefs(app).logText.contains("nouvel essai (2/3)"))
+        idle(9)
+        assertEquals(3, TestSupport.calls.size)
+        idle(9)
+        assertEquals("pas plus de 3 essais", 3, TestSupport.calls.size)
+        assertTrue(Prefs(app).logText.contains("Échec : l'appel s'est coupé 3 fois sans sonner"))
+        assertEquals("1 seul appel dans l'historique", 1, History.parse(Prefs(app).history).size)
+    }
+
+    @Test
+    fun `appel qui sonne raccroche automatiquement apres le delai`() {
+        var ended = false
+        CallMonitor.inCallProbe = { true }
+        CallMonitor.endCaller = { ended = true; true }
+        Prefs(app).hangupSeconds = 20
+        monitoredCall()
+        idle(7)
+        assertTrue(Prefs(app).logText.contains("Appel en cours (essai 1)"))
+        assertTrue("pas encore raccroché", !ended)
+        idle(14)
+        assertTrue(ended)
+        assertTrue(Prefs(app).logText.contains("Raccroché automatiquement après 20 s"))
+        assertEquals("aucun nouvel essai", 1, TestSupport.calls.size)
+    }
+
+    @Test
+    fun `raccrochage desactive`() {
+        var ended = false
+        CallMonitor.inCallProbe = { true }
+        CallMonitor.endCaller = { ended = true; true }
+        Prefs(app).hangupSeconds = 0
+        monitoredCall()
+        idle(60)
+        assertTrue(!ended)
+    }
+
+    @Test
+    fun `sans autorisation de gestion des appels pas de suivi`() {
+        val controller = Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_CALL_NOW))
+            .create().startCommand(0, 1)
+        controller.withIntent(intent(PortalService.ACTION_MONITOR)).startCommand(0, 2)
+        assertTrue(Prefs(app).logText.contains("Suivi de l'appel impossible"))
+    }
+
     @Test
     fun `appeler maintenant n'attend pas la fin du compte a rebours`() {
         val controller = Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_COUNTDOWN))

@@ -24,7 +24,7 @@ object CallHelper {
      * @param automatic true quand l'appel vient de la zone : on mémorise la date pour
      *                  ne pas rappeler le même jour.
      */
-    fun call(ctx: Context, number: String, automatic: Boolean): Boolean {
+    fun call(ctx: Context, number: String, automatic: Boolean, retry: Boolean = false): Boolean {
         val prefs = Prefs(ctx)
         if (!Perms.call(ctx)) {
             prefs.log("Échec : permission d'appel manquante")
@@ -33,11 +33,15 @@ object CallHelper {
         }
         return try {
             placer(ctx, Uri.fromParts("tel", number, null))
-            if (automatic) {
+            if (automatic && !retry) {
                 prefs.lastCallDate = AppClock.today().toString()
                 prefs.history = History.add(prefs.history, AppClock.now())
             }
-            prefs.log(if (automatic) "Appel automatique lancé vers $number" else "Appel manuel lancé vers $number")
+            prefs.log(when {
+                retry -> "Nouvel essai d'appel vers $number"
+                automatic -> "Appel automatique lancé vers $number"
+                else -> "Appel manuel lancé vers $number"
+            })
             PortalWidget.refresh(ctx)
             true
         } catch (e: Exception) {

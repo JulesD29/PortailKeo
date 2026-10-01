@@ -38,6 +38,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
 - [ ] « Ouvrir le portail maintenant » appelle bien le numéro
+- [ ] Appel automatique (Simuler l'arrivée) : notification « Appel du portail en cours », raccrochage après le délai
+      réglé ; journal « Appel en cours (essai 1) » puis « Raccroché automatiquement… »
 - [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
       l'état change après une pause / un appel
 - [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
@@ -88,7 +90,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallHelperTest` | Appel auto / manuel, permission manquante, erreur du téléphone |
 | `AutoCallTest` | Appel direct ou compte à rebours, refus, pas de double appel |
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
-| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant |
+| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto) |
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
 | `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
 | `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
@@ -101,6 +103,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
+| `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, abandon après 3 essais, délai de raccrochage |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

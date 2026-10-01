@@ -26,9 +26,14 @@ object TestSupport {
     fun tearDown() {
         AppClock.reset()
         CallHelper.placer = CallHelper.defaultPlacer
+        CallMonitor.inCallProbe = CallMonitor.defaultInCall
+        CallMonitor.endCaller = CallMonitor.defaultEndCall
     }
 
     fun grantCall() = shadowOf(app).grantPermissions(Manifest.permission.CALL_PHONE)
+
+    fun grantCallControl() = shadowOf(app).grantPermissions(
+        Manifest.permission.READ_PHONE_STATE, Manifest.permission.ANSWER_PHONE_CALLS)
 
     /** Réglages complets et valides, comme après une configuration normale. */
     fun configuredPrefs(countdown: Int = 0): Prefs = Prefs(app).apply {

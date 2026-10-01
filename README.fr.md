@@ -151,6 +151,7 @@ installer des applis.
 |---|---|
 | Localisation — *Toujours autoriser* | Détecter l'arrivée même quand l'app est fermée |
 | Appels téléphoniques | Passer l'appel directement, sans ouvrir le clavier |
+| Gestion des appels (état du téléphone, raccrocher) | Vérifier que l'appel sonne (rappel s'il s'est coupé) et raccrocher automatiquement |
 | Notifications | Approche, compte à rebours, mises à jour et erreurs |
 | Exemption d'optimisation batterie | Empêcher Android de mettre l'app en veille |
 | Installation d'applis | Installer les mises à jour téléchargées depuis GitHub |
@@ -173,6 +174,7 @@ installer des applis.
 | « ✗ Localisation « Toujours autoriser » manquante » | *Paramètres › Applis › Portail Keo › Autorisations › Position › Toujours autoriser*. |
 | Rien ne se passe en arrière-plan | Désactivez l'optimisation batterie / mettez l'app en **Sans restriction**. |
 | Appel passé mais portail fermé | Votre numéro n'est pas autorisé par le système du portail. |
+| L'appel se coupe sans sonner | L'app rappelle automatiquement (jusqu'à 3 essais) ; le **Journal** indique « nouvel essai ». |
 | Tuile sans texte | Ouvrez le volet complet, ou agrandissez la tuile (Android 16). |
 | « Mise à jour refusée : signature différente » | Désinstallez l'app, puis installez le dernier APK à la main. |
 

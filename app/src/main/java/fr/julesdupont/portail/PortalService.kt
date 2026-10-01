@@ -35,6 +35,8 @@ class PortalService : Service() {
         const val ACTION_CANCEL = "fr.julesdupont.portail.CANCEL"
         const val ACTION_CALL_NOW = "fr.julesdupont.portail.CALL_NOW"
         const val ACTION_STOP = "fr.julesdupont.portail.STOP"
+        const val ACTION_MONITOR = "fr.julesdupont.portail.MONITOR"
+        const val ACTION_HANGUP = "fr.julesdupont.portail.HANGUP"
         private const val NOTIF_ID = 10
         private const val APPROACH_TIMEOUT_MS = 20 * 60 * 1000L
 
@@ -52,6 +54,9 @@ class PortalService : Service() {
         fun startCountdown(ctx: Context): Boolean =
             Prefs(ctx).countdownSeconds > 0 && start(ctx, ACTION_COUNTDOWN)
 
+        /** Suivi d'un appel automatique qui vient d'être lancé. */
+        fun startMonitor(ctx: Context) = start(ctx, ACTION_MONITOR)
+
         fun stop(ctx: Context) {
             ctx.stopService(Intent(ctx, PortalService::class.java))
         }
@@ -61,6 +66,48 @@ class PortalService : Service() {
     private var client: FusedLocationProviderClient? = null
     private var remaining = 0
     private var inCountdown = false
+    private var monitoring = false
+    private var attempt = 0
+
+    /** Quelques secondes après l'appel : sonne-t-il ? Sinon on rappelle. */
+    private val checkCall = Runnable {
+        val p = Prefs(this)
+        when (CallMonitor.decide(CallMonitor.isInCall(this), attempt)) {
+            CallMonitor.Decision.RINGING -> {
+                p.log("Appel en cours (essai $attempt)")
+                val delay = CallMonitor.hangupDelayMs(p.hangupSeconds)
+                if (delay == null) stopSelf() else handler.postDelayed(hangup, delay)
+            }
+            CallMonitor.Decision.RETRY -> {
+                p.log("L'appel s'est coupé sans sonner : nouvel essai (${attempt + 1}/${CallMonitor.MAX_ATTEMPTS})")
+                handler.postDelayed(retryCall, CallMonitor.RETRY_DELAY_MS)
+            }
+            CallMonitor.Decision.GIVE_UP -> {
+                p.log("Échec : l'appel s'est coupé ${CallMonitor.MAX_ATTEMPTS} fois sans sonner")
+                Notifier.fallback(this, p.phone, "l'appel ne passe pas")
+                stopSelf()
+            }
+        }
+    }
+
+    private val retryCall = Runnable {
+        attempt++
+        val p = Prefs(this)
+        if (CallHelper.call(this, p.phone, automatic = true, retry = true)) {
+            show(callingNotification())
+            handler.postDelayed(checkCall, CallMonitor.CHECK_DELAY_MS)
+        } else stopSelf()
+    }
+
+    /** Raccroche comme on le fait à la main, une fois le portail ouvert. */
+    private val hangup = Runnable {
+        val p = Prefs(this)
+        if (CallMonitor.isInCall(this)) {
+            p.log(if (CallMonitor.endCall(this)) "Raccroché automatiquement après ${p.hangupSeconds} s"
+                  else "Raccrochage automatique impossible")
+        }
+        stopSelf()
+    }
 
     private val approachTimeout = Runnable {
         Prefs(this).log("Approche : GPS arrêté après 20 min sans arrivée")
@@ -70,8 +117,7 @@ class PortalService : Service() {
     private val tick = object : Runnable {
         override fun run() {
             if (remaining <= 0) {
-                AutoCall.callNow(this@PortalService)
-                stopSelf()
+                if (!AutoCall.callNow(this@PortalService)) stopSelf()
                 return
             }
             show(countdownNotification())
@@ -108,7 +154,16 @@ class PortalService : Service() {
             }
             ACTION_CALL_NOW -> {
                 handler.removeCallbacks(tick)
-                AutoCall.callNow(this)
+                if (!AutoCall.callNow(this)) stopSelf()
+            }
+            ACTION_MONITOR -> {
+                goForeground(callingNotification())
+                startMonitoring()
+            }
+            ACTION_HANGUP -> {
+                handler.removeCallbacksAndMessages(null)
+                if (CallMonitor.isInCall(this)) CallMonitor.endCall(this)
+                Prefs(this).log("Appel raccroché depuis la notification")
                 stopSelf()
             }
             else -> stopSelf() // ACTION_STOP ou redémarrage système
@@ -165,6 +220,23 @@ class PortalService : Service() {
         }
     }
 
+    // ---------- Suivi de l'appel ----------
+
+    private fun startMonitoring() {
+        if (monitoring) return
+        monitoring = true
+        inCountdown = false
+        handler.removeCallbacks(tick)
+        stopLocationUpdates()
+        attempt = 1
+        if (!CallMonitor.canMonitor(this)) {
+            Prefs(this).log("Suivi de l'appel impossible : autorisation « Téléphone » incomplète")
+            stopSelf()
+            return
+        }
+        handler.postDelayed(checkCall, CallMonitor.CHECK_DELAY_MS)
+    }
+
     // ---------- Compte à rebours ----------
 
     private fun startCountdownInternal() {
@@ -211,6 +283,19 @@ class PortalService : Service() {
             .setOnlyAlertOnce(true)
             .addAction(0, "Annuler", action(ACTION_CANCEL, 21))
             .addAction(0, "Appeler maintenant", action(ACTION_CALL_NOW, 22))
+            .build()
+    }
+
+    private fun callingNotification(): Notification {
+        Notifier.ensureChannels(this)
+        return NotificationCompat.Builder(this, Notifier.CHANNEL_APPROACH)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Appel du portail en cours")
+            .setContentText(if (attempt > 1) "Essai $attempt/${CallMonitor.MAX_ATTEMPTS}" else "Raccrochage automatique prévu")
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .addAction(0, "Raccrocher", action(ACTION_HANGUP, 23))
             .build()
     }
 
