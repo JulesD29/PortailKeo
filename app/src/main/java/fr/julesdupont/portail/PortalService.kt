@@ -70,7 +70,7 @@ class PortalService : Service() {
     private var attempt = 0
 
     /** Quelques secondes après l'appel : sonne-t-il ? Sinon on rappelle. */
-    private val checkCall = Runnable {
+    private val checkCall: Runnable = Runnable {
         val p = Prefs(this)
         when (CallMonitor.decide(CallMonitor.isInCall(this), attempt)) {
             CallMonitor.Decision.RINGING -> {
@@ -90,7 +90,7 @@ class PortalService : Service() {
         }
     }
 
-    private val retryCall = Runnable {
+    private val retryCall: Runnable = Runnable {
         attempt++
         val p = Prefs(this)
         if (CallHelper.call(this, p.phone, automatic = true, retry = true)) {
@@ -100,7 +100,7 @@ class PortalService : Service() {
     }
 
     /** Raccroche comme on le fait à la main, une fois le portail ouvert. */
-    private val hangup = Runnable {
+    private val hangup: Runnable = Runnable {
         val p = Prefs(this)
         if (CallMonitor.isInCall(this)) {
             p.log(if (CallMonitor.endCall(this)) "Raccroché automatiquement après ${p.hangupSeconds} s"
