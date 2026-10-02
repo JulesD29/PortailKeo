@@ -47,6 +47,16 @@ class TestToolsTest {
     }
 
     @Test
+    fun `arrivee simulee differee pour tester telephone verrouille`() {
+        TestSupport.configuredPrefs(countdown = 5)
+        TestTools.simulateArrivalDelayed(app, 20)
+        val started = shadowOf(app).nextStartedService
+        assertEquals(PortalService.ACTION_COUNTDOWN, started.action)
+        assertEquals(20, started.getIntExtra(PortalService.EXTRA_SECONDS, 0))
+        assertTrue(TestSupport.calls.isEmpty())
+    }
+
+    @Test
     fun `revoir quoi de neuf`() {
         Prefs(app).lastSeenWhatsNew = WhatsNew.CURRENT
         TestTools.resetWhatsNew(app)

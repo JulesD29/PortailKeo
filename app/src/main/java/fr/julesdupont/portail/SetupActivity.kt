@@ -115,9 +115,11 @@ class SetupActivity : AppCompatActivity() {
             line(Perms.fineLocation(this), "Localisation précise"),
             line(Perms.backgroundLocation(this), "Localisation « Toujours autoriser »"),
             line(Perms.call(this), "Passer des appels"),
+            line(Perms.callControl(this), "Gérer les appels (nouvel essai, raccrochage auto)"),
             line(Perms.notifications(this), "Notifications (conseillé)"),
         ).joinToString("\n")
-        b.btnPerms.visibility = if (state().permissionsOk && Perms.notifications(this)) View.GONE else View.VISIBLE
+        b.btnPerms.visibility =
+            if (state().permissionsOk && Perms.notifications(this) && Perms.callControl(this)) View.GONE else View.VISIBLE
 
         val battery = Perms.batteryUnrestricted(this)
         b.txtBattery.text = line(battery, if (battery) "Optimisation batterie désactivée" else "Optimisation batterie active")
@@ -180,7 +182,7 @@ class SetupActivity : AppCompatActivity() {
     }
 
     private fun requestPermissions() {
-        if (!Perms.fineLocation(this) || !Perms.call(this) || !Perms.notifications(this)) {
+        if (!Perms.fineLocation(this) || !Perms.call(this) || !Perms.notifications(this) || !Perms.callControl(this)) {
             basePermLauncher.launch(Perms.basePermissions())
         } else if (!Perms.backgroundLocation(this)) {
             askBackgroundLocation()

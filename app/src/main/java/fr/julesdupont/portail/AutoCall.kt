@@ -5,7 +5,7 @@ import android.content.Context
 /** Point d'entrée unique d'un appel automatique (zone du portail ou GPS d'approche). */
 object AutoCall {
     /** Vérifie les règles puis lance le compte à rebours (ou l'appel direct). */
-    fun attempt(ctx: Context, source: String) {
+    fun attempt(ctx: Context, source: String, countdownSeconds: Int? = null) {
         val prefs = Prefs(ctx)
         val refusal = Rules.check(prefs)
         if (refusal != null) {
@@ -14,15 +14,21 @@ object AutoCall {
             return
         }
         prefs.log(source)
-        if (!PortalService.startCountdown(ctx)) callNow(ctx)
+        val started = if (countdownSeconds != null) PortalService.startCountdown(ctx, countdownSeconds)
+                      else PortalService.startCountdown(ctx)
+        if (!started) callNow(ctx)
     }
 
-    /** Appel immédiat (fin du compte à rebours, ou si le service n'a pas pu démarrer). */
-    fun callNow(ctx: Context) {
+    /**
+     * Appel immédiat (fin du compte à rebours, ou si le service n'a pas pu démarrer),
+     * puis suivi de l'appel : nouvel essai s'il se coupe sans sonner, raccrochage automatique.
+     * @return true si l'appel a été lancé.
+     */
+    fun callNow(ctx: Context): Boolean {
         val prefs = Prefs(ctx)
-        if (prefs.lastCallDate == AppClock.today().toString()) return
-        if (CallHelper.call(ctx, prefs.phone, automatic = true)) {
-            Notifier.info(ctx, "Appel du portail lancé")
-        }
+        if (prefs.lastCallDate == AppClock.today().toString()) return false
+        val ok = CallHelper.call(ctx, prefs.phone, automatic = true)
+        if (ok) PortalService.startMonitor(ctx)
+        return ok
     }
 }

@@ -15,6 +15,7 @@ object Notifier {
     private const val ID_INFO = 1
     private const val ID_FALLBACK = 2
     private const val ID_UPDATE = 3
+    const val ID_LOCKED_CALL = 4
     const val EXTRA_SHOW_UPDATE = "show_update"
 
     fun ensureChannels(ctx: Context) {
@@ -54,6 +55,28 @@ object Notifier {
             .setContentText(text)
             .setContentIntent(openApp(ctx))
             .setAutoCancel(true))
+    }
+
+    /** Appel automatique téléphone verrouillé : affiche l'écran d'appel par-dessus le verrouillage. */
+    fun lockedCall(ctx: Context) {
+        val pi = PendingIntent.getActivity(
+            ctx, 4, CallActivity.autoIntent(ctx),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        post(ctx, ID_LOCKED_CALL, NotificationCompat.Builder(ctx, CHANNEL)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Appel du portail")
+            .setContentText("Ouverture du portail…")
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setFullScreenIntent(pi, true)
+            .setContentIntent(pi)
+            .setAutoCancel(true)
+            .setTimeoutAfter(30_000))
+    }
+
+    fun cancelLockedCall(ctx: Context) {
+        NotificationManagerCompat.from(ctx).cancel(ID_LOCKED_CALL)
     }
 
     fun update(ctx: Context, version: String) {

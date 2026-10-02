@@ -368,7 +368,7 @@
                     android:orientation="vertical">
                     <TextView style="@style/SectionTitle"
                         android:drawableStart="@drawable/ic_timer"
-                        android:text="Compte à rebours" />
+                        android:text="Appel automatique" />
                     <TextView
                         android:id="@+id/txtCountdown"
                         android:layout_width="match_parent"
@@ -388,6 +388,25 @@
                         style="@style/SectionHint"
                         android:layout_marginTop="0dp"
                         android:text="Une notification permet d'annuler avant l'appel. La tuile et le raccourci appellent sans délai." />
+                    <TextView
+                        android:id="@+id/txtHangup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:textAppearance="?attr/textAppearanceBodyMedium" />
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/sliderHangup"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="Raccrocher automatiquement après"
+                        android:stepSize="5"
+                        android:value="20"
+                        android:valueFrom="0"
+                        android:valueTo="60" />
+                    <TextView
+                        style="@style/SectionHint"
+                        android:layout_marginTop="0dp"
+                        android:text="Si l'appel se coupe sans sonner, l'app rappelle automatiquement (jusqu'à 3 essais)." />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -532,6 +551,12 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Simuler l'arrivée au portail" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSimArrivalLocked"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Simuler l'arrivée dans 20 s (verrouillez le téléphone)" />
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSimApproach"
                         style="@style/Widget.Material3.Button.TonalButton"

@@ -69,6 +69,11 @@ class Prefs(context: Context) {
         get() = sp.getInt("approachRadius", 2000)
         set(v) = sp.edit().putInt("approachRadius", v).apply()
 
+    /** Raccrocher automatiquement l'appel automatique après ce nombre de secondes (0 = jamais). */
+    var hangupSeconds: Int
+        get() = sp.getInt("hangupSeconds", 20)
+        set(v) = sp.edit().putInt("hangupSeconds", v).apply()
+
     /** Secondes de compte à rebours avant l'appel automatique (0 = appel immédiat). */
     var countdownSeconds: Int
         get() = sp.getInt("countdown", 5)

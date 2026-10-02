@@ -233,6 +233,10 @@ class MainActivity : AppCompatActivity() {
             prefs.log(if (checked) "Pas d'appel les jours fériés" else "Appel aussi les jours fériés")
             refreshStatus()
         }
+        b.sliderHangup.addOnChangeListener { _, value, fromUser ->
+            b.txtHangup.text = hangupLabel(value.toInt())
+            if (fromUser) prefs.hangupSeconds = value.toInt()
+        }
         b.sliderCountdown.addOnChangeListener { _, value, fromUser ->
             b.txtCountdown.text = countdownLabel(value.toInt())
             if (fromUser) prefs.countdownSeconds = value.toInt()
@@ -323,6 +327,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(SetupActivity.intent(this))
             finish()
         }
+        b.btnSimArrivalLocked.setOnClickListener {
+            TestTools.simulateArrivalDelayed(this, 20)
+            snack("Verrouillez le téléphone maintenant : l'appel partira dans 20 s")
+            refreshStatus()
+        }
         b.btnResetWhatsNew.setOnClickListener {
             TestTools.resetWhatsNew(this)
             showWhatsNewIfNeeded()
@@ -386,6 +395,9 @@ class MainActivity : AppCompatActivity() {
         b.sliderCountdown.value = countdown.toFloat()
         b.switchVoice.isChecked = VoiceCommand.isEnabled(this)
         b.txtCountdown.text = countdownLabel(countdown)
+        val hangupValue = Zones.snap(prefs.hangupSeconds, 0, 60, 5)
+        b.sliderHangup.value = hangupValue.toFloat()
+        b.txtHangup.text = hangupLabel(hangupValue)
         loading = false
         refreshStatus()
     }
@@ -408,6 +420,9 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("OK", null)
             .show()
     }
+
+    private fun hangupLabel(s: Int) =
+        if (s == 0) "Ne pas raccrocher automatiquement" else "Raccrocher automatiquement après $s s"
 
     private fun countdownLabel(s: Int) =
         if (s == 0) "Appel immédiat à l'arrivée" else "Appel $s s après l'arrivée"
@@ -479,10 +494,13 @@ class MainActivity : AppCompatActivity() {
     // ---------- Autorisations ----------
 
     private fun requestPermissions() {
-        if (!Perms.fineLocation(this) || !Perms.call(this) || !Perms.notifications(this)) {
+        if (!Perms.fineLocation(this) || !Perms.call(this) || !Perms.notifications(this) || !Perms.callControl(this)) {
             basePermLauncher.launch(Perms.basePermissions())
         } else if (!Perms.backgroundLocation(this)) {
             askBackgroundLocation()
+        } else if (!Perms.fullScreen(this) && Build.VERSION.SDK_INT >= 34) {
+            snack("Autorisez les notifications plein écran pour appeler téléphone verrouillé")
+            startActivity(Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT, Uri.parse("package:$packageName")))
         } else {
             toast("Toutes les autorisations sont accordées")
         }
@@ -557,11 +575,15 @@ class MainActivity : AppCompatActivity() {
             else if (!Perms.backgroundLocation(this@MainActivity)) add("• Localisation « Toujours autoriser »")
             if (!Perms.call(this@MainActivity)) add("• Passer des appels")
             if (!Perms.notifications(this@MainActivity)) add("• Notifications (compte à rebours)")
+            if (Perms.call(this@MainActivity) && !Perms.callControl(this@MainActivity))
+                add("• Gestion des appels (nouvel essai, raccrochage auto)")
+            if (!Perms.fullScreen(this@MainActivity)) add("• Notifications plein écran (appel téléphone verrouillé)")
             if (!Perms.batteryUnrestricted(this@MainActivity)) add("• Optimisation batterie à désactiver (conseillé)")
         }
         b.cardPerms.visibility = if (missing.isEmpty()) View.GONE else View.VISIBLE
         b.txtPerms.text = missing.joinToString("\n")
-        b.btnPerms.visibility = if (permsOk && Perms.notifications(this)) View.GONE else View.VISIBLE
+        b.btnPerms.visibility =
+            if (permsOk && Perms.notifications(this) && Perms.callControl(this) && Perms.fullScreen(this)) View.GONE else View.VISIBLE
         b.btnBattery.visibility = if (Perms.batteryUnrestricted(this)) View.GONE else View.VISIBLE
 
         b.txtZoneSummary.text = if (prefs.hasLocation) {

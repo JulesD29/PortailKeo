@@ -35,6 +35,8 @@ class PortalService : Service() {
         const val ACTION_CANCEL = "fr.julesdupont.portail.CANCEL"
         const val ACTION_CALL_NOW = "fr.julesdupont.portail.CALL_NOW"
         const val ACTION_STOP = "fr.julesdupont.portail.STOP"
+        const val ACTION_MONITOR = "fr.julesdupont.portail.MONITOR"
+        const val ACTION_HANGUP = "fr.julesdupont.portail.HANGUP"
         private const val NOTIF_ID = 10
         private const val APPROACH_TIMEOUT_MS = 20 * 60 * 1000L
 
@@ -49,8 +51,20 @@ class PortalService : Service() {
         fun startApproach(ctx: Context) = start(ctx, ACTION_APPROACH)
 
         /** @return false si le compte à rebours est désactivé ou impossible (→ appel direct). */
-        fun startCountdown(ctx: Context): Boolean =
-            Prefs(ctx).countdownSeconds > 0 && start(ctx, ACTION_COUNTDOWN)
+        const val EXTRA_SECONDS = "seconds"
+
+        /** @param seconds durée du compte à rebours (par défaut celle des réglages). */
+        fun startCountdown(ctx: Context, seconds: Int = Prefs(ctx).countdownSeconds): Boolean = seconds > 0 && try {
+            ContextCompat.startForegroundService(ctx,
+                Intent(ctx, PortalService::class.java).setAction(ACTION_COUNTDOWN).putExtra(EXTRA_SECONDS, seconds))
+            true
+        } catch (e: Exception) {
+            Prefs(ctx).log("Service impossible à démarrer : ${e.javaClass.simpleName}")
+            false
+        }
+
+        /** Suivi d'un appel automatique qui vient d'être lancé. */
+        fun startMonitor(ctx: Context) = start(ctx, ACTION_MONITOR)
 
         fun stop(ctx: Context) {
             ctx.stopService(Intent(ctx, PortalService::class.java))
@@ -61,6 +75,48 @@ class PortalService : Service() {
     private var client: FusedLocationProviderClient? = null
     private var remaining = 0
     private var inCountdown = false
+    private var monitoring = false
+    private var attempt = 0
+
+    /** Quelques secondes après l'appel : sonne-t-il ? Sinon on rappelle. */
+    private val checkCall: Runnable = Runnable {
+        val p = Prefs(this)
+        when (CallMonitor.decide(CallMonitor.isInCall(this), attempt)) {
+            CallMonitor.Decision.RINGING -> {
+                p.log("Appel en cours (essai $attempt)")
+                val delay = CallMonitor.hangupDelayMs(p.hangupSeconds)
+                if (delay == null) stopSelf() else handler.postDelayed(hangup, delay)
+            }
+            CallMonitor.Decision.RETRY -> {
+                p.log("L'appel s'est coupé sans sonner : nouvel essai (${attempt + 1}/${CallMonitor.MAX_ATTEMPTS})")
+                handler.postDelayed(retryCall, CallMonitor.RETRY_DELAY_MS)
+            }
+            CallMonitor.Decision.GIVE_UP -> {
+                p.log("Échec : l'appel s'est coupé ${CallMonitor.MAX_ATTEMPTS} fois sans sonner")
+                Notifier.fallback(this, p.phone, "l'appel ne passe pas")
+                stopSelf()
+            }
+        }
+    }
+
+    private val retryCall: Runnable = Runnable {
+        attempt++
+        val p = Prefs(this)
+        if (CallHelper.call(this, p.phone, automatic = true, retry = true)) {
+            show(callingNotification())
+            handler.postDelayed(checkCall, CallMonitor.CHECK_DELAY_MS)
+        } else stopSelf()
+    }
+
+    /** Raccroche comme on le fait à la main, une fois le portail ouvert. */
+    private val hangup: Runnable = Runnable {
+        val p = Prefs(this)
+        if (CallMonitor.isInCall(this)) {
+            p.log(if (CallMonitor.endCall(this)) "Raccroché automatiquement après ${p.hangupSeconds} s"
+                  else "Raccrochage automatique impossible")
+        }
+        stopSelf()
+    }
 
     private val approachTimeout = Runnable {
         Prefs(this).log("Approche : GPS arrêté après 20 min sans arrivée")
@@ -70,8 +126,7 @@ class PortalService : Service() {
     private val tick = object : Runnable {
         override fun run() {
             if (remaining <= 0) {
-                AutoCall.callNow(this@PortalService)
-                stopSelf()
+                launchCall()
                 return
             }
             show(countdownNotification())
@@ -96,7 +151,7 @@ class PortalService : Service() {
             }
             ACTION_COUNTDOWN -> {
                 goForeground(approachNotification(null))
-                startCountdownInternal()
+                startCountdownInternal(intent.getIntExtra(EXTRA_SECONDS, Prefs(this).countdownSeconds))
             }
             ACTION_CANCEL -> {
                 handler.removeCallbacks(tick)
@@ -108,7 +163,17 @@ class PortalService : Service() {
             }
             ACTION_CALL_NOW -> {
                 handler.removeCallbacks(tick)
-                AutoCall.callNow(this)
+                if (!AutoCall.callNow(this)) stopSelf()
+            }
+            ACTION_MONITOR -> {
+                handler.removeCallbacks(lockedFallback)
+                goForeground(callingNotification())
+                startMonitoring()
+            }
+            ACTION_HANGUP -> {
+                handler.removeCallbacksAndMessages(null)
+                if (CallMonitor.isInCall(this)) CallMonitor.endCall(this)
+                Prefs(this).log("Appel raccroché depuis la notification")
                 stopSelf()
             }
             else -> stopSelf() // ACTION_STOP ou redémarrage système
@@ -165,14 +230,52 @@ class PortalService : Service() {
         }
     }
 
+    // ---------- Suivi de l'appel ----------
+
+    private fun startMonitoring() {
+        if (monitoring) return
+        monitoring = true
+        inCountdown = false
+        handler.removeCallbacks(tick)
+        stopLocationUpdates()
+        attempt = 1
+        if (!CallMonitor.canMonitor(this)) {
+            Prefs(this).log("Suivi de l'appel impossible : autorisation « Téléphone » incomplète")
+            stopSelf()
+            return
+        }
+        handler.postDelayed(checkCall, CallMonitor.CHECK_DELAY_MS)
+    }
+
     // ---------- Compte à rebours ----------
 
-    private fun startCountdownInternal() {
+    private fun startCountdownInternal(seconds: Int) {
         if (inCountdown) return
         inCountdown = true
         stopLocationUpdates()
-        remaining = Prefs(this).countdownSeconds
+        remaining = seconds
         handler.post(tick)
+    }
+
+    /** Fin du compte à rebours : appel direct, ou via l'écran verrouillé si le téléphone est verrouillé. */
+    private fun launchCall() {
+        when (CallLaunch.current(this)) {
+            CallLaunch.Mode.DIRECT -> if (!AutoCall.callNow(this)) stopSelf()
+            CallLaunch.Mode.LOCK_SCREEN -> {
+                Prefs(this).log("Téléphone verrouillé : affichage de l'écran d'appel")
+                Notifier.lockedCall(this)
+                handler.postDelayed(lockedFallback, CallLaunch.FALLBACK_DELAY_MS)
+            }
+        }
+    }
+
+    /** Si l'écran d'appel ne s'est pas affiché, on appelle quand même directement. */
+    private val lockedFallback: Runnable = Runnable {
+        if (Prefs(this).lastCallDate != AppClock.today().toString()) {
+            Prefs(this).log("Écran d'appel non affiché : appel direct")
+            Notifier.cancelLockedCall(this)
+            if (!AutoCall.callNow(this)) stopSelf()
+        }
     }
 
     // ---------- Notifications ----------
@@ -211,6 +314,19 @@ class PortalService : Service() {
             .setOnlyAlertOnce(true)
             .addAction(0, "Annuler", action(ACTION_CANCEL, 21))
             .addAction(0, "Appeler maintenant", action(ACTION_CALL_NOW, 22))
+            .build()
+    }
+
+    private fun callingNotification(): Notification {
+        Notifier.ensureChannels(this)
+        return NotificationCompat.Builder(this, Notifier.CHANNEL_APPROACH)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Appel du portail en cours")
+            .setContentText(if (attempt > 1) "Essai $attempt/${CallMonitor.MAX_ATTEMPTS}" else "Raccrochage automatique prévu")
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .addAction(0, "Raccrocher", action(ACTION_HANGUP, 23))
             .build()
     }
 
