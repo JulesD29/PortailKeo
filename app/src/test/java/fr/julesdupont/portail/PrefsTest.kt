@@ -29,6 +29,8 @@ class PrefsTest {
         assertEquals(2000, p.approachRadius)
         assertEquals(5, p.countdownSeconds)
         assertEquals("", p.pauseUntil)
+        assertTrue(p.feedbackVibrate)
+        assertEquals(Feedback.Voice.HEADSET_ONLY, p.feedbackVoice)
     }
 
     @Test

@@ -28,7 +28,10 @@ object AutoCall {
         val prefs = Prefs(ctx)
         if (prefs.lastCallDate == AppClock.today().toString()) return false
         val ok = CallHelper.call(ctx, prefs.phone, automatic = true)
-        if (ok) PortalService.startMonitor(ctx)
+        if (ok) {
+            Feedback.emit(ctx, Feedback.Event.CALL_STARTED, inCall = true)
+            PortalService.startMonitor(ctx)
+        }
         return ok
     }
 }

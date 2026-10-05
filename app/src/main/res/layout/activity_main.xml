@@ -407,6 +407,29 @@
                         style="@style/SectionHint"
                         android:layout_marginTop="0dp"
                         android:text="Si l'appel se coupe sans sonner, l'app rappelle automatiquement (jusqu'à 3 essais)." />
+
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchFeedbackVibrate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Vibrer quand l'appel part et quand il se termine" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchFeedbackVoice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Annoncer « Portail appelé »" />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchFeedbackHeadset"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Seulement avec des écouteurs" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnFeedbackTry"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tester le retour" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

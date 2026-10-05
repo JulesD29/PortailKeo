@@ -85,7 +85,11 @@ class PortalService : Service() {
             CallMonitor.Decision.RINGING -> {
                 p.log("Appel en cours (essai $attempt)")
                 val delay = CallMonitor.hangupDelayMs(p.hangupSeconds)
-                if (delay == null) stopSelf() else handler.postDelayed(hangup, delay)
+                if (delay == null) {
+                    // Pas de raccrochage auto : vibration seulement (l'appel occupe le son).
+                    Feedback.emit(this, Feedback.Event.CALL_DONE, inCall = true)
+                    stopSelf()
+                } else handler.postDelayed(hangup, delay)
             }
             CallMonitor.Decision.RETRY -> {
                 p.log("L'appel s'est coupé sans sonner : nouvel essai (${attempt + 1}/${CallMonitor.MAX_ATTEMPTS})")
@@ -94,7 +98,8 @@ class PortalService : Service() {
             CallMonitor.Decision.GIVE_UP -> {
                 p.log("Échec : l'appel s'est coupé ${CallMonitor.MAX_ATTEMPTS} fois sans sonner")
                 Notifier.fallback(this, p.phone, "l'appel ne passe pas")
-                stopSelf()
+                Feedback.emit(this, Feedback.Event.CALL_FAILED)
+                stopSoon()
             }
         }
     }
@@ -115,7 +120,13 @@ class PortalService : Service() {
             p.log(if (CallMonitor.endCall(this)) "Raccroché automatiquement après ${p.hangupSeconds} s"
                   else "Raccrochage automatique impossible")
         }
-        stopSelf()
+        // Laisse le temps au son de l'appel de se libérer avant l'annonce.
+        handler.postDelayed({ Feedback.emit(this, Feedback.Event.CALL_DONE); stopSoon() }, 1_500)
+    }
+
+    /** Arrête le service un peu plus tard, le temps que l'annonce vocale se termine. */
+    private fun stopSoon() {
+        handler.postDelayed({ stopSelf() }, 5_000)
     }
 
     private val approachTimeout = Runnable {

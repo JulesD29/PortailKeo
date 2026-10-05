@@ -44,6 +44,7 @@ and at the times you choose. The app interface is in French.
 | 🏖️ **Pause & public holidays** | Pause until a given date; no call on French public holidays. |
 | 📲 **Manual call** | **Appeler Garage** Quick Settings tile, home-screen widget and a launcher shortcut. |
 | 🎙️ **Voice command** | "Ok Google, ouvre Portail" calls the gate — handy while driving (optional). |
+| 📳 **Pocket feedback** | Vibration when the call starts; double vibration and "Portail appelé" in your earbuds when it ends. |
 | 📊 **History** | Calls this week, average arrival time and latest calls. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
 | 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the app. |

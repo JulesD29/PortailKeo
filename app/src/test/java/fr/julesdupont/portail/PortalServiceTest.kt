@@ -110,6 +110,8 @@ class PortalServiceTest {
         idle(9)
         assertEquals("pas plus de 3 essais", 3, TestSupport.calls.size)
         assertTrue(Prefs(app).logText.contains("Échec : l'appel s'est coupé 3 fois sans sonner"))
+        assertEquals(listOf(Feedback.Event.CALL_STARTED, Feedback.Event.CALL_FAILED), Feedback.emitted)
+        assertEquals("longue vibration d'échec", Feedback.PATTERN_FAILED.toList(), TestSupport.vibrations.last())
         assertEquals("1 seul appel dans l'historique", 1, History.parse(Prefs(app).history).size)
     }
 
@@ -127,6 +129,23 @@ class PortalServiceTest {
         assertTrue(ended)
         assertTrue(Prefs(app).logText.contains("Raccroché automatiquement après 20 s"))
         assertEquals("aucun nouvel essai", 1, TestSupport.calls.size)
+        idle(2)
+        assertEquals(listOf(Feedback.Event.CALL_STARTED, Feedback.Event.CALL_DONE), Feedback.emitted)
+        assertEquals(listOf(Feedback.PATTERN_STARTED.toList(), Feedback.PATTERN_DONE.toList()), TestSupport.vibrations)
+        assertTrue("pas d'annonce sans écouteurs", TestSupport.speeches.isEmpty())
+    }
+
+    @Test
+    fun `annonce portail appele dans les ecouteurs apres le raccrochage`() {
+        TestSupport.headset = true
+        CallMonitor.inCallProbe = { true }
+        CallMonitor.endCaller = { true }
+        Prefs(app).hangupSeconds = 15
+        monitoredCall()
+        idle(7)
+        assertTrue("rien d'annoncé pendant l'appel", TestSupport.speeches.isEmpty())
+        idle(12)
+        assertEquals(listOf("Portail appelé"), TestSupport.speeches)
     }
 
     @Test
