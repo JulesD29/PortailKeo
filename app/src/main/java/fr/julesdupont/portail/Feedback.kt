@@ -3,12 +3,14 @@ package fr.julesdupont.portail
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
+import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import java.util.Locale
 
 /**
@@ -27,6 +29,21 @@ object Feedback {
     val PATTERN_STARTED = longArrayOf(0, 150)
     val PATTERN_DONE = longArrayOf(0, 100, 120, 100)
     val PATTERN_FAILED = longArrayOf(0, 600)
+
+    /**
+     * Silence joué avant la phrase : les écouteurs Bluetooth en veille mettent ~1 s à rétablir
+     * la liaison audio, sinon le début de la phrase est coupé (« …pelé »).
+     */
+    const val LEAD_SILENCE_MS = 1_200L
+
+    /** Ce qui est envoyé à la synthèse vocale, dans l'ordre. */
+    sealed class Utterance {
+        data class Silence(val ms: Long) : Utterance()
+        data class Speech(val text: String) : Utterance()
+    }
+
+    fun utterances(text: String): List<Utterance> =
+        listOf(Utterance.Silence(LEAD_SILENCE_MS), Utterance.Speech(text))
 
     /**
      * @param inCall un appel est en cours : pas d'annonce (le son de l'appel occupe les écouteurs).
@@ -101,7 +118,7 @@ object Feedback {
     @Synchronized
     private fun speakNow(ctx: Context, text: String) {
         val engine = tts
-        if (engine != null && ttsReady) return say(engine, text)
+        if (engine != null && ttsReady) return say(ctx, engine, text)
         pending = text
         if (engine != null) return
         tts = TextToSpeech(ctx) { status ->
@@ -114,13 +131,48 @@ object Feedback {
                     .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                     .build())
-                pending?.let { say(t, it) }
+                t.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                    override fun onStart(id: String?) {}
+                    override fun onDone(id: String?) { if (id?.startsWith("speech-") == true) releaseFocus(ctx) }
+                    @Deprecated("Deprecated in Java")
+                    override fun onError(id: String?) { releaseFocus(ctx) }
+                })
+                pending?.let { say(ctx, t, it) }
                 pending = null
             }
         }
     }
 
-    private fun say(engine: TextToSpeech, text: String) {
-        engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "portail-${System.currentTimeMillis()}")
+    private fun say(ctx: Context, engine: TextToSpeech, text: String) {
+        requestFocus(ctx)
+        val stamp = System.currentTimeMillis()
+        utterances(text).forEachIndexed { i, u ->
+            val mode = if (i == 0) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD
+            when (u) {
+                is Utterance.Silence -> engine.playSilentUtterance(u.ms, mode, "lead-$stamp")
+                is Utterance.Speech -> engine.speak(u.text, mode, null, "speech-$stamp")
+            }
+        }
+    }
+
+    // Priorité audio : la musique baisse pendant l'annonce puis reprend.
+    private var focusRequest: AudioFocusRequest? = null
+
+    private fun requestFocus(ctx: Context) {
+        val am = ctx.getSystemService(AudioManager::class.java) ?: return
+        val req = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK)
+            .setAudioAttributes(AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ASSISTANCE_NAVIGATION_GUIDANCE)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+                .build())
+            .build()
+        focusRequest = req
+        runCatching { am.requestAudioFocus(req) }
+    }
+
+    private fun releaseFocus(ctx: Context) {
+        val req = focusRequest ?: return
+        runCatching { ctx.getSystemService(AudioManager::class.java)?.abandonAudioFocusRequest(req) }
+        focusRequest = null
     }
 }

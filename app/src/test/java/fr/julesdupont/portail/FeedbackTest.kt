@@ -49,6 +49,14 @@ class FeedbackTest {
         assertNull(plan(Event.CALL_DONE, inCall = true).speech)
 
     @Test
+    fun `silence avant la phrase pour reveiller les ecouteurs bluetooth`() {
+        val u = Feedback.utterances("Portail appelé")
+        assertEquals(Feedback.Utterance.Silence(Feedback.LEAD_SILENCE_MS), u.first())
+        assertEquals(Feedback.Utterance.Speech("Portail appelé"), u.last())
+        assertEquals(true, Feedback.LEAD_SILENCE_MS >= 1_000L)
+    }
+
+    @Test
     fun `vibration desactivee`() =
         assertNull(plan(Event.CALL_DONE, vibrate = false).vibration)
 }

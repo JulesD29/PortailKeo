@@ -129,7 +129,7 @@ class PortalServiceTest {
         assertTrue(ended)
         assertTrue(Prefs(app).logText.contains("Raccroché automatiquement après 20 s"))
         assertEquals("aucun nouvel essai", 1, TestSupport.calls.size)
-        idle(2)
+        idle(3)
         assertEquals(listOf(Feedback.Event.CALL_STARTED, Feedback.Event.CALL_DONE), Feedback.emitted)
         assertEquals(listOf(Feedback.PATTERN_STARTED.toList(), Feedback.PATTERN_DONE.toList()), TestSupport.vibrations)
         assertTrue("pas d'annonce sans écouteurs", TestSupport.speeches.isEmpty())

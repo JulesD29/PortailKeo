@@ -121,7 +121,7 @@ class PortalService : Service() {
                   else "Raccrochage automatique impossible")
         }
         // Laisse le temps au son de l'appel de se libérer avant l'annonce.
-        handler.postDelayed({ Feedback.emit(this, Feedback.Event.CALL_DONE); stopSoon() }, 1_500)
+        handler.postDelayed({ Feedback.emit(this, Feedback.Event.CALL_DONE); stopSoon() }, 2_500)
     }
 
     /** Arrête le service un peu plus tard, le temps que l'annonce vocale se termine. */
