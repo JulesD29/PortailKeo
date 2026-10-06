@@ -12,6 +12,11 @@ object TestSupport {
     val MONDAY_8H: LocalDateTime = LocalDateTime.of(2026, 10, 5, 8, 0)
     const val PHONE = "0611223344"
 
+    /** Vibrations et annonces vocales « jouées » pendant le test. */
+    val vibrations = mutableListOf<List<Long>>()
+    val speeches = mutableListOf<String>()
+    var headset = false
+
     /** Numéros « appelés » pendant le test (aucun vrai appel). */
     val calls = mutableListOf<String>()
 
@@ -21,6 +26,13 @@ object TestSupport {
         AppClock.now = { now }
         calls.clear()
         CallHelper.placer = { _, uri -> calls += uri.schemeSpecificPart }
+        // Retour (vibration, voix) enregistré au lieu d'être joué.
+        vibrations.clear(); speeches.clear()
+        Feedback.emitted.clear()
+        Feedback.vibrator = { _, p -> vibrations += p.toList() }
+        Feedback.speaker = { _, t -> speeches += t }
+        Feedback.headsetProbe = { headset }
+        headset = false
         // Par défaut : téléphone déverrouillé, écran allumé (appel direct).
         CallLaunch.lockedProbe = { false }
         CallLaunch.screenOnProbe = { true }
@@ -32,6 +44,7 @@ object TestSupport {
         CallMonitor.inCallProbe = CallMonitor.defaultInCall
         CallMonitor.endCaller = CallMonitor.defaultEndCall
         CallLaunch.reset()
+        Feedback.resetForTests()
     }
 
     fun grantCall() = shadowOf(app).grantPermissions(Manifest.permission.CALL_PHONE)

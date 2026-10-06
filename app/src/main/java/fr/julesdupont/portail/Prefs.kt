@@ -74,6 +74,17 @@ class Prefs(context: Context) {
         get() = sp.getInt("hangupSeconds", 20)
         set(v) = sp.edit().putInt("hangupSeconds", v).apply()
 
+    /** Vibrer aux moments clés de l'appel automatique. */
+    var feedbackVibrate: Boolean
+        get() = sp.getBoolean("feedbackVibrate", true)
+        set(v) = sp.edit().putBoolean("feedbackVibrate", v).apply()
+
+    /** Annonce vocale « Portail appelé » (par défaut seulement avec des écouteurs). */
+    var feedbackVoice: Feedback.Voice
+        get() = runCatching { Feedback.Voice.valueOf(sp.getString("feedbackVoice", null) ?: "") }
+            .getOrDefault(Feedback.Voice.HEADSET_ONLY)
+        set(v) = sp.edit().putString("feedbackVoice", v.name).apply()
+
     /** Secondes de compte à rebours avant l'appel automatique (0 = appel immédiat). */
     var countdownSeconds: Int
         get() = sp.getInt("countdown", 5)

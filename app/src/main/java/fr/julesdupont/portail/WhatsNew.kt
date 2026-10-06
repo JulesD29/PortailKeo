@@ -5,7 +5,7 @@ object WhatsNew {
     data class Item(val edition: Int, val title: String, val text: String)
 
     /** À incrémenter quand on ajoute des nouveautés à présenter. */
-    const val CURRENT = 4
+    const val CURRENT = 5
 
     val items = listOf(
         Item(1, "Portail sur une carte", "Placez le portail et réglez les deux zones directement sur la carte."),
@@ -16,6 +16,7 @@ object WhatsNew {
         Item(2, "Historique des arrivées", "Nombre d'appels de la semaine, heure d'arrivée moyenne et derniers appels."),
         Item(3, "Commande vocale", "« Ok Google, ouvre Portail » appelle le portail, pratique en conduisant. À activer dans les réglages."),
         Item(4, "Appel plus fiable", "Si l'appel automatique se coupe sans sonner, l'app rappelle toute seule (jusqu'à 3 essais), puis raccroche une fois le portail ouvert. Téléphone verrouillé, l'appel part depuis l'écran verrouillé. Réglable dans « Appel automatique »."),
+        Item(5, "Retour téléphone en poche", "Une vibration quand l'appel part, une double vibration et l'annonce « Portail appelé » dans vos écouteurs quand il se termine."),
     )
 
     /** Nouveautés pas encore vues. */

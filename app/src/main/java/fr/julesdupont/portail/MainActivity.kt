@@ -233,6 +233,25 @@ class MainActivity : AppCompatActivity() {
             prefs.log(if (checked) "Pas d'appel les jours fériés" else "Appel aussi les jours fériés")
             refreshStatus()
         }
+        val onFeedbackChanged = { _: android.widget.CompoundButton, _: Boolean ->
+            if (!loading) {
+                prefs.feedbackVibrate = b.switchFeedbackVibrate.isChecked
+                prefs.feedbackVoice = when {
+                    !b.switchFeedbackVoice.isChecked -> Feedback.Voice.OFF
+                    b.switchFeedbackHeadset.isChecked -> Feedback.Voice.HEADSET_ONLY
+                    else -> Feedback.Voice.ALWAYS
+                }
+                b.switchFeedbackHeadset.isEnabled = b.switchFeedbackVoice.isChecked
+            }
+        }
+        b.switchFeedbackVibrate.setOnCheckedChangeListener(onFeedbackChanged)
+        b.switchFeedbackVoice.setOnCheckedChangeListener(onFeedbackChanged)
+        b.switchFeedbackHeadset.setOnCheckedChangeListener(onFeedbackChanged)
+        b.btnFeedbackTry.setOnClickListener {
+            if (prefs.feedbackVoice == Feedback.Voice.HEADSET_ONLY && !Feedback.headsetConnected(this))
+                snack("Pas d'écouteurs connectés : vibration seulement")
+            Feedback.emit(this, Feedback.Event.CALL_DONE)
+        }
         b.sliderHangup.addOnChangeListener { _, value, fromUser ->
             b.txtHangup.text = hangupLabel(value.toInt())
             if (fromUser) prefs.hangupSeconds = value.toInt()
@@ -395,6 +414,10 @@ class MainActivity : AppCompatActivity() {
         b.sliderCountdown.value = countdown.toFloat()
         b.switchVoice.isChecked = VoiceCommand.isEnabled(this)
         b.txtCountdown.text = countdownLabel(countdown)
+        b.switchFeedbackVibrate.isChecked = prefs.feedbackVibrate
+        b.switchFeedbackVoice.isChecked = prefs.feedbackVoice != Feedback.Voice.OFF
+        b.switchFeedbackHeadset.isChecked = prefs.feedbackVoice != Feedback.Voice.ALWAYS
+        b.switchFeedbackHeadset.isEnabled = prefs.feedbackVoice != Feedback.Voice.OFF
         val hangupValue = Zones.snap(prefs.hangupSeconds, 0, 60, 5)
         b.sliderHangup.value = hangupValue.toFloat()
         b.txtHangup.text = hangupLabel(hangupValue)

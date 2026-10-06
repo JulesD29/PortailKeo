@@ -37,7 +37,11 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleRelease --no-daemon
       - name: Renommer l'APK
-        run: cp app/build/outputs/apk/release/*.apk "PortailKeo-1.${{ github.run_number }}.apk"
+        run: |
+          cp app/build/outputs/apk/release/*.apk "PortailKeo-1.${{ github.run_number }}.apk"
+          # Copie au nom fixe : lien de téléchargement permanent
+          # https://github.com/JulesD29/PortailKeo/releases/latest/download/PortailKeo.apk
+          cp app/build/outputs/apk/release/*.apk PortailKeo.apk
       - uses: actions/upload-artifact@v7
         with:
           name: PortailKeo-apk
@@ -62,4 +66,6 @@ jobs:
           tag_name: v${{ github.run_number }}
           name: "1.${{ github.run_number }}"
           body_path: notes.md
-          files: PortailKeo-1.${{ github.run_number }}.apk
+          files: |
+            PortailKeo-1.${{ github.run_number }}.apk
+            PortailKeo.apk
