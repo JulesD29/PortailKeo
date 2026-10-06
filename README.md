@@ -53,8 +53,8 @@ and at the times you choose. The app interface is in French.
 
 > Requires Android 8.0 or later. The app is not on the Play Store; you install the APK directly.
 
-1. On your phone, open the [**latest release**](https://github.com/JulesD29/PortailKeo/releases/latest)
-   and download `PortailKeo-1.x.apk`.
+1. On your phone, download the app: **https://github.com/JulesD29/PortailKeo/releases/latest/download/PortailKeo.apk**
+   (or open the [latest release](https://github.com/JulesD29/PortailKeo/releases/latest) page).
 2. Open the downloaded file. If Android asks, allow your browser or file manager to
    *install unknown apps*.
 3. If Play Protect shows a warning: **More details › Install anyway**.

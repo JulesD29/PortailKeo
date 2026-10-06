@@ -53,8 +53,8 @@ les jours et aux heures que vous choisissez.
 
 > Nécessite Android 8.0 ou plus récent. L'app n'est pas sur le Play Store : on installe directement l'APK.
 
-1. Sur le téléphone, ouvrez la [**dernière version**](https://github.com/JulesD29/PortailKeo/releases/latest)
-   et téléchargez `PortailKeo-1.x.apk`.
+1. Sur le téléphone, téléchargez l'app : **https://github.com/JulesD29/PortailKeo/releases/latest/download/PortailKeo.apk**
+   (ou ouvrez la page de la [dernière version](https://github.com/JulesD29/PortailKeo/releases/latest)).
 2. Ouvrez le fichier téléchargé. Si Android le demande, autorisez votre navigateur ou
    gestionnaire de fichiers à *installer des applis inconnues*.
 3. Si Play Protect affiche un avertissement : **Plus de détails › Installer quand même**.
