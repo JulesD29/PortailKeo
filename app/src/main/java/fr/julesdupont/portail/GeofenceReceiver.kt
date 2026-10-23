@@ -44,7 +44,7 @@ class GeofenceReceiver : BroadcastReceiver() {
                 }
                 Geofence.GEOFENCE_TRANSITION_EXIT -> if (GeofenceManager.APPROACH_ID in ids) {
                     prefs.log("Sortie de la zone d'approche")
-                    PortalService.stop(context)
+                    PortalService.stopIfIdle(context)
                 }
             }
         }

@@ -10,7 +10,8 @@ object AutoCall {
         val refusal = Rules.check(prefs)
         if (refusal != null) {
             prefs.log("$source, pas d'appel : $refusal")
-            PortalService.stop(ctx)
+            // Ne coupe pas un compte à rebours ou un appel en cours (ex. zone atteinte juste après l'appel).
+            PortalService.stopIfIdle(ctx)
             return
         }
         prefs.log(source)

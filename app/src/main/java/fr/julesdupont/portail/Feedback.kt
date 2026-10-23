@@ -18,7 +18,7 @@ import java.util.Locale
  * aux moments clés d'un appel automatique.
  */
 object Feedback {
-    enum class Event { CALL_STARTED, CALL_DONE, CALL_FAILED }
+    enum class Event { CALL_STARTED, CALL_DONE, CALL_FAILED, LINE_BUSY }
 
     /** Quand annoncer à voix haute. */
     enum class Voice { OFF, HEADSET_ONLY, ALWAYS }
@@ -29,6 +29,8 @@ object Feedback {
     val PATTERN_STARTED = longArrayOf(0, 150)
     val PATTERN_DONE = longArrayOf(0, 100, 120, 100)
     val PATTERN_FAILED = longArrayOf(0, 600)
+    /** Trois vibrations courtes : ligne occupée, pas de nouvel essai. */
+    val PATTERN_BUSY = longArrayOf(0, 80, 100, 80, 100, 80)
 
     /**
      * Silence joué avant la phrase : les écouteurs Bluetooth en veille mettent ~1 s à rétablir
@@ -53,11 +55,13 @@ object Feedback {
             Event.CALL_STARTED -> PATTERN_STARTED
             Event.CALL_DONE -> PATTERN_DONE
             Event.CALL_FAILED -> PATTERN_FAILED
+            Event.LINE_BUSY -> PATTERN_BUSY
         }
         val text = when (event) {
             Event.CALL_STARTED -> null // l'appel va occuper le son : on annonce à la fin
             Event.CALL_DONE -> "Portail appelé"
             Event.CALL_FAILED -> "Le portail n'a pas pu être appelé"
+            Event.LINE_BUSY -> "Ligne du portail occupée"
         }
         val speak = text != null && !inCall && when (voice) {
             Voice.OFF -> false

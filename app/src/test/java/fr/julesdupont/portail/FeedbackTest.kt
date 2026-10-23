@@ -26,6 +26,13 @@ class FeedbackTest {
     }
 
     @Test
+    fun `ligne occupee trois vibrations courtes et annonce`() {
+        val p = plan(Event.LINE_BUSY)
+        assertEquals(Feedback.PATTERN_BUSY.toList(), p.vibration?.toList())
+        assertEquals("Ligne du portail occupée", p.speech)
+    }
+
+    @Test
     fun `echec longue vibration et annonce`() {
         val p = plan(Event.CALL_FAILED)
         assertEquals(Feedback.PATTERN_FAILED.toList(), p.vibration?.toList())

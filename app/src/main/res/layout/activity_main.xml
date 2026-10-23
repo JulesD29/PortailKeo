@@ -407,6 +407,16 @@
                         style="@style/SectionHint"
                         android:layout_marginTop="0dp"
                         android:text="Si l'appel se coupe sans sonner, l'app rappelle automatiquement (jusqu'à 3 essais)." />
+                    <com.google.android.material.materialswitch.MaterialSwitch
+                        android:id="@+id/switchRetryBusy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Rappeler si portail occupé" />
+                    <TextView
+                        style="@style/SectionHint"
+                        android:layout_marginTop="0dp"
+                        android:text="Quand quelqu'un appelle le portail en même temps, il est souvent déjà ouvert. Activé : l'app rappelle 15 s plus tard (jusqu'à 3 essais). Désactivé : elle s'arrête là." />
 
                     <com.google.android.material.materialswitch.MaterialSwitch
                         android:id="@+id/switchFeedbackVibrate"

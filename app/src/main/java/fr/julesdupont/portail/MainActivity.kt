@@ -252,6 +252,11 @@ class MainActivity : AppCompatActivity() {
                 snack("Pas d'écouteurs connectés : vibration seulement")
             Feedback.emit(this, Feedback.Event.CALL_DONE)
         }
+        b.switchRetryBusy.setOnCheckedChangeListener { _, checked ->
+            if (loading) return@setOnCheckedChangeListener
+            prefs.retryIfBusy = checked
+            prefs.log(if (checked) "Rappel si le portail est occupé : activé" else "Rappel si le portail est occupé : désactivé")
+        }
         b.sliderHangup.addOnChangeListener { _, value, fromUser ->
             b.txtHangup.text = hangupLabel(value.toInt())
             if (fromUser) prefs.hangupSeconds = value.toInt()
@@ -421,6 +426,7 @@ class MainActivity : AppCompatActivity() {
         val hangupValue = Zones.snap(prefs.hangupSeconds, 0, 60, 5)
         b.sliderHangup.value = hangupValue.toFloat()
         b.txtHangup.text = hangupLabel(hangupValue)
+        b.switchRetryBusy.isChecked = prefs.retryIfBusy
         loading = false
         refreshStatus()
     }

@@ -69,6 +69,20 @@ class PortalService : Service() {
         fun stop(ctx: Context) {
             ctx.stopService(Intent(ctx, PortalService::class.java))
         }
+
+        /**
+         * Compte à rebours ou appel en cours de suivi : le service ne doit pas être arrêté par une zone
+         * (ex. entrée dans la zone du portail refusée car « déjà appelé », juste après l'appel).
+         */
+        @Volatile var busy = false
+            internal set
+
+        /** Arrête le service seulement s'il ne gère ni compte à rebours ni appel. @return true si arrêté. */
+        fun stopIfIdle(ctx: Context): Boolean {
+            if (busy) return false
+            stop(ctx)
+            return true
+        }
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -78,26 +92,62 @@ class PortalService : Service() {
     private var monitoring = false
     private var attempt = 0
 
-    /** Quelques secondes après l'appel : sonne-t-il ? Sinon on rappelle. */
-    private val checkCall: Runnable = Runnable {
+    private var elapsed = 0L
+    private var seenInCall = false
+    private var ringingLogged = false
+
+    /** Vérification de l'appel, chaque seconde jusqu'au raccrochage. */
+    private val poll: Runnable = Runnable { onPoll() }
+
+    private fun watchCall() {
+        elapsed = 0L
+        seenInCall = false
+        ringingLogged = false
+        handler.postDelayed(poll, CallMonitor.POLL_MS)
+    }
+
+    private fun onPoll() {
+        elapsed += CallMonitor.POLL_MS
         val p = Prefs(this)
-        when (CallMonitor.decide(CallMonitor.isInCall(this), attempt)) {
-            CallMonitor.Decision.RINGING -> {
-                p.log("Appel en cours (essai $attempt)")
-                val delay = CallMonitor.hangupDelayMs(p.hangupSeconds)
-                if (delay == null) {
-                    // Pas de raccrochage auto : vibration seulement (l'appel occupe le son).
-                    Feedback.emit(this, Feedback.Event.CALL_DONE, inCall = true)
-                    stopSelf()
-                } else handler.postDelayed(hangup, delay)
+        val inCall = CallMonitor.isInCall(this)
+        if (inCall && !ringingLogged && elapsed >= CallMonitor.CHECK_DELAY_MS) {
+            ringingLogged = true
+            p.log("Appel en cours (essai $attempt)")
+        }
+        val decision = CallMonitor.decide(inCall, seenInCall, elapsed, attempt, p.hangupSeconds, p.retryIfBusy)
+        if (inCall) seenInCall = true
+        when (decision) {
+            CallMonitor.Decision.WAIT -> handler.postDelayed(poll, CallMonitor.POLL_MS)
+            CallMonitor.Decision.HANG_UP -> hangUpNow()
+            CallMonitor.Decision.RELEASE -> {
+                // Pas de raccrochage auto : vibration seulement (l'appel occupe le son).
+                Feedback.emit(this, Feedback.Event.CALL_DONE, inCall = true)
+                stopSelf()
+            }
+            CallMonitor.Decision.ENDED -> {
+                p.log("Appel terminé après ${elapsed / 1000} s")
+                handler.postDelayed({ Feedback.emit(this, Feedback.Event.CALL_DONE); stopSoon() }, 2_500)
             }
             CallMonitor.Decision.RETRY -> {
                 p.log("L'appel s'est coupé sans sonner : nouvel essai (${attempt + 1}/${CallMonitor.MAX_ATTEMPTS})")
                 handler.postDelayed(retryCall, CallMonitor.RETRY_DELAY_MS)
             }
+            CallMonitor.Decision.RETRY_BUSY -> {
+                p.log("Ligne du portail occupée : nouvel essai dans ${CallMonitor.BUSY_RETRY_DELAY_MS / 1000} s " +
+                      "(${attempt + 1}/${CallMonitor.MAX_ATTEMPTS})")
+                show(busyNotification())
+                handler.postDelayed(retryCall, CallMonitor.BUSY_RETRY_DELAY_MS)
+            }
+            CallMonitor.Decision.BUSY_STOP -> {
+                p.log("Ligne du portail occupée : pas de nouvel essai (option « Rappeler si portail occupé » désactivée)")
+                if (CallMonitor.isInCall(this)) CallMonitor.endCall(this)
+                Feedback.emit(this, Feedback.Event.LINE_BUSY)
+                stopSoon()
+            }
             CallMonitor.Decision.GIVE_UP -> {
-                p.log("Échec : l'appel s'est coupé ${CallMonitor.MAX_ATTEMPTS} fois sans sonner")
-                Notifier.fallback(this, p.phone, "l'appel ne passe pas")
+                p.log(if (seenInCall) "Échec : ligne du portail toujours occupée après ${CallMonitor.MAX_ATTEMPTS} essais"
+                      else "Échec : l'appel s'est coupé ${CallMonitor.MAX_ATTEMPTS} fois sans sonner")
+                Notifier.fallback(this, p.phone, if (seenInCall) "la ligne est occupée" else "l'appel ne passe pas")
                 Feedback.emit(this, Feedback.Event.CALL_FAILED)
                 stopSoon()
             }
@@ -109,12 +159,12 @@ class PortalService : Service() {
         val p = Prefs(this)
         if (CallHelper.call(this, p.phone, automatic = true, retry = true)) {
             show(callingNotification())
-            handler.postDelayed(checkCall, CallMonitor.CHECK_DELAY_MS)
+            watchCall()
         } else stopSelf()
     }
 
     /** Raccroche comme on le fait à la main, une fois le portail ouvert. */
-    private val hangup: Runnable = Runnable {
+    private fun hangUpNow() {
         val p = Prefs(this)
         if (CallMonitor.isInCall(this)) {
             p.log(if (CallMonitor.endCall(this)) "Raccroché automatiquement après ${p.hangupSeconds} s"
@@ -246,6 +296,7 @@ class PortalService : Service() {
     private fun startMonitoring() {
         if (monitoring) return
         monitoring = true
+        busy = true
         inCountdown = false
         handler.removeCallbacks(tick)
         stopLocationUpdates()
@@ -255,7 +306,7 @@ class PortalService : Service() {
             stopSelf()
             return
         }
-        handler.postDelayed(checkCall, CallMonitor.CHECK_DELAY_MS)
+        watchCall()
     }
 
     // ---------- Compte à rebours ----------
@@ -263,6 +314,7 @@ class PortalService : Service() {
     private fun startCountdownInternal(seconds: Int) {
         if (inCountdown) return
         inCountdown = true
+        busy = true
         stopLocationUpdates()
         remaining = seconds
         handler.post(tick)
@@ -328,6 +380,19 @@ class PortalService : Service() {
             .build()
     }
 
+    private fun busyNotification(): Notification {
+        Notifier.ensureChannels(this)
+        return NotificationCompat.Builder(this, Notifier.CHANNEL_APPROACH)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Ligne du portail occupée")
+            .setContentText("Nouvel essai dans ${CallMonitor.BUSY_RETRY_DELAY_MS / 1000} s")
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setSilent(true)
+            .addAction(0, "Ne pas rappeler", action(ACTION_HANGUP, 23))
+            .build()
+    }
+
     private fun callingNotification(): Notification {
         Notifier.ensureChannels(this)
         return NotificationCompat.Builder(this, Notifier.CHANNEL_APPROACH)
@@ -342,6 +407,7 @@ class PortalService : Service() {
     }
 
     override fun onDestroy() {
+        busy = false
         handler.removeCallbacksAndMessages(null)
         stopLocationUpdates()
         super.onDestroy()

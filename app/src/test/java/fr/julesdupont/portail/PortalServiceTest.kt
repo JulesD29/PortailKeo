@@ -149,6 +149,103 @@ class PortalServiceTest {
     }
 
     @Test
+    fun `ligne occupee option decochee pas de nouvel appel`() {
+        var inCall = true
+        CallMonitor.inCallProbe = { inCall }
+        monitoredCall()
+        idle(4)              // tonalité « occupé »…
+        inCall = false       // …puis l'opérateur coupe l'appel
+        idle(1)
+        assertTrue(Prefs(app).logText.contains("Ligne du portail occupée : pas de nouvel essai"))
+        idle(60)
+        assertEquals("aucun autre appel", 1, TestSupport.calls.size)
+        assertEquals(listOf(Feedback.Event.CALL_STARTED, Feedback.Event.LINE_BUSY), Feedback.emitted)
+        assertEquals(Feedback.PATTERN_BUSY.toList(), TestSupport.vibrations.last())
+    }
+
+    @Test
+    fun `ligne occupee option cochee rappel 15 s plus tard puis raccrochage`() {
+        var inCall = true
+        var ended = false
+        CallMonitor.inCallProbe = { inCall }
+        CallMonitor.endCaller = { ended = true; true }
+        Prefs(app).retryIfBusy = true
+        monitoredCall()
+        idle(4); inCall = false; idle(1)
+        assertTrue(Prefs(app).logText.contains("Ligne du portail occupée : nouvel essai dans 15 s (2/3)"))
+        idle(14)
+        assertEquals("pas encore rappelé", 1, TestSupport.calls.size)
+        idle(1)
+        assertEquals("rappel", 2, TestSupport.calls.size)
+        inCall = true        // cette fois ça sonne
+        idle(21)
+        assertTrue(ended)
+        assertTrue(Prefs(app).logText.contains("Raccroché automatiquement après 20 s"))
+        assertEquals(2, TestSupport.calls.size)
+    }
+
+    @Test
+    fun `ligne toujours occupee abandon apres 3 essais`() {
+        var inCall = true
+        CallMonitor.inCallProbe = { inCall }
+        Prefs(app).retryIfBusy = true
+        monitoredCall()
+        repeat(CallMonitor.MAX_ATTEMPTS) { i ->
+            inCall = true; idle(4); inCall = false; idle(1)
+            if (i < CallMonitor.MAX_ATTEMPTS - 1) idle(15)
+        }
+        idle(60)
+        assertEquals(3, TestSupport.calls.size)
+        assertTrue(Prefs(app).logText.contains("Échec : ligne du portail toujours occupée après 3 essais"))
+        assertEquals(Feedback.Event.CALL_FAILED, Feedback.emitted.last())
+    }
+
+    @Test
+    fun `appel raccroche a la main apres avoir sonne pas de nouvel essai`() {
+        var inCall = true
+        CallMonitor.inCallProbe = { inCall }
+        Prefs(app).retryIfBusy = true
+        monitoredCall()
+        idle(12); inCall = false; idle(1)
+        assertTrue(Prefs(app).logText.contains("Appel terminé après 13 s"))
+        idle(60)
+        assertEquals(1, TestSupport.calls.size)
+        assertEquals(Feedback.Event.CALL_DONE, Feedback.emitted.last())
+    }
+
+    @Test
+    fun `entree dans la zone juste apres l'appel ne coupe pas le suivi (19 10)`() {
+        var ended = false
+        CallMonitor.inCallProbe = { true }
+        CallMonitor.endCaller = { ended = true; true }
+        monitoredCall()
+        idle(2)
+        // La zone du portail se déclenche 2 s après l'appel : refusée (« déjà appelé »)…
+        AutoCall.attempt(app, "Entrée dans la zone du portail")
+        assertTrue(Prefs(app).logText.contains("pas d'appel : déjà appelé aujourd'hui"))
+        // …mais le service n'est pas arrêté.
+        assertTrue(PortalService.busy)
+        assertEquals(null, shadowOf(app).nextStoppedService)
+        idle(19)
+        assertTrue("raccroché automatiquement", ended)
+    }
+
+    @Test
+    fun `sortie de la zone d'approche ne coupe pas un appel suivi`() {
+        CallMonitor.inCallProbe = { true }
+        monitoredCall()
+        assertTrue(!PortalService.stopIfIdle(app))
+        assertEquals(null, shadowOf(app).nextStoppedService)
+    }
+
+    @Test
+    fun `service arrete sans appel en cours`() {
+        val controller = Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_APPROACH)).create()
+        controller.destroy()
+        assertTrue(PortalService.stopIfIdle(app))
+    }
+
+    @Test
     fun `raccrochage desactive`() {
         var ended = false
         CallMonitor.inCallProbe = { true }

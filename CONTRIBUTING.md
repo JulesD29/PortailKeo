@@ -44,6 +44,10 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
       en vrai : vibration à l'appel, double vibration + annonce après le raccrochage
 - [ ] Appel automatique (Simuler l'arrivée) : notification « Appel du portail en cours », raccrochage après le délai
       réglé ; journal « Appel en cours (essai 1) » puis « Raccroché automatiquement… »
+- [ ] Portail occupé : régler le numéro sur une ligne occupée (ex. un téléphone déjà en communication),
+      Simuler l'arrivée. Option décochée : journal « Ligne du portail occupée : pas de nouvel essai », trois
+      vibrations courtes, aucun autre appel. Option cochée : « nouvel essai dans 15 s (2/3) », puis rappel
+- [ ] Appel en cours puis entrée dans la zone du portail : le raccrochage automatique a bien lieu
 - [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
       l'état change après une pause / un appel
 - [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
@@ -94,7 +98,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallHelperTest` | Appel auto / manuel, permission manquante, erreur du téléphone |
 | `AutoCallTest` | Appel direct ou compte à rebours, refus, pas de double appel |
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
-| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto) |
+| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto, ligne occupée avec ou sans rappel) ; une zone ne coupe pas un appel suivi |
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
 | `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
 | `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
@@ -107,10 +111,10 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
-| `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, abandon après 3 essais, délai de raccrochage |
+| `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, ligne occupée (rappel selon l'option), appel terminé à la main, abandon après 3 essais, délai de raccrochage |
 | `CallLaunchTest` | Appel direct ou via l'écran verrouillé selon l'état du téléphone |
 | `CallActivityTest` | Écran d'appel : appel automatique (verrouillé), pas de double appel, appel manuel |
-| `FeedbackTest` | Retour en poche : vibrations, annonce seulement avec écouteurs et hors appel |
+| `FeedbackTest` | Retour en poche : vibrations (dont ligne occupée), annonce seulement avec écouteurs et hors appel |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

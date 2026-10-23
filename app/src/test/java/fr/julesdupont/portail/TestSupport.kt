@@ -45,6 +45,7 @@ object TestSupport {
         CallMonitor.endCaller = CallMonitor.defaultEndCall
         CallLaunch.reset()
         Feedback.resetForTests()
+        PortalService.busy = false
     }
 
     fun grantCall() = shadowOf(app).grantPermissions(Manifest.permission.CALL_PHONE)

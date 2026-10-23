@@ -177,6 +177,7 @@ installer des applis.
 | Rien ne se passe en arrière-plan | Désactivez l'optimisation batterie / mettez l'app en **Sans restriction**. |
 | Appel passé mais portail fermé | Votre numéro n'est pas autorisé par le système du portail. |
 | L'appel se coupe sans sonner | L'app rappelle automatiquement (jusqu'à 3 essais) ; le **Journal** indique « nouvel essai ». |
+| Ligne du portail occupée (quelqu'un l'appelle en même temps) | Par défaut l'app s'arrête là : le portail est souvent déjà ouvert. Cochez **Rappeler si portail occupé** pour rappeler 15 s plus tard (jusqu'à 3 essais). |
 | Tuile sans texte | Ouvrez le volet complet, ou agrandissez la tuile (Android 16). |
 | « Mise à jour refusée : signature différente » | Désinstallez l'app, puis installez le dernier APK à la main. |
 

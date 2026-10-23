@@ -170,6 +170,7 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Nothing happens in the background | Disable battery optimisation / set the app to **Unrestricted**. |
 | Call placed but gate stays closed | Your number is not authorised by the gate system. |
 | Call drops without ringing | The app retries automatically (up to 3 attempts); check the **Journal** for "nouvel essai". |
+| Gate line busy (someone calls it at the same time) | By default the app stops there: the gate is usually already open. Enable **Rappeler si portail occupé** to retry 15 s later (up to 3 attempts). |
 | Tile shows no label | Expand the full shade, or enlarge the tile (Android 16). |
 | "Mise à jour refusée : signature différente" | Uninstall the app, then install the latest APK manually. |
 
