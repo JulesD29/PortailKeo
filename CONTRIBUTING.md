@@ -22,11 +22,15 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - Elle s'installe **à côté** de la vraie app, avec ses propres réglages.
 - **Rechercher une mise à jour** installe la dernière version de `develop` (sur demande uniquement,
   pas de vérification automatique).
-- **Outils de test** en bas de l'écran : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
-- Pour tester l'appel automatique en conditions réelles, désactiver l'automatisation dans la vraie app
+- **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
+- Pour tester l'appel automatique en conditions réelles, désactiver l'appel automatique dans la vraie app
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
 ### Checklist de tests fonctionnels avant de fusionner dans `main`
+- [ ] Onglets : Accueil, Réglages, Historique ; dans Réglages, chaque entrée ouvre sa page ; Retour ferme la page
+      puis revient à l'accueil ; les résumés sous chaque entrée sont à jour après une modification
+- [ ] Suivi en direct : Simuler l'arrivée l'app ouverte → l'accueil affiche le compte à rebours (« Annuler l'appel »
+      annule), puis l'appel (anneau, étapes, « Raccrocher maintenant » raccroche) ; retour à l'état normal ensuite
 - [ ] Écran principal : la carte d'état change selon la situation (actif, pause, appelé aujourd'hui,
       désactivé, autorisations manquantes) ; clair et sombre lisibles
 - [ ] Réglages : modifier, fermer, rouvrir → tout est conservé sans bouton « Enregistrer » ; « ✓ Zone active »
@@ -34,16 +38,20 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] « Choisir sur la carte » : la carte s'ouvre sur la position enregistrée, les 2 cercles suivent
       le viseur et les curseurs ; « Valider » enregistre coordonnées et rayons
 - [ ] Assistant (Outils de test › Réinitialiser l'assistant) : les 6 étapes s'enchaînent, « Suivant »
-      reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'automatisation
+      reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'appel automatique
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
 - [ ] « Ouvrir le portail maintenant » appelle bien le numéro
 - [ ] Téléphone verrouillé : « Simuler l'arrivée dans 20 s », verrouiller ; l'écran s'allume, l'appel sonne ;
       journal « Téléphone verrouillé… » puis « Appel lancé depuis l'écran verrouillé » puis « Appel en cours (essai 1) »
-- [ ] Retour en poche : « Tester le retour » vibre deux fois ; avec écouteurs, annonce « Portail appelé » ;
+- [ ] Retour vocal : « Tester le retour vocal » vibre deux fois ; avec écouteurs, annonce « Portail appelé » ;
       en vrai : vibration à l'appel, double vibration + annonce après le raccrochage
 - [ ] Appel automatique (Simuler l'arrivée) : notification « Appel du portail en cours », raccrochage après le délai
       réglé ; journal « Appel en cours (essai 1) » puis « Raccroché automatiquement… »
+- [ ] Portail occupé : régler le numéro sur une ligne occupée (ex. un téléphone déjà en communication),
+      Simuler l'arrivée. Option décochée : journal « Ligne du portail occupée : pas de nouvel essai », trois
+      vibrations courtes, aucun autre appel. Option cochée : « nouvel essai dans 15 s (2/3) », puis rappel
+- [ ] Appel en cours puis entrée dans la zone du portail : le raccrochage automatique a bien lieu
 - [ ] Widget : appui long sur l'écran d'accueil › Widgets › Portail Keo ; l'état s'affiche, le bouton appelle,
       l'état change après une pause / un appel
 - [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
@@ -54,7 +62,7 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
 - [ ] Simuler l'arrivée hors plage horaire : pas d'appel, raison dans le journal
 - [ ] Simuler l'approche : notification « Approche du portail » avec la distance réelle ; « Arrêter » la coupe
-- [ ] Tuile « Garage (test) » et raccourci « Portail (test) » appellent sans délai
+- [ ] Tuile et raccourci « Portail (test) » appellent sans délai
 - [ ] Pause jusqu'à demain : simuler l'arrivée → pas d'appel ; « Reprendre » → appel possible
 - [ ] Ce qui a été modifié dans la pull request
 
@@ -94,7 +102,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallHelperTest` | Appel auto / manuel, permission manquante, erreur du téléphone |
 | `AutoCallTest` | Appel direct ou compte à rebours, refus, pas de double appel |
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
-| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto) |
+| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto, ligne occupée avec ou sans rappel) ; une zone ne coupe pas un appel suivi ; état en direct pour l'accueil, bouton Annuler de l'accueil |
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
 | `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
 | `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
@@ -103,14 +111,18 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `ConfigImportTest` | Import : réglages appliqués, activation/pause conservées ; assistant ; réinitialisation |
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
 | `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
-| `HistoryTest` | Historique des arrivées : limite, semaine en cours, heure moyenne, résumé |
+| `HistoryTest` | Historique des arrivées : limite, semaine en cours (cases jour par jour), heure moyenne, résumé |
+| `JournalTest` | Lignes du journal découpées (heure, date si pas aujourd'hui, message) |
+| `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
+| `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
+| `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
-| `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, abandon après 3 essais, délai de raccrochage |
+| `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, ligne occupée (rappel selon l'option), appel terminé à la main, abandon après 3 essais, délai de raccrochage |
 | `CallLaunchTest` | Appel direct ou via l'écran verrouillé selon l'état du téléphone |
 | `CallActivityTest` | Écran d'appel : appel automatique (verrouillé), pas de double appel, appel manuel |
-| `FeedbackTest` | Retour en poche : vibrations, annonce seulement avec écouteurs et hors appel |
+| `FeedbackTest` | Retour vocal : vibrations (dont ligne occupée), annonce seulement avec écouteurs et hors appel |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

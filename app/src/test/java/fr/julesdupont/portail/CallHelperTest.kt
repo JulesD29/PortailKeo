@@ -49,7 +49,7 @@ class CallHelperTest {
     fun `sans permission d'appel rien n'est appele`() {
         assertFalse(CallHelper.call(app, "0611", automatic = true))
         assertTrue(TestSupport.calls.isEmpty())
-        assertTrue(Prefs(app).logText.contains("permission d'appel manquante"))
+        assertTrue(Prefs(app).logText.contains("autorisation d'appeler manquante"))
     }
 
     @Test
@@ -58,6 +58,6 @@ class CallHelperTest {
         CallHelper.placer = { _, _ -> throw SecurityException("refusé") }
         assertFalse(CallHelper.call(app, "0611", automatic = true))
         assertEquals("", Prefs(app).lastCallDate)
-        assertTrue(Prefs(app).logText.contains("Échec de l'appel"))
+        assertTrue(Prefs(app).logText.contains("L'appel n'a pas pu partir"))
     }
 }

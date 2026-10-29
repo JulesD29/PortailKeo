@@ -74,6 +74,14 @@ class Prefs(context: Context) {
         get() = sp.getInt("hangupSeconds", 20)
         set(v) = sp.edit().putInt("hangupSeconds", v).apply()
 
+    /**
+     * Ligne du portail occupée (quelqu'un l'appelle en même temps) : rappeler ?
+     * Désactivé par défaut : le portail est alors souvent déjà ouvert par l'autre personne.
+     */
+    var retryIfBusy: Boolean
+        get() = sp.getBoolean("retryIfBusy", false)
+        set(v) = sp.edit().putBoolean("retryIfBusy", v).apply()
+
     /** Vibrer aux moments clés de l'appel automatique. */
     var feedbackVibrate: Boolean
         get() = sp.getBoolean("feedbackVibrate", true)

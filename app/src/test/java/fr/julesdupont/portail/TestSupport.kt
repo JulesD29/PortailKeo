@@ -45,6 +45,8 @@ object TestSupport {
         CallMonitor.endCaller = CallMonitor.defaultEndCall
         CallLaunch.reset()
         Feedback.resetForTests()
+        PortalService.busy = false
+        LiveCall.state = LiveCall.State.Idle
     }
 
     fun grantCall() = shadowOf(app).grantPermissions(Manifest.permission.CALL_PHONE)

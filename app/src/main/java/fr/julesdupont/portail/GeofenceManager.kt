@@ -39,7 +39,7 @@ object GeofenceManager {
         if (!p.enabled || !p.hasLocation) {
             client.removeGeofences(geofenceIntent(app))
             cancelRefresh(app)
-            done(true, "Automatisation désactivée")
+            done(true, "Appel automatique désactivé")
             return
         }
         if (!Perms.fineLocation(app) || !Perms.backgroundLocation(app)) {
@@ -75,8 +75,8 @@ object GeofenceManager {
             client.addGeofences(request, geofenceIntent(app))
                 .addOnSuccessListener {
                     scheduleRefresh(app)
-                    done(true, if (twoStage) "Zone active (${p.radius} m, approche ${p.approachRadius} m)"
-                               else "Zone active (${p.radius} m)")
+                    done(true, if (twoStage) "Zone active (${Zones.label(p.radius)}, approche ${Zones.label(p.approachRadius)})"
+                               else "Zone active (${Zones.label(p.radius)})")
                 }
                 .addOnFailureListener { e ->
                     val code = (e as? ApiException)?.statusCode

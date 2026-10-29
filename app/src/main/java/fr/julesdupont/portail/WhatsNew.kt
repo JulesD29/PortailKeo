@@ -5,7 +5,7 @@ object WhatsNew {
     data class Item(val edition: Int, val title: String, val text: String)
 
     /** À incrémenter quand on ajoute des nouveautés à présenter. */
-    const val CURRENT = 5
+    const val CURRENT = 6
 
     val items = listOf(
         Item(1, "Portail sur une carte", "Placez le portail et réglez les deux zones directement sur la carte."),
@@ -16,7 +16,9 @@ object WhatsNew {
         Item(2, "Historique des arrivées", "Nombre d'appels de la semaine, heure d'arrivée moyenne et derniers appels."),
         Item(3, "Commande vocale", "« Ok Google, ouvre Portail » appelle le portail, pratique en conduisant. À activer dans les réglages."),
         Item(4, "Appel plus fiable", "Si l'appel automatique se coupe sans sonner, l'app rappelle toute seule (jusqu'à 3 essais), puis raccroche une fois le portail ouvert. Téléphone verrouillé, l'appel part depuis l'écran verrouillé. Réglable dans « Appel automatique »."),
-        Item(5, "Retour téléphone en poche", "Une vibration quand l'appel part, une double vibration et l'annonce « Portail appelé » dans vos écouteurs quand il se termine."),
+        Item(5, "Retour vocal", "Une vibration quand l'appel part, une double vibration et l'annonce « Portail appelé » dans vos écouteurs quand il se termine."),
+        Item(6, "Portail occupé", "Si quelqu'un appelle le portail en même temps que vous, l'app le détecte : elle s'arrête là (le portail est sans doute déjà ouvert) ou rappelle 15 s plus tard si vous cochez « Rappeler si le portail est occupé » dans « Appel automatique »."),
+        Item(6, "Interface repensée", "Trois onglets (Accueil, Réglages, Historique), un gros bouton pour ouvrir le portail et le suivi de l'appel en direct : compte à rebours, appel, raccrochage."),
     )
 
     /** Nouveautés pas encore vues. */

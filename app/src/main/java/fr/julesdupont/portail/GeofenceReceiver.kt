@@ -13,7 +13,7 @@ class GeofenceReceiver : BroadcastReceiver() {
         val event = GeofencingEvent.fromIntent(intent) ?: return
 
         if (event.hasError()) {
-            prefs.log("Erreur zone : ${GeofenceStatusCodes.getStatusCodeString(event.errorCode)}")
+            prefs.log("Zone indisponible (${GeofenceStatusCodes.getStatusCodeString(event.errorCode)}) : vérifiez que la localisation est activée")
             if (event.errorCode == GeofenceStatusCodes.GEOFENCE_NOT_AVAILABLE) {
                 Notifier.info(context, "Zone désactivée par le système : ouvrez l'app pour la réactiver.")
             }
@@ -37,14 +37,14 @@ class GeofenceReceiver : BroadcastReceiver() {
                         if (refusal != null) {
                             prefs.log("Approche détectée, pas de suivi GPS : $refusal")
                         } else {
-                            prefs.log("Approche détectée (zone de ${prefs.approachRadius} m)")
+                            prefs.log("Approche détectée (zone de ${Zones.label(prefs.approachRadius)})")
                             PortalService.startApproach(context)
                         }
                     }
                 }
                 Geofence.GEOFENCE_TRANSITION_EXIT -> if (GeofenceManager.APPROACH_ID in ids) {
                     prefs.log("Sortie de la zone d'approche")
-                    PortalService.stop(context)
+                    PortalService.stopIfIdle(context)
                 }
             }
         }

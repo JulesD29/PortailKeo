@@ -43,4 +43,38 @@ class HistoryTest {
         assertEquals("Aucun appel automatique pour l'instant", History.summary(emptyList(), today))
         assertEquals(listOf("mer. 7 oct. · 08:00", "mar. 6 oct. · 08:20"), History.recent(calls))
     }
+
+    @Test
+    fun `semaine en cours jours actifs et heure du premier appel`() {
+        val today = java.time.LocalDate.of(2026, 10, 8) // jeudi
+        val calls = listOf(call(8, 8, 20), call(6, 8, 9), call(5, 8, 14), call(5, 9, 30))
+        val week = History.week(calls, today, setOf(1, 2, 3, 4, 5))
+        assertEquals(listOf("lun", "mar", "mer", "jeu", "ven"), week.map { it.label })
+        assertEquals(listOf("08:14", "08:09", null, "08:20", null), week.map { it.time })
+        assertEquals(listOf(false, false, false, true, false), week.map { it.isToday })
+        assertEquals(listOf(false, false, false, false, true), week.map { it.future })
+    }
+
+    @Test
+    fun `jour non actif affiche s'il y a eu un appel`() {
+        val today = java.time.LocalDate.of(2026, 10, 11) // dimanche
+        val week = History.week(listOf(call(10, 11, 0)), today, setOf(1, 2, 3, 4, 5))
+        assertEquals(listOf("lun", "mar", "mer", "jeu", "ven", "sam"), week.map { it.label })
+        assertEquals("11:00", week.last().time)
+    }
+
+    @Test
+    fun `libelle du dernier appel`() {
+        assertEquals("aujourd'hui à 08:14", History.lastCallLabel(call(7, 8, 14), today))
+        assertEquals("hier à 08:09", History.lastCallLabel(call(6, 8, 9), today))
+        assertEquals("ven. 2 oct. à 10:51", History.lastCallLabel(call(2, 10, 51), today))
+    }
+
+    @Test
+    fun `ligne de la semaine`() {
+        assertEquals("Aucun appel cette semaine · arrivée moyenne 10 h 51", History.weekLine(listOf(call(2, 10, 51)), today))
+        assertEquals("1 appel cette semaine · arrivée moyenne 8 h 14", History.weekLine(listOf(call(5, 8, 14)), today))
+        assertEquals("2 appels cette semaine · arrivée moyenne 8 h 20", History.weekLine(listOf(call(5, 8, 10), call(6, 8, 30)), today))
+        assertEquals("Aucun appel cette semaine", History.weekLine(emptyList(), today))
+    }
 }

@@ -21,8 +21,8 @@ class PortalTileService : TileService() {
         if (Build.VERSION.SDK_INT >= 29) {
             tile.subtitle = when {
                 prefs.phone.isBlank() -> "À configurer"
-                Rules.pauseLabel(prefs) != null -> "Auto en pause"
-                else -> "Appuyer pour ouvrir"
+                Rules.pauseLabel(prefs) != null -> "Appel auto en pause"
+                else -> "Toucher pour ouvrir"
             }
         }
         tile.updateTile()

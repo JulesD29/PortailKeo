@@ -37,7 +37,7 @@ object Dashboard {
         val next = nextWindow(c, now)
         val subtitle = when {
             next == null -> "Aucun créneau à venir : vérifiez les jours actifs"
-            next.startsWith("en cours") -> "Créneau $next : l'appel partira à votre arrivée"
+            next.startsWith("en cours") -> "Jusqu'à ${Rules.fmt(c.endMinutes)}, l'appel partira dès votre arrivée"
             else -> "Prochain créneau : $next"
         }
         return Status(Level.ACTIVE, "Actif", (holiday?.let { "Aujourd'hui férié ($it) · " } ?: "") + subtitle)

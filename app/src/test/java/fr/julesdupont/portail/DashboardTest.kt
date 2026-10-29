@@ -36,7 +36,7 @@ class DashboardTest {
 
     @Test
     fun `actif pendant le creneau`() =
-        assertEquals("Créneau en cours jusqu'à 10:00 : l'appel partira à votre arrivée", status(now = at(8)).subtitle)
+        assertEquals("Jusqu'à 10:00, l'appel partira dès votre arrivée", status(now = at(8)).subtitle)
 
     @Test
     fun `apres le creneau prochain jour`() =
