@@ -273,4 +273,45 @@ class PortalServiceTest {
         idle(10)
         assertEquals("un seul appel", 1, TestSupport.calls.size)
     }
+
+    @Test
+    fun `suivi en direct pendant le compte a rebours puis l'appel`() {
+        var ended = false
+        CallMonitor.inCallProbe = { true }
+        CallMonitor.endCaller = { ended = true; true }
+        TestSupport.grantCallControl()
+        Prefs(app).hangupSeconds = 20
+        val controller = Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_COUNTDOWN))
+            .create().startCommand(0, 1)
+        shadowOf(Looper.getMainLooper()).idle()
+        assertEquals(LiveCall.State.Countdown(3, 3), LiveCall.state)
+        idle(1)
+        assertEquals(LiveCall.State.Countdown(2, 3), LiveCall.state)
+        idle(3)
+        assertEquals(listOf(TestSupport.PHONE), TestSupport.calls)
+        controller.withIntent(intent(PortalService.ACTION_MONITOR)).startCommand(0, 2)
+        idle(5)
+        val calling = LiveCall.state as LiveCall.State.Calling
+        assertEquals(1, calling.attempt)
+        assertEquals(5_000L, calling.elapsedMs)
+        idle(16)
+        assertTrue(ended)
+        assertEquals(LiveCall.State.Done, LiveCall.state)
+        controller.destroy()
+        assertEquals(LiveCall.State.Idle, LiveCall.state)
+    }
+
+    @Test
+    fun `bouton annuler de l'accueil`() {
+        val controller = Robolectric.buildService(PortalService::class.java, intent(PortalService.ACTION_COUNTDOWN))
+            .create().startCommand(0, 1)
+        PortalService.cancel(app)
+        val sent = shadowOf(app).nextStartedService
+        assertEquals(PortalService.ACTION_CANCEL, sent.action)
+        controller.withIntent(sent).startCommand(0, 2)
+        controller.destroy()
+        idle(10)
+        assertTrue(TestSupport.calls.isEmpty())
+        assertEquals(LiveCall.State.Idle, LiveCall.state)
+    }
 }

@@ -35,6 +35,7 @@ les jours et aux heures que vous choisissez.
 
 | | |
 |---|---|
+| 🏠 **Trois onglets** | **Accueil** (état, gros bouton pour ouvrir le portail, suivi de l'appel en direct), **Réglages** rangés par thème, **Historique**. |
 | 🗺️ **Choix sur la carte** | Placer le portail sur une carte OpenStreetMap et voir les deux zones sous forme de cercles en les réglant. |
 | 🧭 **Assistant de configuration** | Au premier lancement : numéro, autorisations, carte, batterie et appel de test, étape par étape. |
 | 🔗 **Partage par QR code** | Affichez votre configuration en QR code ; un collègue le scanne et tout est rempli. |
@@ -45,9 +46,9 @@ les jours et aux heures que vous choisissez.
 | 📲 **Appel manuel** | Tuile **Appeler Garage**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
 | 🎙️ **Commande vocale** | « Ok Google, ouvre Portail » appelle le portail, pratique en conduisant (facultatif). |
 | 📳 **Retour en poche** | Vibration quand l'appel part ; double vibration et « Portail appelé » dans les écouteurs quand il se termine. |
-| 📊 **Historique** | Appels de la semaine, heure d'arrivée moyenne et derniers appels. |
+| 📊 **Historique** | Semaine en cours jour par jour, heure d'arrivée moyenne et journal. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
-| 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'app. |
+| 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'onglet **Historique**. |
 
 ## Installation
 
@@ -72,7 +73,7 @@ Au premier lancement, un **assistant** vous guide étape par étape. Un collègu
 Sur son téléphone : *Partager ma configuration (QR code)* ; sur le vôtre : **Scanner la configuration
 d'un collègue** — il ne reste que les autorisations à accorder.
 
-Les mêmes réglages restent ensuite disponibles sur l'écran principal :
+Les mêmes réglages restent ensuite disponibles dans l'onglet **Réglages**, rangés par thème :
 
 1. **Numéro du portail** : le numéro qui ouvre le portail.
 2. **Choisir sur la carte** : déplacez la carte pour mettre le viseur sur le portail et réglez les
@@ -83,12 +84,12 @@ Les mêmes réglages restent ensuite disponibles sur l'écran principal :
 4. *(les rayons peuvent aussi être saisis directement)*
 5. **Compte à rebours** : secondes avant l'appel (**0** = appel immédiat).
 6. **Quand** : jours et plage horaire (lun–ven, 7h00–10h00 par défaut).
-7. Activez **Appel automatique à l'arrivée** dans la carte d'état en haut. Chaque modification est
-   enregistrée immédiatement ; la carte *Portail* doit afficher **✓ Zone active**.
+7. Activez **Appel automatique à l'arrivée** sur l'**Accueil**. Chaque modification est
+   enregistrée immédiatement ; la page *Portail* doit afficher **✓ Zone active**.
 8. **Accorder les autorisations** : appels, notifications, puis localisation › **Toujours autoriser**.
 9. **Désactiver l'optimisation batterie** : fortement conseillé. Sur Samsung, Xiaomi, Huawei ou
    Oppo, mettez aussi *Paramètres › Applis › Portail Keo › Batterie* sur **Sans restriction**.
-10. **Ouvrir le portail maintenant** pour vérifier que l'appel part bien.
+10. Le gros bouton **Ouvrir le portail** de l'accueil, pour vérifier que l'appel part bien.
 
 > [!IMPORTANT]
 > Le portail doit reconnaître **votre** numéro. S'il n'est pas enregistré auprès du système
@@ -99,7 +100,8 @@ Les mêmes réglages restent ensuite disponibles sur l'écran principal :
 ### Appel automatique
 Rien à faire : en arrivant, la notification **Approche du portail** affiche la distance restante,
 puis **Appel du portail dans 5 s**. Touchez **Annuler** pour annuler ; aucun autre appel
-automatique ne sera passé ce jour-là.
+automatique ne sera passé ce jour-là. Si l'app est ouverte, l'**Accueil** suit le compte à rebours puis
+l'appel en direct, avec un bouton pour annuler ou raccrocher.
 
 ### Appel manuel
 - **Tuile des réglages rapides** : tirez le volet deux fois › ✏️ › glissez **Appeler Garage**
@@ -117,7 +119,7 @@ Personnel › *Quand je dis…* → commande personnalisée *« ouvre Portail »
 **Dire exactement « ouvre le portail »** de l'app l'explique.
 
 ### Pause et jours fériés
-- **Mettre en pause…** : aucun appel automatique jusqu'à la date choisie (incluse).
+- **Pause…** (accueil) : aucun appel automatique jusqu'à la date choisie (incluse).
   **Reprendre** annule la pause.
 - **Pas d'appel les jours fériés** (activé par défaut) : jours fériés de France métropolitaine,
   y compris le lundi de Pâques, l'Ascension et le lundi de Pentecôte.
@@ -171,7 +173,7 @@ installer des applis.
 
 | Problème | Solution |
 |---|---|
-| Pas d'appel à l'arrivée | Regardez la section **Journal** dans l'app : elle indique si la zone a été détectée et pourquoi l'appel n'est pas parti. |
+| Pas d'appel à l'arrivée | Regardez le **Journal** (onglet Historique) : elle indique si la zone a été détectée et pourquoi l'appel n'est pas parti. |
 | Appel trop tardif | Augmentez le **rayon** de la zone du portail ou la **zone d'approche**. |
 | « ✗ Localisation « Toujours autoriser » manquante » | *Paramètres › Applis › Portail Keo › Autorisations › Position › Toujours autoriser*. |
 | Rien ne se passe en arrière-plan | Désactivez l'optimisation batterie / mettez l'app en **Sans restriction**. |
@@ -198,7 +200,10 @@ Ou ouvrez le dossier dans Android Studio et cliquez sur ▶ **Run**.
 
 ```
 app/src/main/java/fr/julesdupont/portail/
-├── MainActivity.kt        Écran de réglages
+├── MainActivity.kt        Écran principal : onglets Accueil, Réglages, Historique
+├── LiveCall.kt            Suivi en direct du compte à rebours et de l'appel (accueil)
+├── Summaries.kt           Résumés de l'onglet Réglages
+├── Journal.kt             Lignes du journal (onglet Historique)
 ├── MapPickerActivity.kt   Choix sur la carte (OpenStreetMap / osmdroid)
 ├── Zones.kt               Règles de taille des zones
 ├── SetupActivity.kt       Assistant de premier lancement (étapes dans SetupWizard.kt)
@@ -241,7 +246,7 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 [PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
 Elle s'installe à côté de la vraie app, a ses propres réglages, se met à jour depuis `develop` sur demande
 (**Rechercher une mise à jour**), et une
-section **Outils de test** (simuler l'arrivée / l'approche, réinitialiser l'appel du jour).
+page **Outils de test** de l'onglet Réglages (simuler l'arrivée / l'approche, réinitialiser l'appel du jour).
 Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 </details>
 

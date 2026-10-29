@@ -18,6 +18,7 @@ object WhatsNew {
         Item(4, "Appel plus fiable", "Si l'appel automatique se coupe sans sonner, l'app rappelle toute seule (jusqu'à 3 essais), puis raccroche une fois le portail ouvert. Téléphone verrouillé, l'appel part depuis l'écran verrouillé. Réglable dans « Appel automatique »."),
         Item(5, "Retour téléphone en poche", "Une vibration quand l'appel part, une double vibration et l'annonce « Portail appelé » dans vos écouteurs quand il se termine."),
         Item(6, "Portail occupé", "Si quelqu'un appelle le portail en même temps que vous, l'app le détecte : elle s'arrête là (le portail est sans doute déjà ouvert) ou rappelle 15 s plus tard si vous cochez « Rappeler si portail occupé » dans « Appel automatique »."),
+        Item(6, "Interface repensée", "Trois onglets (Accueil, Réglages, Historique), un gros bouton pour ouvrir le portail et le suivi de l'appel en direct : compte à rebours, appel, raccrochage."),
     )
 
     /** Nouveautés pas encore vues. */

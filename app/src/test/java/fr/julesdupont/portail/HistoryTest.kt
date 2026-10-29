@@ -43,4 +43,23 @@ class HistoryTest {
         assertEquals("Aucun appel automatique pour l'instant", History.summary(emptyList(), today))
         assertEquals(listOf("mer. 7 oct. · 08:00", "mar. 6 oct. · 08:20"), History.recent(calls))
     }
+
+    @Test
+    fun `semaine en cours jours actifs et heure du premier appel`() {
+        val today = java.time.LocalDate.of(2026, 10, 8) // jeudi
+        val calls = listOf(call(8, 8, 20), call(6, 8, 9), call(5, 8, 14), call(5, 9, 30))
+        val week = History.week(calls, today, setOf(1, 2, 3, 4, 5))
+        assertEquals(listOf("lun", "mar", "mer", "jeu", "ven"), week.map { it.label })
+        assertEquals(listOf("08:14", "08:09", null, "08:20", null), week.map { it.time })
+        assertEquals(listOf(false, false, false, true, false), week.map { it.isToday })
+        assertEquals(listOf(false, false, false, false, true), week.map { it.future })
+    }
+
+    @Test
+    fun `jour non actif affiche s'il y a eu un appel`() {
+        val today = java.time.LocalDate.of(2026, 10, 11) // dimanche
+        val week = History.week(listOf(call(10, 11, 0)), today, setOf(1, 2, 3, 4, 5))
+        assertEquals(listOf("lun", "mar", "mer", "jeu", "ven", "sam"), week.map { it.label })
+        assertEquals("11:00", week.last().time)
+    }
 }

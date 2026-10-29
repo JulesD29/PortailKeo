@@ -77,6 +77,21 @@ class PortalService : Service() {
         @Volatile var busy = false
             internal set
 
+        /** Annule le compte à rebours en cours (bouton « Annuler » de l'accueil). */
+        fun cancel(ctx: Context) = send(ctx, ACTION_CANCEL)
+
+        /** Raccroche l'appel suivi (bouton « Raccrocher » de l'accueil). */
+        fun hangUp(ctx: Context) = send(ctx, ACTION_HANGUP)
+
+        /** Demande au service déjà démarré (pas de passage au premier plan nécessaire). */
+        private fun send(ctx: Context, action: String) {
+            try {
+                ctx.startService(Intent(ctx, PortalService::class.java).setAction(action))
+            } catch (e: Exception) {
+                Prefs(ctx).log("Service injoignable : ${e.javaClass.simpleName}")
+            }
+        }
+
         /** Arrête le service seulement s'il ne gère ni compte à rebours ni appel. @return true si arrêté. */
         fun stopIfIdle(ctx: Context): Boolean {
             if (busy) return false
@@ -88,6 +103,7 @@ class PortalService : Service() {
     private val handler = Handler(Looper.getMainLooper())
     private var client: FusedLocationProviderClient? = null
     private var remaining = 0
+    private var countdownTotal = 0
     private var inCountdown = false
     private var monitoring = false
     private var attempt = 0
@@ -103,6 +119,7 @@ class PortalService : Service() {
         elapsed = 0L
         seenInCall = false
         ringingLogged = false
+        LiveCall.state = LiveCall.State.Calling(0, Prefs(this).hangupSeconds, attempt)
         handler.postDelayed(poll, CallMonitor.POLL_MS)
     }
 
@@ -116,6 +133,13 @@ class PortalService : Service() {
         }
         val decision = CallMonitor.decide(inCall, seenInCall, elapsed, attempt, p.hangupSeconds, p.retryIfBusy)
         if (inCall) seenInCall = true
+        LiveCall.state = when (decision) {
+            CallMonitor.Decision.WAIT -> LiveCall.State.Calling(elapsed, p.hangupSeconds, attempt)
+            CallMonitor.Decision.HANG_UP, CallMonitor.Decision.ENDED -> LiveCall.State.Done
+            CallMonitor.Decision.RETRY -> LiveCall.State.Retrying(attempt + 1, busy = false)
+            CallMonitor.Decision.RETRY_BUSY -> LiveCall.State.Retrying(attempt + 1, busy = true)
+            else -> LiveCall.State.Idle
+        }
         when (decision) {
             CallMonitor.Decision.WAIT -> handler.postDelayed(poll, CallMonitor.POLL_MS)
             CallMonitor.Decision.HANG_UP -> hangUpNow()
@@ -186,6 +210,7 @@ class PortalService : Service() {
 
     private val tick = object : Runnable {
         override fun run() {
+            LiveCall.state = LiveCall.State.Countdown(remaining, countdownTotal)
             if (remaining <= 0) {
                 launchCall()
                 return
@@ -317,6 +342,7 @@ class PortalService : Service() {
         busy = true
         stopLocationUpdates()
         remaining = seconds
+        countdownTotal = seconds
         handler.post(tick)
     }
 
@@ -408,6 +434,7 @@ class PortalService : Service() {
 
     override fun onDestroy() {
         busy = false
+        LiveCall.state = LiveCall.State.Idle
         handler.removeCallbacksAndMessages(null)
         stopLocationUpdates()
         super.onDestroy()

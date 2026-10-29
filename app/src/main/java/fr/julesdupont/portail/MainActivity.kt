@@ -16,7 +16,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -27,12 +30,18 @@ import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import fr.julesdupont.portail.databinding.ActivityMainBinding
+import fr.julesdupont.portail.databinding.ItemDayBinding
+import fr.julesdupont.portail.databinding.ItemLogBinding
+import fr.julesdupont.portail.databinding.RowSettingBinding
 import java.time.LocalDate
 import java.time.ZoneId
 
 /**
- * Écran principal : carte d'état en haut, bouton « Ouvrir le portail », puis les réglages
- * regroupés en cartes. Chaque modification est enregistrée immédiatement.
+ * Écran principal en trois onglets :
+ * - Accueil : carte d'état, gros bouton « Ouvrir le portail », suivi en direct du compte à rebours et de l'appel ;
+ * - Réglages : une entrée par thème, chacune ouvre sa page (une section de [ActivityMainBinding.pageDetail]) ;
+ * - Historique : semaine en cours et journal.
+ * Chaque modification est enregistrée immédiatement.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -41,6 +50,27 @@ class MainActivity : AppCompatActivity() {
     /** Vrai pendant le remplissage du formulaire : les écouteurs ne doivent rien enregistrer. */
     private var loading = false
     private var logExpanded = false
+
+    enum class Tab { HOME, SETTINGS, HISTORY }
+    private var tab = Tab.HOME
+    /** Section affichée dans la page d'un réglage, null = liste des réglages. */
+    private var openSection: View? = null
+
+    /** Retour : ferme la page d'un réglage, puis revient à l'accueil. */
+    private val backCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            if (openSection != null) closeDetail() else b.bottomNav.selectedItemId = R.id.navHome
+        }
+    }
+
+    /** Rafraîchit le suivi en direct (compte à rebours, appel) tant que l'écran est visible. */
+    private val liveTick = object : Runnable {
+        override fun run() {
+            renderLive()
+            handler.postDelayed(this, 500)
+        }
+    }
+    private var liveShown = false
 
     private val dayLabels = listOf("Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim")
 
@@ -98,17 +128,34 @@ class MainActivity : AppCompatActivity() {
         }
         loadForm()
         setupListeners()
+        setupNavigation()
         setupTestTools()
+        savedInstanceState?.getString(STATE_TAB)?.let { name ->
+            b.bottomNav.selectedItemId = when (name) {
+                Tab.SETTINGS.name -> R.id.navSettings
+                Tab.HISTORY.name -> R.id.navHistory
+                else -> R.id.navHome
+            }
+        }
         configLink(intent)?.let { importConfig(it) }
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
         else showWhatsNewIfNeeded()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(STATE_TAB, tab.name)
+    }
+
     /** « Quoi de neuf » une seule fois après une mise à jour qui apporte des nouveautés. */
     private fun showWhatsNewIfNeeded() {
         val items = WhatsNew.toShow(prefs.lastSeenWhatsNew)
         if (items.isEmpty() || !prefs.setupDone) return
+        showWhatsNew(items)
+    }
+
+    private fun showWhatsNew(items: List<WhatsNew.Item>) {
         MaterialAlertDialogBuilder(this)
             .setIcon(R.drawable.ic_info)
             .setTitle("Quoi de neuf dans ${getString(R.string.app_name)}")
@@ -131,9 +178,11 @@ class MainActivity : AppCompatActivity() {
         loadForm()
         applyGeofence(silent = true)
         if (prefs.lastUpdateCheck != LocalDate.now().toString()) checkForUpdate(interactive = false)
+        handler.post(liveTick)
     }
 
     override fun onPause() {
+        handler.removeCallbacks(liveTick)
         // Enregistre tout de suite une modification de zone en attente.
         if (::b.isInitialized && geofencePending) {
             handler.removeCallbacks(geofenceUpdate)
@@ -273,14 +322,140 @@ class MainActivity : AppCompatActivity() {
             if (checked) snack("Dites « Ok Google, ouvre ${VoiceCommand.spokenName(this)} » (l'icône peut mettre un instant à apparaître)")
         }
         b.btnVoiceHelp.setOnClickListener { showVoiceRoutineHelp() }
-        b.btnShareQr.setOnClickListener {
-            if (!prefs.hasLocation || prefs.phone.isBlank()) snack("Renseignez d'abord le numéro et la position")
-            else startActivity(Intent(this, ShareActivity::class.java))
-        }
+        b.btnShareQr.setOnClickListener { shareConfig() }
         b.btnScanQr.setOnClickListener { ConfigImport.scan(this) { importConfig(it) } }
         b.btnWizard.setOnClickListener { startActivity(SetupActivity.intent(this)) }
-        b.btnLogMore.setOnClickListener { logExpanded = !logExpanded; refreshStatus() }
+        b.btnLogMore.setOnClickListener { logExpanded = !logExpanded; refreshHistory() }
         b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
+        b.btnWhatsNew.setOnClickListener { showWhatsNew(WhatsNew.items.filter { it.edition == WhatsNew.CURRENT }) }
+        b.btnLiveAction.setOnClickListener {
+            when (LiveCall.display(LiveCall.state)?.action) {
+                LiveCall.Action.CANCEL -> PortalService.cancel(this)
+                LiveCall.Action.HANG_UP -> PortalService.hangUp(this)
+                else -> {}
+            }
+        }
+    }
+
+    private fun shareConfig() {
+        if (!prefs.hasLocation || prefs.phone.isBlank()) snack("Renseignez d'abord le numéro et la position")
+        else startActivity(Intent(this, ShareActivity::class.java))
+    }
+
+    // ---------- Onglets et pages des réglages ----------
+
+    private val sections get() = listOf(b.secPortal, b.secSchedule, b.secCall, b.secFeedback, b.secVoice,
+        b.secShare, b.testTools, b.secAbout)
+
+    private fun setupNavigation() {
+        onBackPressedDispatcher.addCallback(this, backCallback)
+        b.bottomNav.setOnItemSelectedListener { item ->
+            showTab(when (item.itemId) {
+                R.id.navSettings -> Tab.SETTINGS
+                R.id.navHistory -> Tab.HISTORY
+                else -> Tab.HOME
+            })
+            true
+        }
+        b.bottomNav.setOnItemReselectedListener { if (it.itemId == R.id.navSettings && openSection != null) closeDetail() }
+        b.detailToolbar.setNavigationOnClickListener { closeDetail() }
+        b.cardLastCall.setOnClickListener { b.bottomNav.selectedItemId = R.id.navHistory }
+        b.btnHomeMap.setOnClickListener { openMap() }
+        b.btnHeaderShare.setOnClickListener { shareConfig() }
+
+        row(b.rowPhone, R.drawable.ic_tile_phone, "Numéro du portail") { openDetail(b.secPortal, "Portail") }
+        row(b.rowZone, R.drawable.ic_location, "Position et zones") { openDetail(b.secPortal, "Portail") }
+        row(b.rowSchedule, R.drawable.ic_schedule, "Jours et horaires") { openDetail(b.secSchedule, "Quand appeler") }
+        row(b.rowCall, R.drawable.ic_timer, "Appel automatique") { openDetail(b.secCall, "Appel automatique") }
+        row(b.rowFeedback, R.drawable.ic_headphones, "Retour en poche") { openDetail(b.secFeedback, "Retour en poche") }
+        row(b.rowShortcuts, R.drawable.ic_mic, "Tuile, widget et commande vocale") { openDetail(b.secVoice, "Accès rapide") }
+        row(b.rowShare, R.drawable.ic_qr_code, "Partager avec un collègue") { openDetail(b.secShare, "Partager avec un collègue") }
+        row(b.rowPerms, R.drawable.ic_check_circle, "Autorisations") {
+            when {
+                missingPermissions().isEmpty() -> toast("Toutes les autorisations sont accordées")
+                basePermissionsOk() -> requestBatteryExemption()
+                else -> requestPermissions()
+            }
+        }
+        row(b.rowTest, R.drawable.ic_build, "Outils de test") { openDetail(b.testTools, "Outils de test") }
+        b.rowTest.root.visibility = if (TestTools.enabled) View.VISIBLE else View.GONE
+        row(b.rowAbout, R.drawable.ic_info, "À propos et mises à jour") { openDetail(b.secAbout, "À propos") }
+        showTab(Tab.HOME)
+    }
+
+    private fun row(r: RowSettingBinding, icon: Int, title: String, onClick: () -> Unit) {
+        r.rowIcon.setImageResource(icon)
+        r.rowTitle.text = title
+        r.root.setOnClickListener { onClick() }
+    }
+
+    private fun showTab(t: Tab) {
+        tab = t
+        if (t != Tab.SETTINGS) openSection = null
+        b.pageHome.visibility = if (t == Tab.HOME) View.VISIBLE else View.GONE
+        b.pageSettings.visibility = if (t == Tab.SETTINGS && openSection == null) View.VISIBLE else View.GONE
+        b.pageDetail.visibility = if (t == Tab.SETTINGS && openSection != null) View.VISIBLE else View.GONE
+        b.pageHistory.visibility = if (t == Tab.HISTORY) View.VISIBLE else View.GONE
+        if (t == Tab.HISTORY) refreshHistory()
+        updateBack()
+    }
+
+    private fun openDetail(section: View, title: String) {
+        sections.forEach { it.visibility = if (it === section) View.VISIBLE else View.GONE }
+        b.detailToolbar.title = title
+        b.detailScroll.scrollTo(0, 0)
+        openSection = section
+        b.pageSettings.visibility = View.GONE
+        b.pageDetail.visibility = View.VISIBLE
+        updateBack()
+    }
+
+    private fun closeDetail() {
+        openSection = null
+        b.pageDetail.visibility = View.GONE
+        b.pageSettings.visibility = View.VISIBLE
+        refreshStatus() // résumés des réglages à jour
+        updateBack()
+    }
+
+    private fun updateBack() {
+        backCallback.isEnabled = tab != Tab.HOME || openSection != null
+    }
+
+    // ---------- Suivi en direct ----------
+
+    @VisibleForTesting
+    internal fun renderLive() {
+        val d = LiveCall.display(LiveCall.state)
+        val show = d != null
+        if (show != liveShown) {
+            liveShown = show
+            if (!show) refreshStatus() // l'appel du jour a pu changer l'état
+        }
+        b.cardStatus.visibility = if (show) View.GONE else View.VISIBLE
+        b.layoutGate.visibility = if (show) View.GONE else View.VISIBLE
+        b.cardLive.visibility = if (show) View.VISIBLE else View.GONE
+        b.layoutLive.visibility = if (show) View.VISIBLE else View.GONE
+        if (d == null) return
+        b.liveBadge.text = d.badge
+        b.liveTitle.text = d.title
+        b.liveSubtitle.text = d.subtitle
+        b.liveBig.text = d.big
+        b.liveSmall.text = d.small
+        b.liveSmall.visibility = if (d.small.isEmpty()) View.GONE else View.VISIBLE
+        b.liveProgress.setProgressCompat(d.progress ?: 100, true)
+        listOf(b.liveStep1, b.liveStep2, b.liveStep3).forEachIndexed { i, step -> styleStep(step, i < d.steps) }
+        b.btnLiveAction.visibility = if (d.action == LiveCall.Action.NONE) View.GONE else View.VISIBLE
+        b.btnLiveAction.text = if (d.action == LiveCall.Action.CANCEL) "Annuler l'appel" else "Raccrocher maintenant"
+    }
+
+    private fun styleStep(step: TextView, done: Boolean) {
+        val bg = MaterialColors.getColor(step, if (done) com.google.android.material.R.attr.colorPrimaryContainer
+            else com.google.android.material.R.attr.colorSurfaceContainerHighest)
+        val fg = MaterialColors.getColor(step, if (done) com.google.android.material.R.attr.colorOnPrimaryContainer
+            else com.google.android.material.R.attr.colorOnSurfaceVariant)
+        step.backgroundTintList = ColorStateList.valueOf(bg)
+        step.setTextColor(fg)
     }
 
     private fun onDaysChanged(chip: Chip) {
@@ -333,7 +508,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupTestTools() {
         if (!TestTools.enabled) return
         b.testBanner.visibility = android.view.View.VISIBLE
-        b.testTools.visibility = android.view.View.VISIBLE
         b.btnSimArrival.setOnClickListener {
             TestTools.simulateArrival(this)
             toast("Arrivée simulée : voir la notification et le journal")
@@ -599,20 +773,10 @@ class MainActivity : AppCompatActivity() {
         b.btnResume.visibility = if (paused) View.VISIBLE else View.GONE
 
         // Alerte autorisations : seulement ce qui manque.
-        val missing = buildList {
-            if (!Perms.fineLocation(this@MainActivity)) add("• Localisation")
-            else if (!Perms.backgroundLocation(this@MainActivity)) add("• Localisation « Toujours autoriser »")
-            if (!Perms.call(this@MainActivity)) add("• Passer des appels")
-            if (!Perms.notifications(this@MainActivity)) add("• Notifications (compte à rebours)")
-            if (Perms.call(this@MainActivity) && !Perms.callControl(this@MainActivity))
-                add("• Gestion des appels (nouvel essai, raccrochage auto)")
-            if (!Perms.fullScreen(this@MainActivity)) add("• Notifications plein écran (appel téléphone verrouillé)")
-            if (!Perms.batteryUnrestricted(this@MainActivity)) add("• Optimisation batterie à désactiver (conseillé)")
-        }
+        val missing = missingPermissions()
         b.cardPerms.visibility = if (missing.isEmpty()) View.GONE else View.VISIBLE
         b.txtPerms.text = missing.joinToString("\n")
-        b.btnPerms.visibility =
-            if (permsOk && Perms.notifications(this) && Perms.callControl(this) && Perms.fullScreen(this)) View.GONE else View.VISIBLE
+        b.btnPerms.visibility = if (basePermissionsOk()) View.GONE else View.VISIBLE
         b.btnBattery.visibility = if (Perms.batteryUnrestricted(this)) View.GONE else View.VISIBLE
 
         b.txtZoneSummary.text = if (prefs.hasLocation) {
@@ -627,21 +791,34 @@ class MainActivity : AppCompatActivity() {
             else -> "Un seul appel automatique par jour."
         }
 
-        val lines = prefs.logText.lines().filter { it.isNotBlank() }
-        b.txtLog.text = (if (logExpanded) lines else lines.take(5)).joinToString("\n").ifEmpty { "—" }
-        b.btnLogMore.visibility = if (lines.size > 5) View.VISIBLE else View.GONE
-        b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${lines.size})"
-
         val voiceName = VoiceCommand.spokenName(this)
         b.switchVoice.text = "« Ok Google, ouvre $voiceName »"
         b.txtVoiceHint.text = if (VoiceCommand.isEnabled(this))
             "Activée : une icône « $voiceName » est dans vos applis. La dire à l'assistant appelle le portail sans délai."
         else "Ajoute une icône « $voiceName » à vos applis, que l'assistant vocal peut ouvrir. Pratique en conduisant."
 
+        b.txtTileHint.text = "Tuile : ouvrez les réglages rapides, touchez le crayon et ajoutez « ${getString(R.string.tile_label)} ».\n" +
+            "Widget : appui long sur l'écran d'accueil › Widgets › ${getString(R.string.app_name)}."
+
         val calls = History.parse(prefs.history)
-        b.txtHistorySummary.text = History.summary(calls, AppClock.today())
-        b.txtHistory.text = History.recent(calls).joinToString("\n")
-        b.txtHistory.visibility = if (calls.isEmpty()) View.GONE else View.VISIBLE
+        b.txtLastCall.text = calls.firstOrNull()?.let { "Dernier appel : ${History.recent(listOf(it), 1).first()}" }
+            ?: "Aucun appel automatique pour l'instant"
+        b.txtLastCallSub.text = if (calls.isEmpty()) "L'historique et le journal sont ici" else History.summary(calls, AppClock.today())
+
+        // Résumés de l'onglet Réglages
+        b.rowPhone.rowSubtitle.text = Summaries.phone(prefs.phone)
+        b.rowZone.rowSubtitle.text = Summaries.zone(prefs.hasLocation, prefs.radius, prefs.twoStage, prefs.approachRadius)
+        b.rowSchedule.rowSubtitle.text = Summaries.schedule(prefs.days, prefs.startMinutes, prefs.endMinutes)
+        b.rowCall.rowSubtitle.text = Summaries.call(prefs.countdownSeconds, prefs.hangupSeconds)
+        b.rowFeedback.rowSubtitle.text = Summaries.feedback(prefs.feedbackVibrate, prefs.feedbackVoice)
+        b.rowShortcuts.rowSubtitle.text = Summaries.shortcuts(VoiceCommand.isEnabled(this), voiceName)
+        b.rowShare.rowSubtitle.text = "QR code ou import d'une configuration"
+        b.rowPerms.rowSubtitle.text = Summaries.permissions(missing.size)
+        b.rowPerms.rowIcon.setImageResource(if (missing.isEmpty()) R.drawable.ic_check_circle else R.drawable.ic_warning)
+        b.rowTest.rowSubtitle.text = "Simuler l'arrivée, réinitialiser l'appel du jour…"
+        b.rowAbout.rowSubtitle.text = "Version ${Updater.currentVersionName(this)} · Quoi de neuf"
+
+        if (tab == Tab.HISTORY) refreshHistory()
 
         PortalWidget.refresh(this)
 
@@ -649,6 +826,80 @@ class MainActivity : AppCompatActivity() {
             if (TestTools.enabled) " · version de test (mises à jour depuis develop, sur demande)" else ""
     }
 
-    private fun snack(msg: String) = Snackbar.make(b.root, msg, Snackbar.LENGTH_LONG).show()
+    /** Onglet Historique : semaine en cours et journal. */
+    private fun refreshHistory() {
+        val today = AppClock.today()
+        val calls = History.parse(prefs.history)
+        b.txtHistorySummary.text = History.summary(calls, today)
+
+        b.weekRow.removeAllViews()
+        History.week(calls, today, prefs.days).forEach { d ->
+            val cell = ItemDayBinding.inflate(layoutInflater, b.weekRow, false)
+            cell.dayLabel.text = d.label
+            cell.dayTime.text = d.time ?: when {
+                d.future -> "à venir"
+                d.isToday -> "aujourd'hui"
+                else -> "—"
+            }
+            val (dotBg, dotFg) = if (d.time != null)
+                com.google.android.material.R.attr.colorPrimary to com.google.android.material.R.attr.colorOnPrimary
+            else com.google.android.material.R.attr.colorSurfaceContainerHighest to com.google.android.material.R.attr.colorOnSurfaceVariant
+            cell.dayDot.text = if (d.time != null) "✓" else if (d.future || d.isToday) "" else "–"
+            cell.dayDot.backgroundTintList = ColorStateList.valueOf(MaterialColors.getColor(cell.dayDot, dotBg))
+            cell.dayDot.setTextColor(MaterialColors.getColor(cell.dayDot, dotFg))
+            if (d.isToday) {
+                cell.root.setBackgroundResource(R.drawable.bg_rounded)
+                cell.root.backgroundTintList = ColorStateList.valueOf(
+                    MaterialColors.getColor(cell.root, com.google.android.material.R.attr.colorPrimaryContainer))
+            }
+            cell.root.contentDescription = "${d.label} : ${d.time?.let { "appel à $it" } ?: "pas d'appel"}"
+            b.weekRow.addView(cell.root)
+        }
+
+        val entries = Journal.parse(prefs.logText, today)
+        b.logList.removeAllViews()
+        if (entries.isEmpty()) {
+            b.logList.addView(TextView(this).apply {
+                text = "Aucun événement pour l'instant"
+                setPadding(0, 16, 0, 16)
+            })
+        }
+        (if (logExpanded) entries else entries.take(LOG_PREVIEW)).forEach { e ->
+            val row = ItemLogBinding.inflate(layoutInflater, b.logList, false)
+            row.logTime.text = if (e.date != null) "${e.date}\n${e.time}" else e.time
+            row.logMessage.text = e.message
+            val dot = when {
+                e.message.startsWith("Échec") || e.message.startsWith("Erreur") -> com.google.android.material.R.attr.colorError
+                e.message.contains("ppel") || e.message.contains("accroch") -> com.google.android.material.R.attr.colorPrimary
+                else -> com.google.android.material.R.attr.colorOutline
+            }
+            row.logDot.backgroundTintList = ColorStateList.valueOf(MaterialColors.getColor(row.logDot, dot))
+            b.logList.addView(row.root)
+        }
+        b.btnLogMore.visibility = if (entries.size > LOG_PREVIEW) View.VISIBLE else View.GONE
+        b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${entries.size})"
+    }
+
+    private fun basePermissionsOk() = Perms.fineLocation(this) && Perms.backgroundLocation(this) && Perms.call(this) &&
+        Perms.notifications(this) && Perms.callControl(this) && Perms.fullScreen(this)
+
+    /** Ce qui manque pour que l'app fonctionne, une ligne par réglage. */
+    private fun missingPermissions(): List<String> = buildList {
+        if (!Perms.fineLocation(this@MainActivity)) add("• Localisation")
+        else if (!Perms.backgroundLocation(this@MainActivity)) add("• Localisation « Toujours autoriser »")
+        if (!Perms.call(this@MainActivity)) add("• Passer des appels")
+        if (!Perms.notifications(this@MainActivity)) add("• Notifications (compte à rebours)")
+        if (Perms.call(this@MainActivity) && !Perms.callControl(this@MainActivity))
+            add("• Gestion des appels (nouvel essai, raccrochage auto)")
+        if (!Perms.fullScreen(this@MainActivity)) add("• Notifications plein écran (appel téléphone verrouillé)")
+        if (!Perms.batteryUnrestricted(this@MainActivity)) add("• Optimisation batterie à désactiver (conseillé)")
+    }
+
+    private fun snack(msg: String) = Snackbar.make(b.root, msg, Snackbar.LENGTH_LONG).setAnchorView(b.bottomNav).show()
     private fun toast(msg: String) = snack(msg)
+
+    companion object {
+        private const val STATE_TAB = "tab"
+        private const val LOG_PREVIEW = 8
+    }
 }

@@ -45,9 +45,10 @@ and at the times you choose. The app interface is in French.
 | 📲 **Manual call** | **Appeler Garage** Quick Settings tile, home-screen widget and a launcher shortcut. |
 | 🎙️ **Voice command** | "Ok Google, ouvre Portail" calls the gate — handy while driving (optional). |
 | 📳 **Pocket feedback** | Vibration when the call starts; double vibration and "Portail appelé" in your earbuds when it ends. |
-| 📊 **History** | Calls this week, average arrival time and latest calls. |
+| 🏠 **Three tabs** | **Accueil** (status, big button to open the gate, live call tracking), **Réglages** grouped by topic, **Historique**. |
+| 📊 **History** | This week day by day, average arrival time and the log. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
-| 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the app. |
+| 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the **Historique** tab. |
 
 ## Installation
 
@@ -71,7 +72,7 @@ On first launch an **assistant** guides you step by step. A colleague already us
 On their phone: *Partager ma configuration (QR code)*; on yours: **Scanner la configuration d'un
 collègue** — only the permissions are left to grant.
 
-The same settings are available afterwards on the main screen:
+The same settings are available afterwards in the **Réglages** tab, grouped by topic:
 
 1. **Numéro du portail** — the number that opens the gate.
 2. **Choisir sur la carte** — move the map until the crosshair is on the gate and adjust the two
@@ -82,12 +83,12 @@ The same settings are available afterwards on the main screen:
 4. *(the radii can also be typed in directly)*
 5. **Compte à rebours** — seconds before the call (**0** = call immediately).
 6. **Quand** — days and time window (Mon–Fri, 07:00–10:00 by default).
-7. Turn on **Appel automatique à l'arrivée** in the status card at the top. Every change is saved
-   immediately; the *Portail* card should read **✓ Zone active**.
+7. Turn on **Appel automatique à l'arrivée** on the **Accueil** tab. Every change is saved
+   immediately; the *Portail* page should read **✓ Zone active**.
 8. **Accorder les autorisations** — phone calls, notifications, then location → **Allow all the time**.
 9. **Désactiver l'optimisation batterie** — strongly recommended. On Samsung, Xiaomi, Huawei or
    Oppo, also set *Settings › Apps › Portail Keo › Battery* to **Unrestricted**.
-10. **Ouvrir le portail maintenant** to check that the call goes through.
+10. The big **Ouvrir le portail** button on the home tab, to check that the call goes through.
 
 > [!IMPORTANT]
 > The gate must recognise **your** phone number. If it is not registered with the gate
@@ -114,7 +115,7 @@ name, so **"Ok Google, ouvre Portail"** calls the gate straight away. For an exa
 → custom command *"ouvre Portail"*); the in-app **Dire exactement « ouvre le portail »** button explains it.
 
 ### Pause and public holidays
-- **Mettre en pause…**: no automatic call until the chosen date (inclusive). **Reprendre** cancels it.
+- **Pause…** (home tab): no automatic call until the chosen date (inclusive). **Reprendre** cancels it.
 - **Pas d'appel les jours fériés** (on by default): French metropolitan public holidays,
   including Easter Monday, Ascension Day and Whit Monday.
 
@@ -164,7 +165,7 @@ The first time, Android asks you to allow Portail Keo to install apps.
 
 | Problem | Fix |
 |---|---|
-| No call on arrival | Check the **Journal** section in the app: it shows whether the zone was entered and why no call was made. |
+| No call on arrival | Check the **Journal** (Historique tab): it shows whether the zone was entered and why no call was made. |
 | Call placed too late | Increase the gate zone **radius** or the **approach zone**. |
 | "✗ Localisation « Toujours autoriser » manquante" | *Settings › Apps › Portail Keo › Permissions › Location › Allow all the time*. |
 | Nothing happens in the background | Disable battery optimisation / set the app to **Unrestricted**. |
@@ -191,7 +192,10 @@ Or open the folder in Android Studio and click ▶ **Run**.
 
 ```
 app/src/main/java/fr/julesdupont/portail/
-├── MainActivity.kt        Settings screen
+├── MainActivity.kt        Main screen: Accueil, Réglages, Historique tabs
+├── LiveCall.kt            Live countdown and call tracking (home tab)
+├── Summaries.kt           One-line summaries in the Réglages tab
+├── Journal.kt             Log lines (Historique tab)
 ├── MapPickerActivity.kt   Map picker (OpenStreetMap / osmdroid)
 ├── Zones.kt               Zone size rules
 ├── SetupActivity.kt       First-launch wizard (steps in SetupWizard.kt)
@@ -234,7 +238,7 @@ Every push to `develop` publishes **Portail Keo (test)** (orange icon) as the `t
 [PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
 It installs next to the real app, has its own settings, updates from `develop` on demand
 (**Rechercher une mise à jour**), and a **test tools**
-section (simulate arrival / approach, reset today's call). See [CONTRIBUTING.md](CONTRIBUTING.md).
+page in the Réglages tab (simulate arrival / approach, reset today's call). See [CONTRIBUTING.md](CONTRIBUTING.md).
 </details>
 
 ## Contributing

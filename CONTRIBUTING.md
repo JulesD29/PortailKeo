@@ -22,11 +22,15 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - Elle s'installe **à côté** de la vraie app, avec ses propres réglages.
 - **Rechercher une mise à jour** installe la dernière version de `develop` (sur demande uniquement,
   pas de vérification automatique).
-- **Outils de test** en bas de l'écran : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
+- **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
 - Pour tester l'appel automatique en conditions réelles, désactiver l'automatisation dans la vraie app
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
 ### Checklist de tests fonctionnels avant de fusionner dans `main`
+- [ ] Onglets : Accueil, Réglages, Historique ; dans Réglages, chaque entrée ouvre sa page ; Retour ferme la page
+      puis revient à l'accueil ; les résumés sous chaque entrée sont à jour après une modification
+- [ ] Suivi en direct : Simuler l'arrivée l'app ouverte → l'accueil affiche le compte à rebours (« Annuler l'appel »
+      annule), puis l'appel (anneau, étapes, « Raccrocher maintenant » raccroche) ; retour à l'état normal ensuite
 - [ ] Écran principal : la carte d'état change selon la situation (actif, pause, appelé aujourd'hui,
       désactivé, autorisations manquantes) ; clair et sombre lisibles
 - [ ] Réglages : modifier, fermer, rouvrir → tout est conservé sans bouton « Enregistrer » ; « ✓ Zone active »
@@ -98,7 +102,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallHelperTest` | Appel auto / manuel, permission manquante, erreur du téléphone |
 | `AutoCallTest` | Appel direct ou compte à rebours, refus, pas de double appel |
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
-| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto, ligne occupée avec ou sans rappel) ; une zone ne coupe pas un appel suivi |
+| `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto, ligne occupée avec ou sans rappel) ; une zone ne coupe pas un appel suivi ; état en direct pour l'accueil, bouton Annuler de l'accueil |
 | `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
 | `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
 | `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
@@ -107,7 +111,11 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `ConfigImportTest` | Import : réglages appliqués, activation/pause conservées ; assistant ; réinitialisation |
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
 | `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
-| `HistoryTest` | Historique des arrivées : limite, semaine en cours, heure moyenne, résumé |
+| `HistoryTest` | Historique des arrivées : limite, semaine en cours (cases jour par jour), heure moyenne, résumé |
+| `JournalTest` | Lignes du journal découpées (heure, date si pas aujourd'hui, message) |
+| `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
+| `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
+| `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |
