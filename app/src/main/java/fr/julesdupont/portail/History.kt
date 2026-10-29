@@ -60,6 +60,27 @@ object History {
         }
     }
 
+    /** « aujourd'hui à 08:12 », « hier à 08:12 », « ven. 23 oct. à 08:12 ». */
+    fun lastCallLabel(call: LocalDateTime, today: LocalDate): String {
+        val time = Rules.fmt(call.hour * 60 + call.minute)
+        return when (call.toLocalDate()) {
+            today -> "aujourd'hui à $time"
+            today.minusDays(1) -> "hier à $time"
+            else -> "${call.format(dayFmt)} à $time"
+        }
+    }
+
+    /** « 3 appels cette semaine · arrivée moyenne 8 h 12 ». */
+    fun weekLine(calls: List<LocalDateTime>, today: LocalDate): String {
+        val week = thisWeek(calls, today)
+        val count = when (week) {
+            0 -> "Aucun appel cette semaine"
+            1 -> "1 appel cette semaine"
+            else -> "$week appels cette semaine"
+        }
+        return averageTime(calls)?.let { "$count · arrivée moyenne $it" } ?: count
+    }
+
     /** « lun. 5 oct. · 08:12 » pour les [n] derniers appels. */
     fun recent(calls: List<LocalDateTime>, n: Int = 5): List<String> =
         calls.take(n).map { "${it.format(dayFmt)} · ${Rules.fmt(it.hour * 60 + it.minute)}" }

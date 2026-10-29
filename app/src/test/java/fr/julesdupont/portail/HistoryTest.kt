@@ -62,4 +62,19 @@ class HistoryTest {
         assertEquals(listOf("lun", "mar", "mer", "jeu", "ven", "sam"), week.map { it.label })
         assertEquals("11:00", week.last().time)
     }
+
+    @Test
+    fun `libelle du dernier appel`() {
+        assertEquals("aujourd'hui à 08:14", History.lastCallLabel(call(7, 8, 14), today))
+        assertEquals("hier à 08:09", History.lastCallLabel(call(6, 8, 9), today))
+        assertEquals("ven. 2 oct. à 10:51", History.lastCallLabel(call(2, 10, 51), today))
+    }
+
+    @Test
+    fun `ligne de la semaine`() {
+        assertEquals("Aucun appel cette semaine · arrivée moyenne 10 h 51", History.weekLine(listOf(call(2, 10, 51)), today))
+        assertEquals("1 appel cette semaine · arrivée moyenne 8 h 14", History.weekLine(listOf(call(5, 8, 14)), today))
+        assertEquals("2 appels cette semaine · arrivée moyenne 8 h 20", History.weekLine(listOf(call(5, 8, 10), call(6, 8, 30)), today))
+        assertEquals("Aucun appel cette semaine", History.weekLine(emptyList(), today))
+    }
 }

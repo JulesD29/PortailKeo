@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
+import androidx.core.graphics.ColorUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -738,35 +739,36 @@ class MainActivity : AppCompatActivity() {
         val permsOk = Perms.fineLocation(this) && Perms.backgroundLocation(this) && Perms.call(this)
         val status = Dashboard.status(prefs.toRuleConfig(), prefs.hasLocation && prefs.phone.isNotBlank(),
             permsOk, AppClock.now())
-        val (bgAttr, fgAttr, icon) = when (status.level) {
-            Dashboard.Level.ACTIVE, Dashboard.Level.CALLED -> Triple(
-                com.google.android.material.R.attr.colorPrimaryContainer,
-                com.google.android.material.R.attr.colorOnPrimaryContainer,
-                if (status.level == Dashboard.Level.CALLED) R.drawable.ic_tile_phone else R.drawable.ic_check_circle)
-            Dashboard.Level.PAUSED -> Triple(
-                com.google.android.material.R.attr.colorTertiaryContainer,
-                com.google.android.material.R.attr.colorOnTertiaryContainer, R.drawable.ic_pause)
-            Dashboard.Level.OFF -> Triple(
-                com.google.android.material.R.attr.colorSurfaceContainerHighest,
-                com.google.android.material.R.attr.colorOnSurfaceVariant, R.drawable.ic_power)
-            Dashboard.Level.WARNING, Dashboard.Level.INCOMPLETE -> Triple(
-                com.google.android.material.R.attr.colorErrorContainer,
-                com.google.android.material.R.attr.colorOnErrorContainer, R.drawable.ic_warning)
+        val (bgAttr, fgAttr) = when (status.level) {
+            Dashboard.Level.ACTIVE, Dashboard.Level.CALLED ->
+                com.google.android.material.R.attr.colorPrimaryContainer to com.google.android.material.R.attr.colorOnPrimaryContainer
+            Dashboard.Level.PAUSED ->
+                com.google.android.material.R.attr.colorTertiaryContainer to com.google.android.material.R.attr.colorOnTertiaryContainer
+            Dashboard.Level.OFF ->
+                com.google.android.material.R.attr.colorSurfaceContainerHighest to com.google.android.material.R.attr.colorOnSurfaceVariant
+            Dashboard.Level.WARNING, Dashboard.Level.INCOMPLETE ->
+                com.google.android.material.R.attr.colorErrorContainer to com.google.android.material.R.attr.colorOnErrorContainer
+        }
+        val dot = when (status.level) {
+            Dashboard.Level.ACTIVE -> STATUS_GREEN
+            Dashboard.Level.CALLED -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorPrimary)
+            Dashboard.Level.PAUSED -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorTertiary)
+            Dashboard.Level.OFF -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorOutline)
+            Dashboard.Level.WARNING, Dashboard.Level.INCOMPLETE ->
+                MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorError)
         }
         val bg = MaterialColors.getColor(b.cardStatus, bgAttr)
         val fg = MaterialColors.getColor(b.cardStatus, fgAttr)
+        val surface = MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorSurface)
         b.cardStatus.setCardBackgroundColor(bg)
-        b.imgStatus.setImageResource(icon)
-        b.imgStatus.imageTintList = ColorStateList.valueOf(fg)
-        listOf(b.txtStatusTitle, b.txtStatusSubtitle, b.txtLastEvent, b.switchEnabled).forEach { it.setTextColor(fg) }
+        b.statusPill.backgroundTintList = ColorStateList.valueOf(surface)
+        b.txtStatusTitle.setTextColor(MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorOnSurface))
+        b.statusDot.backgroundTintList = ColorStateList.valueOf(dot)
+        b.switchEnabled.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(surface, 0x99))
+        listOf(b.txtStatusSubtitle, b.switchEnabled).forEach { it.setTextColor(fg) }
         b.txtStatusTitle.text = status.title
         b.txtStatusSubtitle.text = status.subtitle
         if (b.switchEnabled.isChecked != prefs.enabled) { loading = true; b.switchEnabled.isChecked = prefs.enabled; loading = false }
-
-        b.txtLastEvent.text = Dashboard.lastEvent(prefs.logText)?.let { (stamp, msg) ->
-            val time = if (Dashboard.isToday(stamp, AppClock.today())) "aujourd'hui ${stamp.substringAfter(' ')}" else stamp
-            "Dernier événement ($time) : $msg"
-        } ?: "Aucun événement pour l'instant"
 
         val paused = Rules.pauseLabel(prefs) != null
         b.btnPause.visibility = if (paused) View.GONE else View.VISIBLE
@@ -801,9 +803,9 @@ class MainActivity : AppCompatActivity() {
             "Widget : appui long sur l'écran d'accueil › Widgets › ${getString(R.string.app_name)}."
 
         val calls = History.parse(prefs.history)
-        b.txtLastCall.text = calls.firstOrNull()?.let { "Dernier appel : ${History.recent(listOf(it), 1).first()}" }
+        b.txtLastCall.text = calls.firstOrNull()?.let { "Dernier appel : ${History.lastCallLabel(it, AppClock.today())}" }
             ?: "Aucun appel automatique pour l'instant"
-        b.txtLastCallSub.text = if (calls.isEmpty()) "L'historique et le journal sont ici" else History.summary(calls, AppClock.today())
+        b.txtLastCallSub.text = if (calls.isEmpty()) "L'historique et le journal sont ici" else History.weekLine(calls, AppClock.today())
 
         // Résumés de l'onglet Réglages
         b.rowPhone.rowSubtitle.text = Summaries.phone(prefs.phone)
@@ -901,5 +903,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val STATE_TAB = "tab"
         private const val LOG_PREVIEW = 8
+        /** Pastille « Actif » : vert lisible en mode clair comme en mode sombre. */
+        private const val STATUS_GREEN = 0xFF34A853.toInt()
     }
 }
