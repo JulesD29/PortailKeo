@@ -163,7 +163,7 @@ class PortalService : Service() {
                 handler.postDelayed(retryCall, CallMonitor.BUSY_RETRY_DELAY_MS)
             }
             CallMonitor.Decision.BUSY_STOP -> {
-                p.log("Ligne du portail occupée : pas de nouvel essai (option « Rappeler si portail occupé » désactivée)")
+                p.log("Ligne du portail occupée : pas de nouvel essai (option « Rappeler si le portail est occupé » désactivée)")
                 if (CallMonitor.isInCall(this)) CallMonitor.endCall(this)
                 Feedback.emit(this, Feedback.Event.LINE_BUSY)
                 stopSoon()
@@ -204,7 +204,7 @@ class PortalService : Service() {
     }
 
     private val approachTimeout = Runnable {
-        Prefs(this).log("Approche : GPS arrêté après 20 min sans arrivée")
+        Prefs(this).log("GPS précis arrêté : pas d'arrivée au bout de 20 min")
         stopSelf()
     }
 
@@ -243,7 +243,7 @@ class PortalService : Service() {
                 handler.removeCallbacks(tick)
                 val p = Prefs(this)
                 p.lastCallDate = AppClock.today().toString() // pas de nouvel appel auto aujourd'hui
-                p.log("Appel annulé (plus d'appel automatique aujourd'hui)")
+                p.log("Appel annulé : plus d'appel automatique aujourd'hui")
                 PortalWidget.refresh(this)
                 stopSelf()
             }
@@ -361,7 +361,7 @@ class PortalService : Service() {
     /** Si l'écran d'appel ne s'est pas affiché, on appelle quand même directement. */
     private val lockedFallback: Runnable = Runnable {
         if (Prefs(this).lastCallDate != AppClock.today().toString()) {
-            Prefs(this).log("Écran d'appel non affiché : appel direct")
+            Prefs(this).log("Appel lancé directement, sans écran d'appel")
             Notifier.cancelLockedCall(this)
             if (!AutoCall.callNow(this)) stopSelf()
         }

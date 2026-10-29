@@ -27,8 +27,8 @@ object CallHelper {
     fun call(ctx: Context, number: String, automatic: Boolean, retry: Boolean = false): Boolean {
         val prefs = Prefs(ctx)
         if (!Perms.call(ctx)) {
-            prefs.log("Échec : permission d'appel manquante")
-            Notifier.fallback(ctx, number, "permission manquante")
+            prefs.log("L'appel n'est pas parti : autorisation d'appeler manquante")
+            Notifier.fallback(ctx, number, "autorisation d'appeler manquante")
             return false
         }
         return try {
@@ -45,8 +45,8 @@ object CallHelper {
             PortalWidget.refresh(ctx)
             true
         } catch (e: Exception) {
-            prefs.log("Échec de l'appel : ${e.javaClass.simpleName} ${e.message ?: ""}")
-            Notifier.fallback(ctx, number, e.javaClass.simpleName)
+            prefs.log("L'appel n'a pas pu partir (${e.javaClass.simpleName} ${e.message ?: ""})")
+            Notifier.fallback(ctx, number, "erreur du téléphone")
             false
         }
     }

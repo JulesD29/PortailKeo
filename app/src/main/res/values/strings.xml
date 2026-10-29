@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Portail Keo</string>
-    <string name="tile_label">Appeler Garage</string>
+    <string name="tile_label">Ouvrir le portail</string>
     <string name="shortcut_short">Ouvrir le portail</string>
     <string name="shortcut_long">Appeler le portail maintenant</string>
     <string name="widget_description">État de l\'appel automatique et bouton pour ouvrir le portail</string>

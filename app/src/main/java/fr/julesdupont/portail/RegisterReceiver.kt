@@ -22,7 +22,12 @@ class RegisterReceiver : BroadcastReceiver() {
                 val pending = goAsync()
                 GeofenceManager.register(context) { ok, msg ->
                     if (!ok || intent.action != GeofenceManager.ACTION_REFRESH) {
-                        Prefs(context).log("Ré-enregistrement (${intent.action?.substringAfterLast('.')}) : $msg")
+                        val reason = when (intent.action) {
+                            Intent.ACTION_BOOT_COMPLETED -> "après le redémarrage"
+                            Intent.ACTION_MY_PACKAGE_REPLACED -> "après la mise à jour"
+                            else -> "(vérification périodique)"
+                        }
+                        Prefs(context).log("Zones réactivées $reason : $msg")
                     }
                     pending.finish()
                 }

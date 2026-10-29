@@ -42,9 +42,9 @@ and at the times you choose. The app interface is in French.
 | ⏱️ **Countdown** | "Calling the gate in 5 s" notification with **Cancel** and **Call now**. |
 | 📅 **Schedule** | Active days, time window, at most one automatic call per day. |
 | 🏖️ **Pause & public holidays** | Pause until a given date; no call on French public holidays. |
-| 📲 **Manual call** | **Appeler Garage** Quick Settings tile, home-screen widget and a launcher shortcut. |
+| 📲 **Manual call** | **Ouvrir le portail** Quick Settings tile, home-screen widget and a launcher shortcut. |
 | 🎙️ **Voice command** | "Ok Google, ouvre Portail" calls the gate — handy while driving (optional). |
-| 📳 **Pocket feedback** | Vibration when the call starts; double vibration and "Portail appelé" in your earbuds when it ends. |
+| 📳 **Voice feedback** | Vibration when the call starts; double vibration and "Portail appelé" in your earbuds when it ends. |
 | 🏠 **Three tabs** | **Accueil** (status, big button to open the gate, live call tracking), **Réglages** grouped by topic, **Historique**. |
 | 📊 **History** | This week day by day, average arrival time and the log. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
@@ -102,7 +102,7 @@ distance, then **Appel du portail dans 5 s**. Tap **Annuler** to cancel; no furt
 call will be made that day.
 
 ### Manual call
-- **Quick Settings tile**: pull down the shade twice › ✏️ › drag **Appeler Garage** into your tiles.
+- **Quick Settings tile**: pull down the shade twice › ✏️ › drag **Ouvrir le portail** into your tiles.
   On Android 16, long-press it in edit mode to enlarge it and show its label.
 - **Shortcut**: long-press the app icon › **Ouvrir le portail** (you can drag it to your home screen).
 
@@ -171,7 +171,7 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Nothing happens in the background | Disable battery optimisation / set the app to **Unrestricted**. |
 | Call placed but gate stays closed | Your number is not authorised by the gate system. |
 | Call drops without ringing | The app retries automatically (up to 3 attempts); check the **Journal** for "nouvel essai". |
-| Gate line busy (someone calls it at the same time) | By default the app stops there: the gate is usually already open. Enable **Rappeler si portail occupé** to retry 15 s later (up to 3 attempts). |
+| Gate line busy (someone calls it at the same time) | By default the app stops there: the gate is usually already open. Enable **Rappeler si le portail est occupé** to retry 15 s later (up to 3 attempts). |
 | Tile shows no label | Expand the full shade, or enlarge the tile (Android 16). |
 | "Mise à jour refusée : signature différente" | Uninstall the app, then install the latest APK manually. |
 
@@ -209,7 +209,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── Rules.kt               Days, time window, pause, holidays, once a day
 ├── Holidays.kt            French public holidays (Easter computed)
 ├── CallHelper.kt          Places the call (TelecomManager)
-├── PortalTileService.kt   "Appeler Garage" Quick Settings tile
+├── PortalTileService.kt   "Ouvrir le portail" Quick Settings tile
 ├── CallActivity.kt        Invisible screen used by the tile and the shortcut
 ├── Updater.kt             Updates from GitHub Releases
 ├── InstallReceiver.kt     Update install result

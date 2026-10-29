@@ -27,8 +27,8 @@ class InstallReceiver : BroadcastReceiver() {
             PackageInstaller.STATUS_SUCCESS -> prefs.log("Mise à jour installée")
             PackageInstaller.STATUS_FAILURE_ABORTED -> prefs.log("Mise à jour annulée")
             PackageInstaller.STATUS_FAILURE_CONFLICT, PackageInstaller.STATUS_FAILURE_INCOMPATIBLE -> {
-                prefs.log("Mise à jour refusée : signature différente. Désinstallez puis installez l'APK à la main.")
-                Notifier.info(context, "Mise à jour impossible : désinstallez l'app puis installez le nouvel APK.")
+                prefs.log("Mise à jour refusée : signature différente. Désinstallez puis installez la nouvelle version à la main.")
+                Notifier.info(context, "Mise à jour impossible : désinstallez l'app puis installez la nouvelle version.")
             }
             else -> {
                 val msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE) ?: "erreur inconnue"

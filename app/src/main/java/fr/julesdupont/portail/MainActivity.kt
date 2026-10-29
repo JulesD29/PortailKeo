@@ -211,7 +211,7 @@ class MainActivity : AppCompatActivity() {
         b.btnPause.setOnClickListener { pickPauseDate() }
         b.btnResume.setOnClickListener {
             prefs.pauseUntil = ""
-            prefs.log("Pause levée")
+            prefs.log("Pause terminée")
             refreshStatus()
             snack("Appel automatique repris")
         }
@@ -367,7 +367,7 @@ class MainActivity : AppCompatActivity() {
         row(b.rowZone, R.drawable.ic_location, "Position et zones") { openDetail(b.secPortal, "Portail") }
         row(b.rowSchedule, R.drawable.ic_schedule, "Jours et horaires") { openDetail(b.secSchedule, "Quand appeler") }
         row(b.rowCall, R.drawable.ic_timer, "Appel automatique") { openDetail(b.secCall, "Appel automatique") }
-        row(b.rowFeedback, R.drawable.ic_headphones, "Retour en poche") { openDetail(b.secFeedback, "Retour en poche") }
+        row(b.rowFeedback, R.drawable.ic_headphones, "Retour vocal") { openDetail(b.secFeedback, "Retour vocal") }
         row(b.rowShortcuts, R.drawable.ic_mic, "Tuile, widget et commande vocale") { openDetail(b.secVoice, "Accès rapide") }
         row(b.rowShare, R.drawable.ic_qr_code, "Partager avec un collègue") { openDetail(b.secShare, "Partager avec un collègue") }
         row(b.rowPerms, R.drawable.ic_check_circle, "Autorisations") {
@@ -651,7 +651,7 @@ class MainActivity : AppCompatActivity() {
             snack("En pause jusqu'au ${d}/${m + 1} inclus")
         }, today.year, today.monthValue - 1, today.dayOfMonth)
         dialog.datePicker.minDate = today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-        dialog.setTitle("Pas d'appel automatique jusqu'au (inclus)")
+        dialog.setTitle("Mettre en pause jusqu'au… (inclus)")
         dialog.show()
     }
 
@@ -780,7 +780,7 @@ class MainActivity : AppCompatActivity() {
         b.btnBattery.visibility = if (Perms.batteryUnrestricted(this)) View.GONE else View.VISIBLE
 
         b.txtZoneSummary.text = if (prefs.hasLocation) {
-            "Zone d'appel : ${Zones.label(prefs.radius)}" +
+            "Zone du portail : ${Zones.label(prefs.radius)}" +
                 (if (prefs.twoStage) " · approche : ${Zones.label(prefs.approachRadius)}" else "") +
                 "\n${Coords.format(prefs.lat, prefs.lng)}"
         } else "Aucune position : placez le portail sur la carte"
@@ -890,9 +890,9 @@ class MainActivity : AppCompatActivity() {
         if (!Perms.call(this@MainActivity)) add("• Passer des appels")
         if (!Perms.notifications(this@MainActivity)) add("• Notifications (compte à rebours)")
         if (Perms.call(this@MainActivity) && !Perms.callControl(this@MainActivity))
-            add("• Gestion des appels (nouvel essai, raccrochage auto)")
+            add("• Gestion des appels (rappeler, raccrocher tout seul)")
         if (!Perms.fullScreen(this@MainActivity)) add("• Notifications plein écran (appel téléphone verrouillé)")
-        if (!Perms.batteryUnrestricted(this@MainActivity)) add("• Optimisation batterie à désactiver (conseillé)")
+        if (!Perms.batteryUnrestricted(this@MainActivity)) add("• Optimisation de la batterie à désactiver (conseillé)")
     }
 
     private fun snack(msg: String) = Snackbar.make(b.root, msg, Snackbar.LENGTH_LONG).setAnchorView(b.bottomNav).show()

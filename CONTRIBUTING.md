@@ -23,7 +23,7 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - **Rechercher une mise à jour** installe la dernière version de `develop` (sur demande uniquement,
   pas de vérification automatique).
 - **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
-- Pour tester l'appel automatique en conditions réelles, désactiver l'automatisation dans la vraie app
+- Pour tester l'appel automatique en conditions réelles, désactiver l'appel automatique dans la vraie app
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
 ### Checklist de tests fonctionnels avant de fusionner dans `main`
@@ -38,13 +38,13 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] « Choisir sur la carte » : la carte s'ouvre sur la position enregistrée, les 2 cercles suivent
       le viseur et les curseurs ; « Valider » enregistre coordonnées et rayons
 - [ ] Assistant (Outils de test › Réinitialiser l'assistant) : les 6 étapes s'enchaînent, « Suivant »
-      reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'automatisation
+      reste grisé tant que le numéro / la position / les autorisations manquent ; « Terminer » active l'appel automatique
 - [ ] QR code : « Partager ma configuration » affiche le QR ; sur un 2e téléphone (ou l'app de test),
       « Scanner la configuration d'un collègue » affiche le résumé puis remplit tout
 - [ ] « Ouvrir le portail maintenant » appelle bien le numéro
 - [ ] Téléphone verrouillé : « Simuler l'arrivée dans 20 s », verrouiller ; l'écran s'allume, l'appel sonne ;
       journal « Téléphone verrouillé… » puis « Appel lancé depuis l'écran verrouillé » puis « Appel en cours (essai 1) »
-- [ ] Retour en poche : « Tester le retour » vibre deux fois ; avec écouteurs, annonce « Portail appelé » ;
+- [ ] Retour vocal : « Tester le retour vocal » vibre deux fois ; avec écouteurs, annonce « Portail appelé » ;
       en vrai : vibration à l'appel, double vibration + annonce après le raccrochage
 - [ ] Appel automatique (Simuler l'arrivée) : notification « Appel du portail en cours », raccrochage après le délai
       réglé ; journal « Appel en cours (essai 1) » puis « Raccroché automatiquement… »
@@ -62,7 +62,7 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
 - [ ] Simuler l'arrivée hors plage horaire : pas d'appel, raison dans le journal
 - [ ] Simuler l'approche : notification « Approche du portail » avec la distance réelle ; « Arrêter » la coupe
-- [ ] Tuile « Garage (test) » et raccourci « Portail (test) » appellent sans délai
+- [ ] Tuile et raccourci « Portail (test) » appellent sans délai
 - [ ] Pause jusqu'à demain : simuler l'arrivée → pas d'appel ; « Reprendre » → appel possible
 - [ ] Ce qui a été modifié dans la pull request
 
@@ -122,7 +122,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallMonitorTest` | Suivi d'appel : rappel si l'appel se coupe sans sonner, ligne occupée (rappel selon l'option), appel terminé à la main, abandon après 3 essais, délai de raccrochage |
 | `CallLaunchTest` | Appel direct ou via l'écran verrouillé selon l'état du téléphone |
 | `CallActivityTest` | Écran d'appel : appel automatique (verrouillé), pas de double appel, appel manuel |
-| `FeedbackTest` | Retour en poche : vibrations (dont ligne occupée), annonce seulement avec écouteurs et hors appel |
+| `FeedbackTest` | Retour vocal : vibrations (dont ligne occupée), annonce seulement avec écouteurs et hors appel |
 | `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
 
 ### Règles pour les prochains développements

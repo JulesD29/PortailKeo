@@ -128,7 +128,7 @@
             <!-- 6. Test -->
             <LinearLayout android:id="@+id/pageTest" style="@style/SetupPage">
                 <TextView style="@style/SetupText"
-                    android:text="Vérifiez que l'appel part bien, puis activez l'automatisation." />
+                    android:text="Vérifiez que l'appel part bien, puis activez l'appel automatique." />
                 <TextView
                     android:id="@+id/txtTestSummary"
                     style="@style/SetupText"

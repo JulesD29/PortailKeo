@@ -36,7 +36,7 @@ class TestToolsTest {
         TestSupport.configuredPrefs(countdown = 0).enabled = false
         TestTools.simulateArrival(app)
         assertTrue(TestSupport.calls.isEmpty())
-        assertTrue(Prefs(app).logText.contains("automatisation désactivée"))
+        assertTrue(Prefs(app).logText.contains("appel automatique désactivé"))
     }
 
     @Test

@@ -8,7 +8,7 @@ import android.telecom.TelecomManager
  * Suivi d'un appel automatique, vérifié chaque seconde :
  *  - appel jamais établi → on rappelle (coupure technique, ex. téléphone verrouillé) ;
  *  - appel terminé tout seul peu après avoir commencé → ligne du portail occupée (quelqu'un l'appelle
- *    en même temps) : on rappelle seulement si l'option « Rappeler si portail occupé » est cochée ;
+ *    en même temps) : on rappelle seulement si l'option « Rappeler si le portail est occupé » est cochée ;
  *  - sinon on raccroche après le délai réglé, comme on le fait à la main une fois le portail ouvert.
  */
 object CallMonitor {
@@ -53,7 +53,7 @@ object CallMonitor {
      * @param elapsedMs temps écoulé depuis le lancement de l'appel
      * @param attempt numéro de l'essai en cours (1 = appel initial)
      * @param hangupSeconds raccrochage automatique (0 = jamais)
-     * @param retryIfBusy option « Rappeler si portail occupé »
+     * @param retryIfBusy option « Rappeler si le portail est occupé »
      */
     fun decide(
         inCall: Boolean, seenInCall: Boolean, elapsedMs: Long, attempt: Int,

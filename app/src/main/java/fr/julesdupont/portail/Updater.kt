@@ -50,7 +50,7 @@ object Updater {
         c.setRequestProperty("Accept", "application/vnd.github+json")
         try {
             if (c.responseCode == 404) return null
-            if (c.responseCode != 200) throw IOException("GitHub a répondu ${c.responseCode}")
+            if (c.responseCode != 200) throw IOException("serveur de mises à jour injoignable (erreur ${c.responseCode})")
             return parseRelease(c.inputStream.bufferedReader().use { it.readText() })
         } finally {
             c.disconnect()
@@ -129,7 +129,7 @@ object Updater {
                 installer.openSession(sessionId).use { session ->
                     val c = open(release.apkUrl)
                     try {
-                        if (c.responseCode != 200) throw IOException("téléchargement : HTTP ${c.responseCode}")
+                        if (c.responseCode != 200) throw IOException("téléchargement impossible (erreur ${c.responseCode})")
                         c.inputStream.use { input ->
                             session.openWrite("PortailKeo.apk", 0, -1).use { out ->
                                 input.copyTo(out)

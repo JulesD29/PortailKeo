@@ -43,9 +43,9 @@ les jours et aux heures que vous choisissez.
 | ⏱️ **Compte à rebours** | Notification « Appel du portail dans 5 s » avec **Annuler** et **Appeler maintenant**. |
 | 📅 **Horaires** | Jours actifs, plage horaire, un seul appel automatique par jour. |
 | 🏖️ **Pause et jours fériés** | Pause jusqu'à une date ; pas d'appel les jours fériés français. |
-| 📲 **Appel manuel** | Tuile **Appeler Garage**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
+| 📲 **Appel manuel** | Tuile **Ouvrir le portail**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
 | 🎙️ **Commande vocale** | « Ok Google, ouvre Portail » appelle le portail, pratique en conduisant (facultatif). |
-| 📳 **Retour en poche** | Vibration quand l'appel part ; double vibration et « Portail appelé » dans les écouteurs quand il se termine. |
+| 📳 **Retour vocal** | Vibration quand l'appel part ; double vibration et « Portail appelé » dans les écouteurs quand il se termine. |
 | 📊 **Historique** | Semaine en cours jour par jour, heure d'arrivée moyenne et journal. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
 | 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'onglet **Historique**. |
@@ -104,7 +104,7 @@ automatique ne sera passé ce jour-là. Si l'app est ouverte, l'**Accueil** suit
 l'appel en direct, avec un bouton pour annuler ou raccrocher.
 
 ### Appel manuel
-- **Tuile des réglages rapides** : tirez le volet deux fois › ✏️ › glissez **Appeler Garage**
+- **Tuile des réglages rapides** : tirez le volet deux fois › ✏️ › glissez **Ouvrir le portail**
   dans vos tuiles. Sur Android 16, appui long en mode édition pour l'agrandir et afficher son nom.
 - **Raccourci** : appui long sur l'icône de l'app › **Ouvrir le portail** (vous pouvez le glisser
   sur l'écran d'accueil).
@@ -179,7 +179,7 @@ installer des applis.
 | Rien ne se passe en arrière-plan | Désactivez l'optimisation batterie / mettez l'app en **Sans restriction**. |
 | Appel passé mais portail fermé | Votre numéro n'est pas autorisé par le système du portail. |
 | L'appel se coupe sans sonner | L'app rappelle automatiquement (jusqu'à 3 essais) ; le **Journal** indique « nouvel essai ». |
-| Ligne du portail occupée (quelqu'un l'appelle en même temps) | Par défaut l'app s'arrête là : le portail est souvent déjà ouvert. Cochez **Rappeler si portail occupé** pour rappeler 15 s plus tard (jusqu'à 3 essais). |
+| Ligne du portail occupée (quelqu'un l'appelle en même temps) | Par défaut l'app s'arrête là : le portail est souvent déjà ouvert. Cochez **Rappeler si le portail est occupé** pour rappeler 15 s plus tard (jusqu'à 3 essais). |
 | Tuile sans texte | Ouvrez le volet complet, ou agrandissez la tuile (Android 16). |
 | « Mise à jour refusée : signature différente » | Désinstallez l'app, puis installez le dernier APK à la main. |
 
@@ -217,7 +217,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── Rules.kt               Jours, plage horaire, pause, fériés, une fois par jour
 ├── Holidays.kt            Jours fériés français (calcul de Pâques)
 ├── CallHelper.kt          Passe l'appel (TelecomManager)
-├── PortalTileService.kt   Tuile « Appeler Garage » des réglages rapides
+├── PortalTileService.kt   Tuile « Ouvrir le portail » des réglages rapides
 ├── CallActivity.kt        Écran invisible utilisé par la tuile et le raccourci
 ├── Updater.kt             Mises à jour depuis les Releases GitHub
 ├── InstallReceiver.kt     Résultat de l'installation d'une mise à jour

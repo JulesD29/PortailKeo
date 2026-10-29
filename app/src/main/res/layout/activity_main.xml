@@ -61,7 +61,7 @@
                         android:layout_marginTop="4dp"
                         android:background="#33E8710A"
                         android:padding="12dp"
-                        android:text="VERSION DE TEST — réglages séparés de l'app normale. Pour tester l'appel automatique, désactivez l'automatisation dans l'app normale, sinon les deux appelleront."
+                        android:text="VERSION DE TEST — réglages séparés de l'app habituelle. Pour tester l'appel automatique, désactivez-le dans l'app habituelle, sinon les deux appelleront."
                         android:textAppearance="?attr/textAppearanceBodySmall"
                         android:visibility="gone" />
 
@@ -277,7 +277,7 @@
                             <TextView style="@style/SectionTitle"
                                 android:drawableStart="@drawable/ic_warning"
                                 android:drawableTint="?attr/colorOnErrorContainer"
-                                android:text="À régler pour que l'app fonctionne"
+                                android:text="Il reste à régler pour que l'app fonctionne"
                                 android:textColor="?attr/colorOnErrorContainer" />
                             <TextView
                                 android:id="@+id/txtPerms"
@@ -303,7 +303,7 @@
                                     style="@style/Widget.Material3.Button.OutlinedButton"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Batterie" />
+                                    android:text="Réglages de la batterie" />
                             </LinearLayout>
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -542,7 +542,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_marginStart="6dp"
                                         android:layout_weight="1"
-                                        android:text="Ici"
+                                        android:text="Ma position actuelle"
                                         app:icon="@drawable/ic_my_location" />
                                 </LinearLayout>
 
@@ -571,7 +571,7 @@
                                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                                         android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
-                                        android:hint="Coordonnées (lat, lng)"
+                                        android:hint="Coordonnées (latitude, longitude)"
                                         app:helperText="Collez-les depuis Google Maps (appui long sur le portail)">
                                         <com.google.android.material.textfield.TextInputEditText
                                             android:id="@+id/editCoords"
@@ -591,7 +591,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginEnd="6dp"
                                             android:layout_weight="1"
-                                            android:hint="Zone portail (m)">
+                                            android:hint="Zone du portail (m)">
                                             <com.google.android.material.textfield.TextInputEditText
                                                 android:id="@+id/editRadius"
                                                 android:layout_width="match_parent"
@@ -605,7 +605,7 @@
                                             android:layout_height="wrap_content"
                                             android:layout_marginStart="6dp"
                                             android:layout_weight="1"
-                                            android:hint="Approche (m)">
+                                            android:hint="Zone d'approche (m)">
                                             <com.google.android.material.textfield.TextInputEditText
                                                 android:id="@+id/editApproach"
                                                 android:layout_width="match_parent"
@@ -714,7 +714,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="16dp"
-                                    android:text="Rappeler si portail occupé"
+                                    android:text="Rappeler si le portail est occupé"
                                     android:textAppearance="?attr/textAppearanceTitleMedium" />
                                 <TextView
                                     style="@style/SectionHint"
@@ -753,7 +753,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginTop="8dp"
-                                    android:text="Tester le retour"
+                                    android:text="Tester le retour vocal"
                                     app:icon="@drawable/ic_headphones" />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>

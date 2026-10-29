@@ -36,7 +36,7 @@ object Rules {
     /** Règles, dans l'ordre de priorité des messages. */
     fun evaluate(c: RuleConfig, now: LocalDateTime): String? {
         val today = now.toLocalDate()
-        if (!c.enabled) return "automatisation désactivée"
+        if (!c.enabled) return "appel automatique désactivé"
         if (c.phone.isBlank()) return "aucun numéro configuré"
         pauseLabel(c.pauseUntil, today)?.let { return it }
         if (c.skipHolidays) Holidays.name(today)?.let { return "jour férié ($it)" }

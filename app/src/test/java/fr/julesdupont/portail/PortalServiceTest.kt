@@ -64,7 +64,7 @@ class PortalServiceTest {
         assertTrue("notification plein écran publiée", n != null)
         idle(6)
         assertEquals("appel direct en secours", listOf(TestSupport.PHONE), TestSupport.calls)
-        assertTrue(Prefs(app).logText.contains("Écran d'appel non affiché : appel direct"))
+        assertTrue(Prefs(app).logText.contains("Appel lancé directement, sans écran d'appel"))
     }
 
     @Test

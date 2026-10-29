@@ -25,7 +25,7 @@ class RulesTest {
 
     @Test
     fun `automatisation desactivee`() =
-        assertEquals("automatisation désactivée", refusal(ok.copy(enabled = false)))
+        assertEquals("appel automatique désactivé", refusal(ok.copy(enabled = false)))
 
     @Test
     fun `numero manquant`() =
@@ -79,7 +79,7 @@ class RulesTest {
 
     @Test
     fun `desactivation prioritaire sur les autres raisons`() =
-        assertEquals("automatisation désactivée",
+        assertEquals("appel automatique désactivé",
             refusal(ok.copy(enabled = false, lastCallDate = "2026-10-05"), LocalDateTime.of(2026, 5, 14, 8, 0)))
 
     @Test

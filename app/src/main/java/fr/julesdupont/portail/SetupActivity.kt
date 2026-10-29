@@ -115,14 +115,14 @@ class SetupActivity : AppCompatActivity() {
             line(Perms.fineLocation(this), "Localisation précise"),
             line(Perms.backgroundLocation(this), "Localisation « Toujours autoriser »"),
             line(Perms.call(this), "Passer des appels"),
-            line(Perms.callControl(this), "Gérer les appels (nouvel essai, raccrochage auto)"),
+            line(Perms.callControl(this), "Gérer les appels (rappeler, raccrocher tout seul)"),
             line(Perms.notifications(this), "Notifications (conseillé)"),
         ).joinToString("\n")
         b.btnPerms.visibility =
             if (state().permissionsOk && Perms.notifications(this) && Perms.callControl(this)) View.GONE else View.VISIBLE
 
         val battery = Perms.batteryUnrestricted(this)
-        b.txtBattery.text = line(battery, if (battery) "Optimisation batterie désactivée" else "Optimisation batterie active")
+        b.txtBattery.text = line(battery, if (battery) "Optimisation de la batterie désactivée" else "Optimisation de la batterie active")
         b.btnBattery.visibility = if (battery) View.GONE else View.VISIBLE
 
         val dayNames = listOf("lun", "mar", "mer", "jeu", "ven", "sam", "dim")
@@ -162,7 +162,7 @@ class SetupActivity : AppCompatActivity() {
         prefs.enabled = true
         prefs.setupDone = true
         prefs.lastSeenWhatsNew = WhatsNew.CURRENT // nouvelle installation : rien de « nouveau » à présenter
-        prefs.log("Assistant terminé, automatisation activée")
+        prefs.log("Assistant terminé, appel automatique activé")
         GeofenceManager.register(this)
         startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         finish()
