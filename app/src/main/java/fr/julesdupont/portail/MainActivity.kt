@@ -158,13 +158,21 @@ class MainActivity : AppCompatActivity() {
 
     /** Après l'animation du portail : le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. */
     private fun playSplashIntro() {
-        b.splashTitle.translationY += 12f * resources.displayMetrics.density
-        b.splashTitle.animate()
-            .alpha(1f).translationYBy(-12f * resources.displayMetrics.density)
-            .setDuration(Splash.TITLE_MS).withEndAction {
-                b.splashOverlay.animate().alpha(0f).setStartDelay(Splash.HOLD_MS).setDuration(Splash.FADE_MS)
-                    .withEndAction { b.splashOverlay.visibility = View.GONE }
-            }
+        (b.splashIcon.drawable as? android.graphics.drawable.Animatable)?.start()
+        val shift = Splash.TITLE_SHIFT_DP * resources.displayMetrics.density
+        b.splashTitle.translationY += shift
+        b.splashTitle.animate().alpha(1f).translationYBy(-shift)
+            .setStartDelay(Splash.TITLE_DELAY_MS).setDuration(Splash.TITLE_MS)
+            .setInterpolator(android.view.animation.DecelerateInterpolator())
+        b.splashOverlay.animate().alpha(0f)
+            .setStartDelay(Splash.FADE_DELAY_MS).setDuration(Splash.FADE_MS)
+            .withEndAction { b.splashOverlay.visibility = View.GONE }
+        // Toucher l'écran passe l'animation.
+        b.splashOverlay.setOnClickListener {
+            b.splashOverlay.animate().cancel()
+            b.splashOverlay.animate().alpha(0f).setStartDelay(0).setDuration(150)
+                .withEndAction { b.splashOverlay.visibility = View.GONE }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

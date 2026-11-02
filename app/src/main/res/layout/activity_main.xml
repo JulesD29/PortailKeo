@@ -1075,7 +1075,7 @@
             app:menu="@menu/bottom_nav" />
     </LinearLayout>
 
-    <!-- Suite de l'animation de démarrage : portail ouvert, puis le nom et la phrase (version de test). -->
+    <!-- Animation de démarrage (version de test) : le portail s'ouvre, le nom et la phrase apparaissent. Toucher pour passer. -->
     <FrameLayout
         android:id="@+id/splashOverlay"
         android:layout_width="match_parent"
@@ -1086,11 +1086,12 @@
         android:focusable="true"
         android:visibility="gone">
         <ImageView
+            android:id="@+id/splashIcon"
             android:layout_width="288dp"
             android:layout_height="288dp"
             android:layout_gravity="center"
             android:importantForAccessibility="no"
-            android:src="@drawable/splash_icon_open" />
+            android:src="@drawable/splash_icon" />
         <LinearLayout
             android:id="@+id/splashTitle"
             android:layout_width="wrap_content"
