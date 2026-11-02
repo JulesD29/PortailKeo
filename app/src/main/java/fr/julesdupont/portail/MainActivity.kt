@@ -138,7 +138,9 @@ class MainActivity : AppCompatActivity() {
         if (Splash.showIntro(resources.getBoolean(R.bool.splash_intro), savedInstanceState == null,
                 ValueAnimator.areAnimatorsEnabled())) {
             b.splashOverlay.visibility = View.VISIBLE
+            prepareSplashVideo()
             splash.setOnExitAnimationListener { provider ->
+                alignSplashVideo()
                 provider.remove()
                 playSplashIntro()
             }
@@ -164,13 +166,40 @@ class MainActivity : AppCompatActivity() {
         else showWhatsNewIfNeeded()
     }
 
-    /** Après l'animation du portail : le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. */
+    /**
+     * La vidéo prend la taille où sa tuile est celle de l'écran de démarrage d'Android, et affiche sa première image
+     * tant qu'elle n'a pas commencé : l'écran de démarrage passe la main sans saut ni retour en arrière.
+     */
+    private fun prepareSplashVideo() {
+        val d = resources.displayMetrics.density
+        b.splashVideo.layoutParams = b.splashVideo.layoutParams.apply {
+            width = Math.round(Splash.videoWidthDp() * d)
+            height = Math.round(Splash.videoHeightDp() * d)
+        }
+        b.splashVideo.setBackgroundResource(R.drawable.ouverture_debut)
+    }
+
+    /** Centre la tuile de la vidéo sur l'écran entier, là où Android dessinait celle de l'écran de démarrage. */
+    private fun alignSplashVideo() {
+        val loc = IntArray(2)
+        b.splashOverlay.getLocationOnScreen(loc)
+        val screenCenter = window.decorView.height / 2f
+        val overlayCenter = loc[1] + b.splashOverlay.height / 2f
+        b.splashVideo.translationY = screenCenter - overlayCenter + Splash.tileOffsetDp() * resources.displayMetrics.density
+    }
+
+    /** Après l'écran de démarrage : la vidéo du K se joue, puis l'écran s'efface sur l'accueil. */
     private fun playSplashIntro() {
         val hide = Runnable { hideSplash(Splash.FADE_MS) }
         handler.postDelayed(hide, Splash.MAX_MS) // filet de sécurité si la vidéo ne se termine pas
         b.splashVideo.setOnPreparedListener { mp ->
             mp.setVolume(0f, 0f) // l'ouverture ne fait jamais de bruit
             b.splashVideo.start()
+        }
+        b.splashVideo.setOnInfoListener { _, what, _ ->
+            // La première image de la vidéo est à l'écran : on retire l'image fixe qui la remplaçait.
+            if (what == android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) b.splashVideo.background = null
+            false
         }
         b.splashVideo.setOnCompletionListener { handler.removeCallbacks(hide); hideSplash(Splash.FADE_MS) }
         b.splashVideo.setOnErrorListener { _, _, _ -> handler.removeCallbacks(hide); hideSplash(0); true }

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Écran de démarrage d'Android : le pilier du K sur sa tuile, comme la première image de la vidéo d'ouverture. -->
+<!--
+  Écran de démarrage d'Android : le pilier du K sur sa tuile, copie exacte de la première image de la vidéo d'ouverture
+  (res/raw/ouverture.mp4, tuile de 352 px sur 720) ramenée à 56 unités sur 108. MainActivity affiche ensuite la vidéo
+  à la taille et à la position où sa tuile recouvre celle-ci (Splash.videoWidthDp, Splash.tileOffsetDp) : aucun saut.
+-->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="288dp" android:height="288dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <path android:fillColor="#FFFFFF" android:fillAlpha="0.1"
-        android:pathData="M38,30 h32 a12,12 0 0 1 12,12 v24 a12,12 0 0 1 -12,12 h-32 a12,12 0 0 1 -12,-12 v-24 a12,12 0 0 1 12,-12 z" />
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.12"
+        android:pathData="M40.8,26 h26.4 a14.8,14.8 0 0 1 14.8,14.8 v26.4 a14.8,14.8 0 0 1 -14.8,14.8 h-26.4 a14.8,14.8 0 0 1 -14.8,-14.8 v-26.4 a14.8,14.8 0 0 1 14.8,-14.8 z" />
     <path android:strokeColor="@color/splash_post" android:strokeWidth="7" android:strokeLineCap="round"
-        android:pathData="M47,42 L47,66" />
+        android:pathData="M43.1,44.7 L43.1,66.2" />
 </vector>
