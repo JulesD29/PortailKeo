@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Écran de démarrage. App normale : écran par défaut (fond de l'app, icône de l'app).
+  La version de test remplace ce thème par l'animation « le portail s'ouvre » (src/beta/res/values/splash.xml).
+-->
+<resources>
+    <string name="splash_phrase">Arrivez, c\'est ouvert</string>
+
+    <!-- Couleurs de l'animation (charte Banook) ; la version de test les remplace par l'orange. -->
+    <color name="splash_bg">#0B3722</color>
+    <color name="splash_post">#FFFFFF</color>
+    <color name="splash_leaf">#F884C9</color>
+    <color name="splash_path">#FCB1EC</color>
+    <color name="splash_title">#FFFFFF</color>
+    <color name="splash_phrase">#FCB1EC</color>
+
+    <style name="Theme.PortailAuto.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/md_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.PortailAuto</item>
+    </style>
+</resources>

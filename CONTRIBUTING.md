@@ -59,6 +59,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
 - [ ] Historique : nombre d'appels de la semaine en grand ; journal regroupé par jour avec la frise colorée ; « Tout afficher »
       en bas du journal (puis « Réduire ») ; « Partager » en haut à droite du journal
+- [ ] Démarrage (version de test) : à l'ouverture, les battants du portail s'ouvrent sur fond orange, puis « Portail Keo (test) »
+      et « Arrivez, c'est ouvert » apparaissent avant l'accueil ; pas d'animation après une rotation ni si « Supprimer les animations » est activé
 - [ ] Partager le journal : le menu de partage s'ouvre ; le texte reçu commence par « Journal Portail Keo », le numéro
       du portail est masqué (02••••••29) et la position n'apparaît pas
 - [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
@@ -120,6 +122,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
 | `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
+| `SplashTest` | Démarrage : nom et phrase seulement au lancement et animations actives, icône animée valide |
 | `LogShareTest` | Partage du journal : numéros masqués (2 premiers et 2 derniers chiffres), contexte (version, réglages, autorisations), jamais la position |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |

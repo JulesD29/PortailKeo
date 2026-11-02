@@ -20,6 +20,8 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import android.animation.ValueAnimator
 import androidx.core.graphics.ColorUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationServices
@@ -107,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splash = installSplashScreen() // avant super.onCreate : écran de démarrage (animé dans la version de test)
         super.onCreate(savedInstanceState)
         prefs = Prefs(this)
         // Premier lancement : assistant (sauf si l'app est ouverte par un QR code de configuration).
@@ -128,6 +131,14 @@ class MainActivity : AppCompatActivity() {
                 setOnCheckedChangeListener { chip, _ -> onDaysChanged(chip as Chip) }
             })
         }
+        if (Splash.showIntro(resources.getBoolean(R.bool.splash_intro), savedInstanceState == null,
+                ValueAnimator.areAnimatorsEnabled())) {
+            b.splashOverlay.visibility = View.VISIBLE
+            splash.setOnExitAnimationListener { provider ->
+                provider.remove()
+                playSplashIntro()
+            }
+        }
         loadForm()
         setupListeners()
         setupNavigation()
@@ -143,6 +154,17 @@ class MainActivity : AppCompatActivity() {
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
         else showWhatsNewIfNeeded()
+    }
+
+    /** Après l'animation du portail : le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. */
+    private fun playSplashIntro() {
+        b.splashTitle.translationY += 12f * resources.displayMetrics.density
+        b.splashTitle.animate()
+            .alpha(1f).translationYBy(-12f * resources.displayMetrics.density)
+            .setDuration(Splash.TITLE_MS).withEndAction {
+                b.splashOverlay.animate().alpha(0f).setStartDelay(Splash.HOLD_MS).setDuration(Splash.FADE_MS)
+                    .withEndAction { b.splashOverlay.visibility = View.GONE }
+            }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

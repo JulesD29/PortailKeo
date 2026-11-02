@@ -135,4 +135,10 @@ class MainActivityTest {
         assertEquals("Réduire", more.text.toString())
         assertEquals("en-tête + 12 événements", 13, list.childCount)
     }
+
+    @Test
+    fun `pas d'ecran nom et phrase dans l'app normale`() {
+        val a = launch().get()
+        assertEquals(false, a.v(R.id.splashOverlay).shown())
+    }
 }

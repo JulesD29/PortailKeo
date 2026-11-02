@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dernière image de splash_icon (portail ouvert), sous laquelle apparaissent le nom et la phrase. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group android:pivotX="54" android:pivotY="54" android:scaleX="0.9" android:scaleY="0.9">
+        <path android:fillColor="@color/splash_leaf" android:fillAlpha="0.25"
+            android:pathData="M54,30 a34,34 0 1,0 0.01,0 Z" />
+        <path android:fillColor="@color/splash_path" android:fillAlpha="0.55"
+            android:pathData="M46,84 L62,84 L76,108 L32,108 Z" />
+        <path android:fillColor="@color/splash_post"
+            android:pathData="M24,36 Q24,34 26,34 L28,34 Q30,34 30,36 L30,82 Q30,84 28,84 L26,84 Q24,84 24,82 Z" />
+        <path android:fillColor="@color/splash_post"
+            android:pathData="M78,36 Q78,34 80,34 L82,34 Q84,34 84,36 L84,82 Q84,84 82,84 L80,84 Q78,84 78,82 Z" />
+        <path android:fillColor="@color/splash_leaf" android:pathData="M30,40 L46,46 L46,80 L30,82 Z" />
+        <path android:fillColor="@color/splash_leaf" android:pathData="M78,40 L62,46 L62,80 L78,82 Z" />
+    </group>
+</vector>
