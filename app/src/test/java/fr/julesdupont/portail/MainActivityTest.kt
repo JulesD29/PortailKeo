@@ -137,9 +137,11 @@ class MainActivityTest {
     }
 
     @Test
-    fun `pas d'ecran nom et phrase dans l'app normale`() {
-        val a = launch().get()
-        assertEquals(false, a.v(R.id.splashOverlay).shown())
+    fun `animation de demarrage au lancement, pas apres une rotation`() {
+        val c = launch()
+        assertEquals(true, c.get().v(R.id.splashOverlay).shown())
+        c.recreate()
+        assertEquals(false, c.get().v(R.id.splashOverlay).shown())
     }
 
     @Test

@@ -63,8 +63,10 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
 - [ ] Historique : nombre d'appels de la semaine en grand ; journal regroupé par jour avec la frise colorée ; « Tout afficher »
       en bas du journal (puis « Réduire ») ; « Partager » en haut à droite du journal
-- [ ] Démarrage (version de test) : à l'ouverture, les battants du portail s'ouvrent sur fond orange, puis « Portail Keo (test) »
-      et « Arrivez, c'est ouvert » apparaissent avant l'accueil (environ 3,5 s, toucher l'écran passe l'animation) ; pas d'animation après une rotation ni si « Supprimer les animations » est activé
+- [ ] Démarrage : à l'ouverture, les battants du portail s'ouvrent (vert et rose ; orange dans la version de test), puis
+      « Portail Keo » et « Arrivez, c'est ouvert » apparaissent avant l'accueil (environ 3,5 s, toucher l'écran passe
+      l'animation) ; pas d'animation après une rotation ni si « Supprimer les animations » est activé
+- [ ] Icône : portail qui s'ouvre sur fond vert (orange pour la version de test)
 - [ ] Partager le journal : le menu de partage s'ouvre ; le texte reçu commence par « Journal Portail Keo », le numéro
       du portail est masqué (02••••••29) et la position n'apparaît pas
 - [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus

@@ -12,7 +12,7 @@
     <!-- Fond de la pastille d'état (« Actif ») -->
     <color name="status_pill">#FFFFFF</color>
 
-    <color name="ic_bg">#1F6FEB</color>
+    <color name="ic_bg">#0B3722</color>
 
     <color name="md_primary">#0B3722</color>
     <color name="md_onPrimary">#FFFFFF</color>

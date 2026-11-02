@@ -46,6 +46,7 @@ les jours et aux heures que vous choisissez.
 | 📲 **Appel manuel** | Tuile **Ouvrir le portail**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
 | 🎙️ **Commande vocale** | « Ok Google, ouvre Portail » appelle le portail, pratique en conduisant (facultatif). |
 | 📳 **Retour vocal** | Vibration quand l'appel part ; double vibration et « Portail appelé » dans les écouteurs quand il se termine. |
+| 🚪 **Icône et ouverture animée** | Le portail qui s'ouvre, en vert et rose, sur l'écran d'accueil et à chaque ouverture de l'app. |
 | 🌗 **Thème clair ou sombre** | Clair, sombre ou comme le système (Réglages › Apparence), aux couleurs vert et rose de l'app. |
 | 📊 **Historique** | Semaine en cours jour par jour, heure d'arrivée moyenne et journal. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
