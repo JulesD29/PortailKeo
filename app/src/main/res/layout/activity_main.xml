@@ -1152,7 +1152,7 @@
             app:menu="@menu/bottom_nav" />
     </LinearLayout>
 
-    <!-- Animation de démarrage (version de test) : le portail s'ouvre, le nom et la phrase apparaissent. Toucher pour passer. -->
+    <!-- Vidéo d'ouverture (res/raw/ouverture.mp4, sans son) jouée au lancement. Toucher l'écran pour passer. -->
     <FrameLayout
         android:id="@+id/splashOverlay"
         android:layout_width="match_parent"
@@ -1162,36 +1162,11 @@
         android:elevation="16dp"
         android:focusable="true"
         android:visibility="gone">
-        <ImageView
-            android:id="@+id/splashIcon"
-            android:layout_width="288dp"
-            android:layout_height="288dp"
-            android:layout_gravity="center"
-            android:importantForAccessibility="no"
-            android:src="@drawable/splash_icon" />
-        <LinearLayout
-            android:id="@+id/splashTitle"
-            android:layout_width="wrap_content"
+        <VideoView
+            android:id="@+id/splashVideo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:alpha="0"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:translationY="140dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                android:textColor="@color/splash_title"
-                android:textStyle="bold" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/splash_phrase"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="@color/splash_phrase" />
-        </LinearLayout>
+            android:importantForAccessibility="no" />
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

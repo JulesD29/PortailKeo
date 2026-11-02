@@ -24,7 +24,8 @@ Le K de Keo dessiné comme un portail, en trois traits arrondis de même épaiss
   - `ic_launcher_fg` + `ic_bg` : icône de l'app (cercle ou carré arrondi selon le téléphone) ;
   - `ic_launcher_mono` : icône à thème d'Android 13+ (une couleur) ;
   - `ic_notif` : silhouette blanche pour les notifications et la barre d'état ;
-  - `splash_icon` : animation d'ouverture (les battants fermés s'ouvrent, puis le point apparaît) ;
+  - vidéo d'ouverture `res/raw/ouverture.mp4` (sans son) : le K se forme, le point part, puis « Portail Keo ·
+    Arrivez, c'est ouvert » ; l'écran de démarrage d'Android (`splash_icon_closed`) montre sa première image ;
   - version claire (fond rose pâle `#FDCFF4`, pilier vert) pour un fond clair ou un fond d'écran sombre ;
   - version de test : fond orange `#E8710A`, pilier marron `#5A2A00`, battants blancs et crème.
 - Lisible jusqu'à **20 px** : en dessous, utiliser `ic_notif`.
@@ -90,7 +91,7 @@ Chaque écran doit être vérifié dans les deux thèmes.
 3. **Sur fond vert** : texte blanc, rose clair pour une phrase secondaire.
 4. **États** : actif = vert / point rose, pause = jaune olive (tertiary), problème = rouge (error). Le rose ne signale
    jamais une erreur.
-5. **Version de test** : mêmes règles ; l'orange `#E8710A` remplace le vert seulement pour l'icône et l'animation
-   d'ouverture.
+5. **Version de test** : mêmes règles ; l'orange `#E8710A` remplace le vert seulement pour l'icône (la vidéo
+   d'ouverture est la même).
 6. **Icônes** : traits arrondis Material, comme le K d'un trait, qui est l'élément graphique de référence.
 7. **Titres** : courts, en Bold ; un sur-titre en majuscules espacées (`colorSecondary`) peut les précéder.

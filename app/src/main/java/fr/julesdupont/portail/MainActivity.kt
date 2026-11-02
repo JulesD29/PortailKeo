@@ -166,20 +166,25 @@ class MainActivity : AppCompatActivity() {
 
     /** Après l'animation du portail : le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. */
     private fun playSplashIntro() {
-        (b.splashIcon.drawable as? android.graphics.drawable.Animatable)?.start()
-        val shift = Splash.TITLE_SHIFT_DP * resources.displayMetrics.density
-        b.splashTitle.translationY += shift
-        b.splashTitle.animate().alpha(1f).translationYBy(-shift)
-            .setStartDelay(Splash.TITLE_DELAY_MS).setDuration(Splash.TITLE_MS)
-            .setInterpolator(android.view.animation.DecelerateInterpolator())
-        b.splashOverlay.animate().alpha(0f)
-            .setStartDelay(Splash.FADE_DELAY_MS).setDuration(Splash.FADE_MS)
-            .withEndAction { b.splashOverlay.visibility = View.GONE }
-        // Toucher l'écran passe l'animation.
-        b.splashOverlay.setOnClickListener {
-            b.splashOverlay.animate().cancel()
-            b.splashOverlay.animate().alpha(0f).setStartDelay(0).setDuration(150)
-                .withEndAction { b.splashOverlay.visibility = View.GONE }
+        val hide = Runnable { hideSplash(Splash.FADE_MS) }
+        handler.postDelayed(hide, Splash.MAX_MS) // filet de sécurité si la vidéo ne se termine pas
+        b.splashVideo.setOnPreparedListener { mp ->
+            mp.setVolume(0f, 0f) // l'ouverture ne fait jamais de bruit
+            b.splashVideo.start()
+        }
+        b.splashVideo.setOnCompletionListener { handler.removeCallbacks(hide); hideSplash(Splash.FADE_MS) }
+        b.splashVideo.setOnErrorListener { _, _, _ -> handler.removeCallbacks(hide); hideSplash(0); true }
+        b.splashVideo.setVideoURI(android.net.Uri.parse("android.resource://$packageName/${R.raw.ouverture}"))
+        // Toucher l'écran passe la vidéo.
+        b.splashOverlay.setOnClickListener { handler.removeCallbacks(hide); hideSplash(150) }
+    }
+
+    /** Efface la vidéo d'ouverture et laisse place à l'accueil. */
+    private fun hideSplash(durationMs: Long) {
+        if (b.splashOverlay.visibility != View.VISIBLE) return
+        b.splashOverlay.animate().alpha(0f).setDuration(durationMs).withEndAction {
+            b.splashVideo.stopPlayback()
+            b.splashOverlay.visibility = View.GONE
         }
     }
 

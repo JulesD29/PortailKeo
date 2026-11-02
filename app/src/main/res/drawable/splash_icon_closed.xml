@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Écran de démarrage d'Android : le K fermé (battants l'un sur l'autre), à la taille de départ de splash_icon. -->
+<!-- Écran de démarrage d'Android : le pilier du K sur sa tuile, comme la première image de la vidéo d'ouverture. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="288dp" android:height="288dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <group android:pivotX="54" android:pivotY="54" android:scaleX="0.81" android:scaleY="0.81">
-        <path android:strokeColor="@color/splash_post" android:strokeWidth="12" android:strokeLineCap="round"
-            android:pathData="M36,30 L36,78" />
-        <path android:strokeColor="@color/splash_leaf" android:strokeWidth="12" android:strokeLineCap="round"
-            android:pathData="M53,54 L78.5,54" />
-    </group>
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.1"
+        android:pathData="M38,30 h32 a12,12 0 0 1 12,12 v24 a12,12 0 0 1 -12,12 h-32 a12,12 0 0 1 -12,-12 v-24 a12,12 0 0 1 12,-12 z" />
+    <path android:strokeColor="@color/splash_post" android:strokeWidth="7" android:strokeLineCap="round"
+        android:pathData="M47,42 L47,66" />
 </vector>
