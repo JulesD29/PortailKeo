@@ -7,7 +7,8 @@ mkdir -p "$OUT"
 adb install -g app/build/outputs/apk/debug/app-debug.apk
 adb shell settings put global window_animation_scale 1
 adb shell settings put global transition_animation_scale 1
-adb shell settings put global animator_duration_scale 1
+# Animations du code ralenties ×10 : le téléphone virtuel est trop lent pour filmer un mouvement de 0,6 s.
+adb shell settings put global animator_duration_scale 10
 adb shell wm size > "$OUT/ecran.txt"; adb shell wm density >> "$OUT/ecran.txt"
 TODAY=$(date +%F)
 # Premier lancement « à vide » puis compilation complète : le téléphone virtuel est lent au premier démarrage.
@@ -35,7 +36,7 @@ XML
   adb shell input keyevent KEYCODE_HOME
   sleep 3
   adb logcat -c
-  adb shell screenrecord --time-limit 30 --bit-rate 8000000 /sdcard/ouverture.mp4 &
+  adb shell screenrecord --time-limit 45 --bit-rate 8000000 /sdcard/ouverture.mp4 &
   REC=$!
   sleep 1
   adb shell am start -W -n $PKG/.MainActivity
