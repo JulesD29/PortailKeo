@@ -174,6 +174,8 @@ class MainActivity : AppCompatActivity() {
         }
         b.splashVideo.setOnCompletionListener { handler.removeCallbacks(hide); hideSplash(Splash.FADE_MS) }
         b.splashVideo.setOnErrorListener { _, _, _ -> handler.removeCallbacks(hide); hideSplash(0); true }
+        // La vidéo est muette : ne pas prendre le son, sinon Android met en pause la musique des écouteurs.
+        b.splashVideo.setAudioFocusRequest(android.media.AudioManager.AUDIOFOCUS_NONE)
         b.splashVideo.setVideoURI(android.net.Uri.parse("android.resource://$packageName/${R.raw.ouverture}"))
         // Toucher l'écran passe la vidéo.
         b.splashOverlay.setOnClickListener { handler.removeCallbacks(hide); hideSplash(150) }
