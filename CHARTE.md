@@ -26,7 +26,8 @@ Le K de Keo dessiné comme un portail, en trois traits arrondis de même épaiss
   - `ic_notif` : silhouette blanche pour les notifications et la barre d'état ;
   - vidéo d'ouverture `res/raw/ouverture.mp4` (sans son) : le K se forme, le point part, puis « Portail Keo ·
     Arrivez, c'est ouvert » ; l'écran de démarrage d'Android (`splash_icon_closed`) reproduit sa première image
-    (`ouverture_debut`) à la même taille et au même endroit, pour un enchaînement sans saut ;
+    (`ouverture_debut`) à la même taille et au même endroit, pour un enchaînement sans saut ; à la fin, le K
+    descend en 0,6 s se poser sur celui du bouton « Ouvrir le portail » pendant que la vidéo s'efface ;
   - version claire (fond rose pâle `#FDCFF4`, pilier vert) pour un fond clair ou un fond d'écran sombre ;
   - version de test : fond orange `#E8710A`, pilier marron `#5A2A00`, battants blancs et crème.
 - Lisible jusqu'à **20 px** : en dessous, utiliser `ic_notif`.

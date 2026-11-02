@@ -34,5 +34,21 @@ class SplashTest {
     }
 
     @Test
+    fun `le K de la fin de la video est place sur la video a l'ecran`() {
+        val k = Splash.endK(videoLeft = 100f, videoTop = 50f, pxPerVideoPx = 0.5f)
+        assertEquals(100f + 108.7f, k[0], 0.01f)
+        assertEquals(50f + 175.3f, k[1], 0.01f)
+        assertEquals(135.9f, k[2], 0.01f)
+        // Pilier du K (x = 36 unités sur 108) mesuré à 308 px dans la dernière image.
+        assertEquals(308f, Splash.END_K_LEFT_PX + 36f / 108f * Splash.END_K_SIZE_PX, 0.5f)
+    }
+
+    @Test
+    fun `le K arrive avant que l'utilisateur s'impatiente`() {
+        assertTrue(Splash.FLY_MS in 300L..900L)
+        assertTrue(Splash.PULSE_SCALE in 1f..1.1f)
+    }
+
+    @Test
     fun `filet de securite plus long que la video de 5 s`() = assertTrue(Splash.MAX_MS > 5_000L)
 }

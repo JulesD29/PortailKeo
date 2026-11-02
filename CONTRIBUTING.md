@@ -64,7 +64,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Historique : nombre d'appels de la semaine en grand ; journal regroupé par jour avec la frise colorée ; « Tout afficher »
       en bas du journal (puis « Réduire ») ; « Partager » en haut à droite du journal
 - [ ] Ouverture : à chaque lancement, la vidéo d'ouverture (le K se forme, « Portail Keo · Arrivez, c'est ouvert ») se joue
-      sans son puis laisse place à l'accueil, sans saut ni retour en arrière après l'écran de démarrage ; toucher l'écran la passe ; pas de vidéo après une rotation ni si
+      sans son puis laisse place à l'accueil, sans saut ni retour en arrière après l'écran de démarrage ;
+      à la fin, le K descend se poser sur celui du bouton « Ouvrir le portail », qui pulse (simple fondu si un appel est en cours) ; toucher l'écran la passe ; pas de vidéo après une rotation ni si
       « Supprimer les animations » est activé
 - [ ] Logo « K d'un trait » : icône de l'app (vert ; orange pour la version de test), icône à thème d'Android 13+,
       icône des notifications, en-tête de l'accueil et gros bouton
@@ -131,7 +132,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
 | `AppThemeTest` | Thème : comme le système par défaut, choix enregistré, appliqué à toute l'app |
 | `CharteTest` | Charte : couleurs de la marque et rôles principaux, police Be Vietnam Pro, logo et icônes, « Keo » en accent |
-| `SplashTest` | Ouverture : vidéo seulement au lancement et animations actives, vidéo, première image et écran de démarrage présents, tuile de la vidéo à la taille de celle de l'écran de démarrage |
+| `SplashTest` | Ouverture : vidéo seulement au lancement et animations actives, vidéo, première image et écran de démarrage présents, tuile de la vidéo à la taille de celle de l'écran de démarrage, position du K de la fin de la vidéo |
 | `LogShareTest` | Partage du journal : numéros masqués (2 premiers et 2 derniers chiffres), contexte (version, réglages, autorisations), jamais la position |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |

@@ -20,7 +20,8 @@ class WhatsNewTest {
         assertTrue(WhatsNew.toShow(5).all { it.edition >= 6 })
         assertTrue(WhatsNew.toShow(6).all { it.edition >= 7 })
         assertTrue(WhatsNew.toShow(7).all { it.edition >= 8 })
-        assertTrue(WhatsNew.toShow(8).all { it.edition == 9 })
+        assertTrue(WhatsNew.toShow(8).all { it.edition >= 9 })
+        assertTrue(WhatsNew.toShow(9).all { it.edition == 10 })
     }
 
     @Test
