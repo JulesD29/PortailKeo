@@ -191,8 +191,8 @@
                             app:icon="@drawable/ic_gate_open"
                             app:iconTint="@null"
                             app:iconGravity="textTop"
-                            app:iconPadding="10dp"
-                            app:iconSize="48dp" />
+                            app:iconPadding="6dp"
+                            app:iconSize="72dp" />
                         </FrameLayout>
                         <TextView
                             android:layout_width="wrap_content"
@@ -327,7 +327,7 @@
                         android:orientation="horizontal">
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnPause"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/HomeButton"
                             android:layout_width="0dp"
                             android:layout_height="56dp"
                             android:layout_marginEnd="6dp"
@@ -337,7 +337,7 @@
                             app:iconGravity="textStart" />
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnResume"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/HomeButton"
                             android:layout_width="0dp"
                             android:layout_height="56dp"
                             android:layout_marginEnd="6dp"
@@ -348,7 +348,7 @@
                             app:iconGravity="textStart" />
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnHomeMap"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/HomeButton"
                             android:layout_width="0dp"
                             android:layout_height="56dp"
                             android:layout_marginStart="6dp"
@@ -362,6 +362,7 @@
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/cardLastCall"
                         style="@style/SectionCard"
+                        app:cardBackgroundColor="?attr/colorSurfaceContainer"
                         android:clickable="true"
                         android:focusable="true"
                         app:cardCornerRadius="20dp"
@@ -375,11 +376,11 @@
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
                                 android:background="@drawable/bg_circle"
-                                android:backgroundTint="?attr/colorPrimaryContainer"
+                                android:backgroundTint="?attr/colorSecondaryContainer"
                                 android:importantForAccessibility="no"
                                 android:padding="9dp"
                                 android:src="@drawable/ic_history"
-                                app:tint="?attr/colorOnPrimaryContainer" />
+                                app:tint="?attr/colorOnSecondaryContainer" />
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

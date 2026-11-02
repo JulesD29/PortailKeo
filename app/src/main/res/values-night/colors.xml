@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Charte graphique Portail Keo (CHARTE.md) — mode sombre. -->
 <resources>
+    <color name="status_pill">#16201A</color>
     <color name="md_primary">#8FD9A8</color>
     <color name="md_onPrimary">#00391F</color>
     <color name="md_primaryContainer">#0B3722</color>

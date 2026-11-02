@@ -821,7 +821,7 @@ class MainActivity : AppCompatActivity() {
         val fg = MaterialColors.getColor(b.cardStatus, fgAttr)
         val surface = MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorSurface)
         b.cardStatus.setCardBackgroundColor(bg)
-        b.statusPill.backgroundTintList = ColorStateList.valueOf(surface)
+        b.statusPill.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.status_pill))
         b.txtStatusTitle.setTextColor(MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorOnSurface))
         b.statusDot.backgroundTintList = ColorStateList.valueOf(dot)
         b.switchEnabled.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(surface, 0x99))
