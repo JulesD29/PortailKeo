@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Nom de l'app et phrase sous l'icône après l'animation de démarrage (version de test pour l'instant). -->
-    <bool name="splash_intro">false</bool>
+    <!-- Animation de démarrage complète : le portail s'ouvre, puis le nom et la phrase. -->
+    <bool name="splash_intro">true</bool>
 </resources>

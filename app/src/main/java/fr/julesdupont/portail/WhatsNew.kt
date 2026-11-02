@@ -5,7 +5,7 @@ object WhatsNew {
     data class Item(val edition: Int, val title: String, val text: String)
 
     /** À incrémenter quand on ajoute des nouveautés à présenter. */
-    const val CURRENT = 8
+    const val CURRENT = 9
 
     val items = listOf(
         Item(1, "Portail sur une carte", "Placez le portail et réglez les deux zones directement sur la carte."),
@@ -23,6 +23,7 @@ object WhatsNew {
         Item(7, "Historique plus lisible", "Le nombre d'appels de la semaine en grand, et le journal regroupé par jour avec une frise colorée. « Tout afficher » est en bas du journal."),
         Item(8, "Nouvelles couleurs", "Vert et rose, inspirés de l'icône du portail qui s'ouvre, avec une nouvelle police. Les couleurs ne changent plus avec le fond d'écran."),
         Item(8, "Thème clair ou sombre", "Réglages › Apparence : clair, sombre ou comme le système."),
+        Item(9, "Nouvelle icône et ouverture animée", "Le portail qui s'ouvre, en vert et rose : sur l'écran d'accueil du téléphone et à chaque ouverture de l'app (touchez l'écran pour passer l'animation)."),
     )
 
     /** Nouveautés pas encore vues. */

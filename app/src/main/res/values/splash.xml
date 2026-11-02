@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Écran de démarrage. App normale : écran par défaut (fond de l'app, icône de l'app).
-  La version de test remplace ce thème par l'animation « le portail s'ouvre » (src/beta/res/values/splash.xml).
+  Écran de démarrage : le portail s'ouvre (splash_icon_closed puis splash_icon, joués par MainActivity / Splash),
+  puis « Portail Keo » et la phrase. La version de test remplace les couleurs par l'orange (src/beta/res/values/splash.xml).
 -->
 <resources>
     <string name="splash_phrase">Arrivez, c\'est ouvert</string>
@@ -15,8 +15,8 @@
     <color name="splash_phrase">#FCB1EC</color>
 
     <style name="Theme.PortailAuto.Starting" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">@color/md_background</item>
-        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="windowSplashScreenBackground">@color/splash_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_closed</item>
         <item name="postSplashScreenTheme">@style/Theme.PortailAuto</item>
     </style>
 </resources>
