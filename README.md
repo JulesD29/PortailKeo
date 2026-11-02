@@ -46,6 +46,7 @@ and at the times you choose. The app interface is in French.
 | 🎙️ **Voice command** | "Ok Google, ouvre Portail" calls the gate — handy while driving (optional). |
 | 📳 **Voice feedback** | Vibration when the call starts; double vibration and "Portail appelé" in your earbuds when it ends. |
 | 🏠 **Three tabs** | **Accueil** (status, big button to open the gate, live call tracking), **Réglages** grouped by topic, **Historique**. |
+| 🌗 **Light or dark theme** | Light, dark or follow the system (Réglages › Apparence), in the app's green and pink colours. |
 | 📊 **History** | This week day by day, average arrival time and the log. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
 | 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the **Historique** tab (about two weeks). **Partager** sends it with your settings, gate number masked and no location. |
@@ -174,6 +175,9 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Gate line busy (someone calls it at the same time) | By default the app stops there: the gate is usually already open. Enable **Rappeler si le portail est occupé** to retry 15 s later (up to 3 attempts). |
 | Tile shows no label | Expand the full shade, or enlarge the tile (Android 16). |
 | "Mise à jour refusée : signature différente" | Uninstall the app, then install the latest APK manually. |
+
+## Design guidelines
+Colours, typeface and usage rules (in French): [CHARTE.md](CHARTE.md).
 
 ## Building from source
 

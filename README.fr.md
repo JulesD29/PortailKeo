@@ -46,6 +46,7 @@ les jours et aux heures que vous choisissez.
 | 📲 **Appel manuel** | Tuile **Ouvrir le portail**, widget d'écran d'accueil et raccourci (appui long sur l'icône). |
 | 🎙️ **Commande vocale** | « Ok Google, ouvre Portail » appelle le portail, pratique en conduisant (facultatif). |
 | 📳 **Retour vocal** | Vibration quand l'appel part ; double vibration et « Portail appelé » dans les écouteurs quand il se termine. |
+| 🌗 **Thème clair ou sombre** | Clair, sombre ou comme le système (Réglages › Apparence), aux couleurs vert et rose de l'app. |
 | 📊 **Historique** | Semaine en cours jour par jour, heure d'arrivée moyenne et journal. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
 | 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'onglet **Historique** (environ deux semaines). **Partager** l'envoie avec vos réglages, numéro du portail masqué et sans la position. |
@@ -182,6 +183,9 @@ installer des applis.
 | Ligne du portail occupée (quelqu'un l'appelle en même temps) | Par défaut l'app s'arrête là : le portail est souvent déjà ouvert. Cochez **Rappeler si le portail est occupé** pour rappeler 15 s plus tard (jusqu'à 3 essais). |
 | Tuile sans texte | Ouvrez le volet complet, ou agrandissez la tuile (Android 16). |
 | « Mise à jour refusée : signature différente » | Désinstallez l'app, puis installez le dernier APK à la main. |
+
+## Charte graphique
+Couleurs, police et règles d'usage de l'app : [CHARTE.md](CHARTE.md).
 
 ## Compiler depuis les sources
 

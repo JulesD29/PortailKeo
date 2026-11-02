@@ -20,6 +20,9 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import android.animation.ValueAnimator
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationServices
@@ -107,6 +110,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splash = installSplashScreen() // avant super.onCreate : écran de démarrage (animé dans la version de test)
         super.onCreate(savedInstanceState)
         prefs = Prefs(this)
         // Premier lancement : assistant (sauf si l'app est ouverte par un QR code de configuration).
@@ -117,6 +121,7 @@ class MainActivity : AppCompatActivity() {
         }
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
+        b.btnOpenGate.iconTint = null // icône du portail en couleurs (charte)
 
         dayLabels.forEachIndexed { i, label ->
             b.chipDays.addView(Chip(this).apply {
@@ -127,6 +132,14 @@ class MainActivity : AppCompatActivity() {
                 id = 1000 + i + 1 // 1 = lundi … 7 = dimanche
                 setOnCheckedChangeListener { chip, _ -> onDaysChanged(chip as Chip) }
             })
+        }
+        if (Splash.showIntro(resources.getBoolean(R.bool.splash_intro), savedInstanceState == null,
+                ValueAnimator.areAnimatorsEnabled())) {
+            b.splashOverlay.visibility = View.VISIBLE
+            splash.setOnExitAnimationListener { provider ->
+                provider.remove()
+                playSplashIntro()
+            }
         }
         loadForm()
         setupListeners()
@@ -139,15 +152,40 @@ class MainActivity : AppCompatActivity() {
                 else -> R.id.navHome
             }
         }
+        // Après un changement de thème (écran recréé) : rester sur la page du réglage ouverte.
+        savedInstanceState?.getInt(STATE_SECTION)?.takeIf { it != 0 }?.let { id ->
+            sections.firstOrNull { it.id == id }?.let { openDetail(it, savedInstanceState.getString(STATE_SECTION_TITLE).orEmpty()) }
+        }
         configLink(intent)?.let { importConfig(it) }
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
         else showWhatsNewIfNeeded()
     }
 
+    /** Après l'animation du portail : le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. */
+    private fun playSplashIntro() {
+        (b.splashIcon.drawable as? android.graphics.drawable.Animatable)?.start()
+        val shift = Splash.TITLE_SHIFT_DP * resources.displayMetrics.density
+        b.splashTitle.translationY += shift
+        b.splashTitle.animate().alpha(1f).translationYBy(-shift)
+            .setStartDelay(Splash.TITLE_DELAY_MS).setDuration(Splash.TITLE_MS)
+            .setInterpolator(android.view.animation.DecelerateInterpolator())
+        b.splashOverlay.animate().alpha(0f)
+            .setStartDelay(Splash.FADE_DELAY_MS).setDuration(Splash.FADE_MS)
+            .withEndAction { b.splashOverlay.visibility = View.GONE }
+        // Toucher l'écran passe l'animation.
+        b.splashOverlay.setOnClickListener {
+            b.splashOverlay.animate().cancel()
+            b.splashOverlay.animate().alpha(0f).setStartDelay(0).setDuration(150)
+                .withEndAction { b.splashOverlay.visibility = View.GONE }
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(STATE_TAB, tab.name)
+        outState.putInt(STATE_SECTION, openSection?.id ?: 0)
+        outState.putString(STATE_SECTION_TITLE, b.detailToolbar.title?.toString())
     }
 
     /** « Quoi de neuf » une seule fois après une mise à jour qui apporte des nouveautés. */
@@ -347,7 +385,7 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- Onglets et pages des réglages ----------
 
-    private val sections get() = listOf(b.secPortal, b.secSchedule, b.secCall, b.secFeedback, b.secVoice,
+    private val sections get() = listOf(b.secPortal, b.secSchedule, b.secCall, b.secFeedback, b.secVoice, b.secTheme,
         b.secShare, b.testTools, b.secAbout)
 
     private fun setupNavigation() {
@@ -382,8 +420,28 @@ class MainActivity : AppCompatActivity() {
         }
         row(b.rowTest, R.drawable.ic_build, "Outils de test") { openDetail(b.testTools, "Outils de test") }
         b.rowTest.root.visibility = if (TestTools.enabled) View.VISIBLE else View.GONE
+        row(b.rowTheme, R.drawable.ic_contrast, "Apparence") { openDetail(b.secTheme, "Apparence") }
         row(b.rowAbout, R.drawable.ic_info, "À propos et mises à jour") { openDetail(b.secAbout, "À propos") }
+        b.toggleTheme.check(themeButton(prefs.theme))
+        b.toggleTheme.addOnButtonCheckedListener { _, id, checked ->
+            if (!checked) return@addOnButtonCheckedListener
+            val mode = when (id) {
+                R.id.btnThemeLight -> AppTheme.Mode.LIGHT
+                R.id.btnThemeDark -> AppTheme.Mode.DARK
+                else -> AppTheme.Mode.SYSTEM
+            }
+            if (mode == prefs.theme) return@addOnButtonCheckedListener
+            prefs.theme = mode
+            b.rowTheme.rowSubtitle.text = mode.label
+            AppTheme.apply(mode)
+        }
         showTab(Tab.HOME)
+    }
+
+    private fun themeButton(mode: AppTheme.Mode) = when (mode) {
+        AppTheme.Mode.LIGHT -> R.id.btnThemeLight
+        AppTheme.Mode.DARK -> R.id.btnThemeDark
+        AppTheme.Mode.SYSTEM -> R.id.btnThemeSystem
     }
 
     private fun row(r: RowSettingBinding, icon: Int, title: String, onClick: () -> Unit) {
@@ -752,7 +810,7 @@ class MainActivity : AppCompatActivity() {
                 com.google.android.material.R.attr.colorErrorContainer to com.google.android.material.R.attr.colorOnErrorContainer
         }
         val dot = when (status.level) {
-            Dashboard.Level.ACTIVE -> STATUS_GREEN
+            Dashboard.Level.ACTIVE -> ContextCompat.getColor(this, R.color.brand_pink)
             Dashboard.Level.CALLED -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorPrimary)
             Dashboard.Level.PAUSED -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorTertiary)
             Dashboard.Level.OFF -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorOutline)
@@ -763,7 +821,7 @@ class MainActivity : AppCompatActivity() {
         val fg = MaterialColors.getColor(b.cardStatus, fgAttr)
         val surface = MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorSurface)
         b.cardStatus.setCardBackgroundColor(bg)
-        b.statusPill.backgroundTintList = ColorStateList.valueOf(surface)
+        b.statusPill.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.status_pill))
         b.txtStatusTitle.setTextColor(MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorOnSurface))
         b.statusDot.backgroundTintList = ColorStateList.valueOf(dot)
         b.switchEnabled.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(surface, 0x99))
@@ -820,6 +878,7 @@ class MainActivity : AppCompatActivity() {
         b.rowPerms.rowSubtitle.text = Summaries.permissions(missing.size)
         b.rowPerms.rowIcon.setImageResource(if (missing.isEmpty()) R.drawable.ic_check_circle else R.drawable.ic_warning)
         b.rowTest.rowSubtitle.text = "Simuler l'arrivée, réinitialiser l'appel du jour…"
+        b.rowTheme.rowSubtitle.text = prefs.theme.label
         b.rowAbout.rowSubtitle.text = "Version ${Updater.currentVersionName(this)} · Quoi de neuf"
 
         if (tab == Tab.HISTORY) refreshHistory()
@@ -885,7 +944,7 @@ class MainActivity : AppCompatActivity() {
             row.logTime.text = e.time
             row.logMessage.text = e.message
             val dot = when (Journal.kind(e.message)) {
-                Journal.Kind.OK -> STATUS_GREEN
+                Journal.Kind.OK -> ContextCompat.getColor(this, R.color.brand_pink)
                 Journal.Kind.CALL -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorPrimary)
                 Journal.Kind.PROBLEM -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorError)
                 Journal.Kind.INFO -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorOutline)
@@ -955,8 +1014,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val STATE_TAB = "tab"
+        private const val STATE_SECTION = "section"
+        private const val STATE_SECTION_TITLE = "sectionTitle"
         private const val LOG_PREVIEW = 8
-        /** Pastille « Actif » : vert lisible en mode clair comme en mode sombre. */
-        private const val STATUS_GREEN = 0xFF34A853.toInt()
     }
 }

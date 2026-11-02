@@ -1,12 +1,14 @@
 package fr.julesdupont.portail
 
 import android.app.Application
-import com.google.android.material.color.DynamicColors
 
-/** Applique les couleurs Material You du fond d'écran (Android 12+), sinon la palette bleue de l'app. */
+/**
+ * Application. Les couleurs sont celles de la charte (CHARTE.md, colors.xml en clair et en sombre) :
+ * les couleurs Material You du fond d'écran ne sont volontairement pas appliquées.
+ */
 class PortalApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        DynamicColors.applyToActivitiesIfAvailable(this)
+        AppTheme.apply(Prefs(this).theme) // thème choisi dans Réglages › Apparence
     }
 }

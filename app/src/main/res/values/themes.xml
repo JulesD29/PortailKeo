@@ -23,7 +23,103 @@
         <item name="colorSurfaceContainerHigh">@color/md_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_surfaceContainerHighest</item>
         <item name="materialCardViewStyle">@style/Widget.Material3.CardView.Filled</item>
+        <!-- Charte : police Be Vietnam Pro partout (CHARTE.md) -->
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.PortailKeo.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.PortailKeo.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.PortailKeo.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.PortailKeo.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.PortailKeo.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.PortailKeo.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.PortailKeo.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.PortailKeo.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.PortailKeo.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.PortailKeo.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.PortailKeo.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.PortailKeo.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.PortailKeo.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.PortailKeo.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.PortailKeo.LabelSmall</item>
     </style>
+
+    <!-- Niveaux de texte de la charte : ceux de Material 3, en Be Vietnam Pro -->
+    <style name="TextAppearance.PortailKeo.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">700</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.BodySmall" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">600</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+    <style name="TextAppearance.PortailKeo.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/be_vietnam_pro</item>
+        <item name="fontFamily">@font/be_vietnam_pro</item>
+        <item name="android:textFontWeight">500</item>
+    </style>
+
 
     <!-- Carte de section de l'écran principal -->
     <style name="SectionCard" parent="Widget.Material3.CardView.Filled">
@@ -60,6 +156,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
     </style>
+    <!-- Boutons de l'accueil (Pause, Voir la zone) : vert clair en clair, vert portail en sombre (charte) -->
+    <style name="HomeButton" parent="Widget.Material3.Button.TonalButton">
+        <item name="backgroundTint">?attr/colorPrimaryContainer</item>
+        <item name="android:textColor">?attr/colorOnPrimaryContainer</item>
+        <item name="iconTint">?attr/colorOnPrimaryContainer</item>
+    </style>
+
     <!-- Titre de page (Accueil, Réglages, Historique) -->
     <style name="PageTitle">
         <item name="android:layout_width">match_parent</item>

@@ -18,12 +18,17 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 - Mettre à jour le tableau des tests dans `CONTRIBUTING.md` et les README (EN + FR) si besoin.
 
 ## Version de test
-- Build type `beta` : `fr.julesdupont.portail.test`, nom « Portail Keo (test) », icône orange
+- Build type `beta` : `fr.julesdupont.portail.test`, nom « Portail Keo (test) », icône orange « portail qui s'ouvre »
   (`app/src/beta/res`), `BuildConfig.TEST_BUILD = true` → `TestTools` visibles ; mises à jour sur demande
   depuis la pré-release `test` (nom « Test 1.N » = versionCode), jamais automatiques.
 - Publiée à chaque push sur develop en pré-release `test` (asset `PortailKeo-test.apk`).
 - Nouvelle fonctionnalité → ajouter si utile un outil de simulation dans `TestTools` + une ligne
   dans la checklist de tests fonctionnels de `CONTRIBUTING.md`.
+
+## Charte graphique
+- Tout écran ou composant suit **`CHARTE.md`** : rôles Material 3 de `colors.xml` (jamais de couleur en dur, sauf
+  `brand_green`, `brand_pink`, `brand_pink_light`), police Be Vietnam Pro via le thème, rayons 28 / 24 / 16 / complet,
+  rose = accent seulement. Couleurs fixes : pas de Material You.
 
 ## Écrans
 - Premier lancement : `SetupActivity` (étapes dans `SetupWizard`, logique pure) si `!prefs.setupDone`.

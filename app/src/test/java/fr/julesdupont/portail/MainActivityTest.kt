@@ -135,4 +135,29 @@ class MainActivityTest {
         assertEquals("Réduire", more.text.toString())
         assertEquals("en-tête + 12 événements", 13, list.childCount)
     }
+
+    @Test
+    fun `pas d'ecran nom et phrase dans l'app normale`() {
+        val a = launch().get()
+        assertEquals(false, a.v(R.id.splashOverlay).shown())
+    }
+
+    @Test
+    fun `page apparence choix du theme`() {
+        val a = launch().get()
+        a.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+            .selectedItemId = R.id.navSettings
+        val subtitle = a.v(R.id.rowTheme).findViewById<android.widget.TextView>(R.id.rowSubtitle)
+        assertEquals("Comme le système", subtitle.text.toString())
+        a.v(R.id.rowTheme).performClick()
+        assertEquals(true, a.v(R.id.secTheme).shown())
+        val group = a.findViewById<com.google.android.material.button.MaterialButtonToggleGroup>(R.id.toggleTheme)
+        assertEquals(R.id.btnThemeSystem, group.checkedButtonId)
+        group.check(R.id.btnThemeDark)
+        assertEquals(AppTheme.Mode.DARK, Prefs(app).theme)
+        assertEquals(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES,
+            androidx.appcompat.app.AppCompatDelegate.getDefaultNightMode())
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(
+            androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    }
 }

@@ -116,6 +116,11 @@ class Prefs(context: Context) {
         get() = sp.getInt("lastSeenWhatsNew", 0)
         set(v) = sp.edit().putInt("lastSeenWhatsNew", v).apply()
 
+    /** Thème : clair, sombre ou comme le système (par défaut). */
+    var theme: AppTheme.Mode
+        get() = AppTheme.parse(sp.getString("theme", null))
+        set(v) = sp.edit().putString("theme", v.name).apply()
+
     /** Appels automatiques passés (voir History). */
     var history: String
         get() = sp.getString("history", "") ?: ""
