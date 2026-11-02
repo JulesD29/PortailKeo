@@ -126,7 +126,12 @@ class Prefs(context: Context) {
     @Synchronized
     fun log(message: String) {
         val stamp = AppClock.now().format(DateTimeFormatter.ofPattern("dd/MM HH:mm:ss"))
-        val lines = ("$stamp  $message\n" + logText).lines().filter { it.isNotBlank() }.take(40)
+        val lines = ("$stamp  $message\n" + logText).lines().filter { it.isNotBlank() }.take(LOG_MAX)
         sp.edit().putString("log", lines.joinToString("\n")).apply()
+    }
+
+    companion object {
+        /** Nombre de lignes gardées dans le journal (environ une à deux semaines). */
+        const val LOG_MAX = 200
     }
 }

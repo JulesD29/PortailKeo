@@ -99,4 +99,21 @@ class MainActivityTest {
         assertEquals("lun → ven", 5, a.findViewById<android.widget.LinearLayout>(R.id.weekRow).childCount)
         assertEquals(1, a.findViewById<android.widget.LinearLayout>(R.id.logList).childCount)
     }
+
+    @Test
+    fun `partage du journal numero masque`() {
+        Prefs(app).log("Appel manuel lancé vers ${TestSupport.PHONE}")
+        val a = launch().get()
+        a.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+            .selectedItemId = R.id.navHistory
+        a.findViewById<View>(R.id.btnLogShare).performClick()
+        val chooser = org.robolectric.Shadows.shadowOf(a).nextStartedActivity
+        assertEquals(android.content.Intent.ACTION_CHOOSER, chooser.action)
+        @Suppress("DEPRECATION")
+        val send = chooser.getParcelableExtra<android.content.Intent>(android.content.Intent.EXTRA_INTENT)!!
+        val text = send.getStringExtra(android.content.Intent.EXTRA_TEXT)!!
+        org.junit.Assert.assertTrue(text.startsWith("Journal Portail Keo"))
+        org.junit.Assert.assertTrue(text.contains("Appel manuel lancé vers 06••••••44"))
+        org.junit.Assert.assertTrue("numéro jamais en clair", !text.contains(TestSupport.PHONE))
+    }
 }

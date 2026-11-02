@@ -327,6 +327,7 @@ class MainActivity : AppCompatActivity() {
         b.btnScanQr.setOnClickListener { ConfigImport.scan(this) { importConfig(it) } }
         b.btnWizard.setOnClickListener { startActivity(SetupActivity.intent(this)) }
         b.btnLogMore.setOnClickListener { logExpanded = !logExpanded; refreshHistory() }
+        b.btnLogShare.setOnClickListener { shareLog() }
         b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
         b.btnWhatsNew.setOnClickListener { showWhatsNew(WhatsNew.items.filter { it.edition == WhatsNew.CURRENT }) }
         b.btnLiveAction.setOnClickListener {
@@ -880,6 +881,41 @@ class MainActivity : AppCompatActivity() {
         }
         b.btnLogMore.visibility = if (entries.size > LOG_PREVIEW) View.VISIBLE else View.GONE
         b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${entries.size})"
+    }
+
+    /** Partage du journal (texte, numéros masqués, sans la position) via le menu de partage d'Android. */
+    private fun shareLog() {
+        val permsOk = Perms.fineLocation(this) && Perms.backgroundLocation(this) && Perms.call(this)
+        val status = Dashboard.status(prefs.toRuleConfig(), prefs.hasLocation && prefs.phone.isNotBlank(),
+            permsOk, AppClock.now())
+        val text = LogShare.text(LogShare.Info(
+            versionName = Updater.currentVersionName(this),
+            testBuild = TestTools.enabled,
+            device = "${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL}",
+            androidVersion = Build.VERSION.RELEASE ?: "?",
+            now = AppClock.now(),
+            statusTitle = status.title,
+            enabled = prefs.enabled,
+            days = prefs.days,
+            startMinutes = prefs.startMinutes,
+            endMinutes = prefs.endMinutes,
+            skipHolidays = prefs.skipHolidays,
+            hasLocation = prefs.hasLocation,
+            radius = prefs.radius,
+            twoStage = prefs.twoStage,
+            approachRadius = prefs.approachRadius,
+            countdownSeconds = prefs.countdownSeconds,
+            hangupSeconds = prefs.hangupSeconds,
+            retryIfBusy = prefs.retryIfBusy,
+            missingPermissions = missingPermissions().map { it.removePrefix("• ") },
+            calls = History.parse(prefs.history),
+            log = prefs.logText,
+        ))
+        val send = Intent(Intent.ACTION_SEND)
+            .setType("text/plain")
+            .putExtra(Intent.EXTRA_SUBJECT, "Journal ${getString(R.string.app_name)}")
+            .putExtra(Intent.EXTRA_TEXT, text)
+        startActivity(Intent.createChooser(send, "Partager le journal"))
     }
 
     private fun basePermissionsOk() = Perms.fineLocation(this) && Perms.backgroundLocation(this) && Perms.call(this) &&

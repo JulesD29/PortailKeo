@@ -48,7 +48,7 @@ les jours et aux heures que vous choisissez.
 | 📳 **Retour vocal** | Vibration quand l'appel part ; double vibration et « Portail appelé » dans les écouteurs quand il se termine. |
 | 📊 **Historique** | Semaine en cours jour par jour, heure d'arrivée moyenne et journal. |
 | 🔄 **Mises à jour automatiques** | L'app consulte les Releases GitHub et installe elle-même les nouvelles versions. |
-| 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'onglet **Historique**. |
+| 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'onglet **Historique** (environ deux semaines). **Partager** l'envoie avec vos réglages, numéro du portail masqué et sans la position. |
 
 ## Installation
 
@@ -173,7 +173,7 @@ installer des applis.
 
 | Problème | Solution |
 |---|---|
-| Pas d'appel à l'arrivée | Regardez le **Journal** (onglet Historique) : elle indique si la zone a été détectée et pourquoi l'appel n'est pas parti. |
+| Pas d'appel à l'arrivée | Regardez le **Journal** (onglet Historique) : il indique si la zone a été détectée et pourquoi l'appel n'est pas parti. Pour demander de l'aide, touchez **Partager** à côté du journal. |
 | Appel trop tardif | Augmentez le **rayon** de la zone du portail ou la **zone d'approche**. |
 | « ✗ Localisation « Toujours autoriser » manquante » | *Paramètres › Applis › Portail Keo › Autorisations › Position › Toujours autoriser*. |
 | Rien ne se passe en arrière-plan | Désactivez l'optimisation batterie / mettez l'app en **Sans restriction**. |

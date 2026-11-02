@@ -993,6 +993,13 @@
                             android:text="Journal"
                             android:textAppearance="?attr/textAppearanceTitleMedium" />
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnLogShare"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Partager"
+                            app:icon="@drawable/ic_share" />
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnLogMore"
                             style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="wrap_content"
