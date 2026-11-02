@@ -39,11 +39,33 @@
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            style="@style/PageTitle"
+                        <!-- Logo complet : le K d'un trait + « Portail Keo » (CHARTE.md) -->
+                        <LinearLayout
                             android:layout_width="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/app_name" />
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="4dp"
+                            android:paddingTop="20dp"
+                            android:paddingBottom="8dp">
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:background="@drawable/bg_logo_tile"
+                                android:importantForAccessibility="no"
+                                android:padding="3dp"
+                                android:src="@drawable/ic_logo_k" />
+                            <TextView
+                                android:id="@+id/txtHomeTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="12dp"
+                                android:text="@string/app_name"
+                                android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                                android:textColor="?attr/colorOnSurface"
+                                android:textStyle="bold" />
+                        </LinearLayout>
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnHeaderShare"
                             style="@style/Widget.Material3.Button.IconButton"
@@ -188,7 +210,7 @@
                             app:cornerRadius="92dp"
                             android:textColor="@android:color/white"
                             app:backgroundTint="@color/brand_green"
-                            app:icon="@drawable/ic_gate_open"
+                            app:icon="@drawable/ic_logo_k"
                             app:iconTint="@null"
                             app:iconGravity="textTop"
                             app:iconPadding="6dp"
@@ -1130,7 +1152,7 @@
             app:menu="@menu/bottom_nav" />
     </LinearLayout>
 
-    <!-- Animation de démarrage (version de test) : le portail s'ouvre, le nom et la phrase apparaissent. Toucher pour passer. -->
+    <!-- Vidéo d'ouverture (res/raw/ouverture.mp4, sans son) jouée au lancement. Toucher l'écran pour passer. -->
     <FrameLayout
         android:id="@+id/splashOverlay"
         android:layout_width="match_parent"
@@ -1140,36 +1162,11 @@
         android:elevation="16dp"
         android:focusable="true"
         android:visibility="gone">
-        <ImageView
-            android:id="@+id/splashIcon"
-            android:layout_width="288dp"
-            android:layout_height="288dp"
-            android:layout_gravity="center"
-            android:importantForAccessibility="no"
-            android:src="@drawable/splash_icon" />
-        <LinearLayout
-            android:id="@+id/splashTitle"
-            android:layout_width="wrap_content"
+        <VideoView
+            android:id="@+id/splashVideo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:alpha="0"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:translationY="140dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:textAppearance="?attr/textAppearanceHeadlineSmall"
-                android:textColor="@color/splash_title"
-                android:textStyle="bold" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/splash_phrase"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="@color/splash_phrase" />
-        </LinearLayout>
+            android:importantForAccessibility="no" />
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

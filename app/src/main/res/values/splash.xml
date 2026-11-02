@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Écran de démarrage : le portail s'ouvre (splash_icon_closed puis splash_icon, joués par MainActivity / Splash),
-  puis « Portail Keo » et la phrase. La version de test remplace les couleurs par l'orange (src/beta/res/values/splash.xml).
+  Écran de démarrage d'Android : le pilier du K (splash_icon_closed) sur le vert portail, première image de la vidéo
+  d'ouverture (res/raw/ouverture.mp4) que MainActivity joue ensuite. Identique dans la version de test.
 -->
 <resources>
-    <string name="splash_phrase">Arrivez, c\'est ouvert</string>
-
-    <!-- Couleurs de l'animation (charte Banook) ; la version de test les remplace par l'orange. -->
     <color name="splash_bg">#0B3722</color>
     <color name="splash_post">#FFFFFF</color>
-    <color name="splash_leaf">#F884C9</color>
-    <color name="splash_path">#FCB1EC</color>
-    <color name="splash_title">#FFFFFF</color>
-    <color name="splash_phrase">#FCB1EC</color>
 
     <style name="Theme.PortailAuto.Starting" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">@color/splash_bg</item>

@@ -1,19 +1,15 @@
 package fr.julesdupont.portail
 
 /**
- * Animation de démarrage, mêmes temps que la maquette : le portail s'ouvre (icône animée splash_icon),
- * puis le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. Toucher l'écran la passe.
+ * Ouverture de l'app : l'écran de démarrage d'Android (le pilier du K sur le vert portail) enchaîne sur la vidéo
+ * res/raw/ouverture.mp4 (le K se forme, le point part, « Portail Keo · Arrivez, c'est ouvert »), sans son.
+ * Toucher l'écran la passe.
  */
 object Splash {
-    /** Le nom et la phrase apparaissent en glissant légèrement vers le haut. */
-    const val TITLE_DELAY_MS = 1760L
-    const val TITLE_MS = 560L
-    const val TITLE_SHIFT_DP = 10f
-    /** Fondu vers l'accueil. */
-    const val FADE_DELAY_MS = 2960L
-    const val FADE_MS = 560L
-    /** Durée totale avant d'arriver sur l'accueil. */
-    const val TOTAL_MS = FADE_DELAY_MS + FADE_MS
+    /** Fondu vers l'accueil à la fin de la vidéo. */
+    const val FADE_MS = 250L
+    /** Au-delà, l'accueil s'affiche même si la vidéo ne s'est pas terminée (vidéo de 5 s). */
+    const val MAX_MS = 7_000L
 
     /**
      * Seulement au lancement de l'app (pas après une rotation), si la version la prévoit
@@ -21,4 +17,14 @@ object Splash {
      */
     fun showIntro(enabledInBuild: Boolean, coldStart: Boolean, animationsEnabled: Boolean): Boolean =
         enabledInBuild && coldStart && animationsEnabled
+
+    /** « Portail Keo » : « Keo » dans la couleur d'accent, comme le logo complet (CHARTE.md). */
+    fun titleWithAccent(name: String, accent: Int): CharSequence {
+        val start = name.indexOf("Keo")
+        if (start < 0) return name
+        return android.text.SpannableString(name).apply {
+            setSpan(android.text.style.ForegroundColorSpan(accent), start, start + 3, 0)
+            setSpan(android.text.style.StyleSpan(android.graphics.Typeface.NORMAL), start, start + 3, 0)
+        }
+    }
 }
