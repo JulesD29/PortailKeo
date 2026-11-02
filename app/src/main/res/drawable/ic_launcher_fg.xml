@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Icône de l'app (charte, CHARTE.md) : le portail qui s'ouvre — piliers blancs, battants roses,
-  chemin rose clair — sur le fond vert portail (ic_bg). La version de test a sa propre variante orange.
-  Réduite à 85 % autour du centre pour rester dans la zone visible des icônes adaptatives.
--->
+<!-- Icône de l'app : le K d'un trait (ic_logo_k) sur le fond vert portail (ic_bg), dans la zone visible des icônes adaptatives. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp" android:height="108dp"
     android:viewportWidth="108" android:viewportHeight="108">
-    <group android:pivotX="54" android:pivotY="54" android:scaleX="0.85" android:scaleY="0.85">
-        <path android:fillColor="@color/brand_pink_light" android:fillAlpha="0.55"
-            android:pathData="M46,84 L62,84 L76,108 L32,108 Z" />
-        <path android:fillColor="#FFFFFF"
-            android:pathData="M26,34 h2 a2,2 0 0 1 2,2 v46 a2,2 0 0 1 -2,2 h-2 a2,2 0 0 1 -2,-2 v-46 a2,2 0 0 1 2,-2 z" />
-        <path android:fillColor="#FFFFFF"
-            android:pathData="M80,34 h2 a2,2 0 0 1 2,2 v46 a2,2 0 0 1 -2,2 h-2 a2,2 0 0 1 -2,-2 v-46 a2,2 0 0 1 2,-2 z" />
-        <path android:fillColor="@color/brand_pink" android:pathData="M30,40 L46,46 L46,80 L30,82 Z" />
-        <path android:fillColor="@color/brand_pink" android:pathData="M78,40 L62,46 L62,80 L78,82 Z" />
+    <group android:pivotX="56" android:pivotY="54" android:scaleX="0.82" android:scaleY="0.82" android:translateX="-2">
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="12" android:strokeLineCap="round"
+            android:pathData="M36,30 L36,78" />
+        <path android:strokeColor="@color/brand_pink" android:strokeWidth="12" android:strokeLineCap="round"
+            android:pathData="M53,54 L71,36" />
+        <path android:strokeColor="@color/brand_pink_light" android:strokeWidth="12" android:strokeLineCap="round"
+            android:pathData="M53,54 L71,72" />
+        <path android:fillColor="@color/brand_pink" android:pathData="M84,49 a5,5 0 1,0 0.01,0 Z" />
     </group>
 </vector>

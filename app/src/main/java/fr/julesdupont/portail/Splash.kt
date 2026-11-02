@@ -21,4 +21,14 @@ object Splash {
      */
     fun showIntro(enabledInBuild: Boolean, coldStart: Boolean, animationsEnabled: Boolean): Boolean =
         enabledInBuild && coldStart && animationsEnabled
+
+    /** « Portail Keo » : « Keo » dans la couleur d'accent, comme le logo complet (CHARTE.md). */
+    fun titleWithAccent(name: String, accent: Int): CharSequence {
+        val start = name.indexOf("Keo")
+        if (start < 0) return name
+        return android.text.SpannableString(name).apply {
+            setSpan(android.text.style.ForegroundColorSpan(accent), start, start + 3, 0)
+            setSpan(android.text.style.StyleSpan(android.graphics.Typeface.NORMAL), start, start + 3, 0)
+        }
+    }
 }

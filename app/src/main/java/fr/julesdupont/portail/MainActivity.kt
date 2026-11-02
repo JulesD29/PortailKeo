@@ -121,7 +121,9 @@ class MainActivity : AppCompatActivity() {
         }
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
-        b.btnOpenGate.iconTint = null // icône du portail en couleurs (charte)
+        b.btnOpenGate.iconTint = null // logo en couleurs (charte)
+        b.txtHomeTitle.text = Splash.titleWithAccent(getString(R.string.app_name),
+            MaterialColors.getColor(b.txtHomeTitle, com.google.android.material.R.attr.colorSecondary))
 
         dayLabels.forEachIndexed { i, label ->
             b.chipDays.addView(Chip(this).apply {

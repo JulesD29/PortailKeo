@@ -63,10 +63,12 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
 - [ ] Historique : nombre d'appels de la semaine en grand ; journal regroupé par jour avec la frise colorée ; « Tout afficher »
       en bas du journal (puis « Réduire ») ; « Partager » en haut à droite du journal
-- [ ] Démarrage : à l'ouverture, les battants du portail s'ouvrent (vert et rose ; orange dans la version de test), puis
+- [ ] Démarrage : à l'ouverture, les battants du K s'ouvrent (vert et rose ; orange dans la version de test), puis
       « Portail Keo » et « Arrivez, c'est ouvert » apparaissent avant l'accueil (environ 3,5 s, toucher l'écran passe
       l'animation) ; pas d'animation après une rotation ni si « Supprimer les animations » est activé
-- [ ] Icône : portail qui s'ouvre sur fond vert (orange pour la version de test)
+- [ ] Logo « K d'un trait » : icône de l'app (vert ; orange pour la version de test), icône à thème d'Android 13+,
+      icône des notifications, en-tête de l'accueil et gros bouton ; animation d'ouverture : les battants s'ouvrent
+      puis le point rose apparaît
 - [ ] Partager le journal : le menu de partage s'ouvre ; le texte reçu commence par « Journal Portail Keo », le numéro
       du portail est masqué (02••••••29) et la position n'apparaît pas
 - [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
@@ -129,7 +131,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
 | `AppThemeTest` | Thème : comme le système par défaut, choix enregistré, appliqué à toute l'app |
-| `CharteTest` | Charte : couleurs de la marque et rôles principaux, police Be Vietnam Pro dans le thème |
+| `CharteTest` | Charte : couleurs de la marque et rôles principaux, police Be Vietnam Pro, logo et icônes, « Keo » en accent |
 | `SplashTest` | Démarrage : nom et phrase seulement au lancement et animations actives, icône animée valide |
 | `LogShareTest` | Partage du journal : numéros masqués (2 premiers et 2 derniers chiffres), contexte (version, réglages, autorisations), jamais la position |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |

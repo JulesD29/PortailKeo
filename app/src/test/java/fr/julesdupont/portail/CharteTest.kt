@@ -35,4 +35,18 @@ class CharteTest {
         assertTrue(themed.theme.resolveAttribute(android.R.attr.fontFamily, v, true))
         assertEquals(R.font.be_vietnam_pro, v.resourceId)
     }
+
+    @Test
+    fun `logo et icones se chargent`() {
+        for (id in listOf(R.drawable.ic_logo_k, R.drawable.ic_launcher_fg, R.drawable.ic_launcher_mono, R.drawable.ic_notif))
+            assertTrue(androidx.appcompat.content.res.AppCompatResources.getDrawable(app, id) != null)
+    }
+
+    @Test
+    fun `Keo en couleur d'accent dans le titre`() {
+        val t = Splash.titleWithAccent("Portail Keo (test)", 0xFF8E3A6E.toInt()) as android.text.Spanned
+        val spans = t.getSpans(0, t.length, android.text.style.ForegroundColorSpan::class.java)
+        assertEquals(1, spans.size)
+        assertEquals("Keo", t.subSequence(t.getSpanStart(spans[0]), t.getSpanEnd(spans[0])).toString())
+    }
 }

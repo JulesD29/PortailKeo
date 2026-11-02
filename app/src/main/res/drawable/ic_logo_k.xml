@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Logo Portail Keo « le K d'un trait » (CHARTE.md) : pilier blanc, battant haut rose, battant bas rose clair,
+  point rose = l'appel qui part. Fond transparent : à poser sur le vert portail.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="12" android:strokeLineCap="round"
+        android:pathData="M36,30 L36,78" />
+    <path android:strokeColor="@color/brand_pink" android:strokeWidth="12" android:strokeLineCap="round"
+        android:pathData="M53,54 L71,36" />
+    <path android:strokeColor="@color/brand_pink_light" android:strokeWidth="12" android:strokeLineCap="round"
+        android:pathData="M53,54 L71,72" />
+    <path android:fillColor="@color/brand_pink" android:pathData="M84,49 a5,5 0 1,0 0.01,0 Z" />
+</vector>
