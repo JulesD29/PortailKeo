@@ -36,6 +36,7 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 
 ## Nouveautés et release
 - Nouvelle fonctionnalité visible → ajouter une entrée dans `WhatsNew.items` et incrémenter `WhatsNew.CURRENT`.
+- Messages de commit et descriptions de PR : **jamais de lien de session Claude** (pas de ligne `Claude-Session:` ni d'URL claude.ai) ; le dépôt est public.
 - Les notes de release sont générées depuis les messages de commit (hors README/CI/merge) : écrire des
   messages de commit clairs, en français, compréhensibles par un utilisateur.
 

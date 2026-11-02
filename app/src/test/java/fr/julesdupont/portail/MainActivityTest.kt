@@ -97,6 +97,42 @@ class MainActivityTest {
             .selectedItemId = R.id.navHistory
         assertEquals(true, a.v(R.id.pageHistory).shown())
         assertEquals("lun → ven", 5, a.findViewById<android.widget.LinearLayout>(R.id.weekRow).childCount)
-        assertEquals(1, a.findViewById<android.widget.LinearLayout>(R.id.logList).childCount)
+        assertEquals("en-tête « Aujourd'hui » + 1 événement", 2, a.findViewById<android.widget.LinearLayout>(R.id.logList).childCount)
+        assertEquals("1", a.findViewById<android.widget.TextView>(R.id.txtWeekCount).text.toString())
+        assertEquals("appel cette semaine", a.findViewById<android.widget.TextView>(R.id.txtWeekLabel).text.toString())
+        assertEquals("pas de « Tout afficher » avec peu d'événements", false, a.v(R.id.btnLogMore).shown())
+    }
+
+    @Test
+    fun `partage du journal numero masque`() {
+        Prefs(app).log("Appel manuel lancé vers ${TestSupport.PHONE}")
+        val a = launch().get()
+        a.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+            .selectedItemId = R.id.navHistory
+        a.findViewById<View>(R.id.btnLogShare).performClick()
+        val chooser = org.robolectric.Shadows.shadowOf(a).nextStartedActivity
+        assertEquals(android.content.Intent.ACTION_CHOOSER, chooser.action)
+        @Suppress("DEPRECATION")
+        val send = chooser.getParcelableExtra<android.content.Intent>(android.content.Intent.EXTRA_INTENT)!!
+        val text = send.getStringExtra(android.content.Intent.EXTRA_TEXT)!!
+        org.junit.Assert.assertTrue(text.startsWith("Journal Portail Keo"))
+        org.junit.Assert.assertTrue(text.contains("Appel manuel lancé vers 06••••••44"))
+        org.junit.Assert.assertTrue("numéro jamais en clair", !text.contains(TestSupport.PHONE))
+    }
+
+    @Test
+    fun `tout afficher en bas du journal`() {
+        repeat(12) { Prefs(app).log("GPS précis activé $it") }
+        val a = launch().get()
+        a.findViewById<com.google.android.material.bottomnavigation.BottomNavigationView>(R.id.bottomNav)
+            .selectedItemId = R.id.navHistory
+        val list = a.findViewById<android.widget.LinearLayout>(R.id.logList)
+        val more = a.findViewById<android.widget.TextView>(R.id.btnLogMore)
+        assertEquals(true, a.v(R.id.btnLogMore).shown())
+        assertEquals("Tout afficher (12 événements)", more.text.toString())
+        assertEquals("en-tête + 8 événements", 9, list.childCount)
+        more.performClick()
+        assertEquals("Réduire", more.text.toString())
+        assertEquals("en-tête + 12 événements", 13, list.childCount)
     }
 }

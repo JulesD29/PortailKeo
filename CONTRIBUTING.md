@@ -57,6 +57,10 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
       « Ok Google, ouvre Portail test » appelle ; désactiver → l'icône disparaît
 - [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
+- [ ] Historique : nombre d'appels de la semaine en grand ; journal regroupé par jour avec la frise colorée ; « Tout afficher »
+      en bas du journal (puis « Réduire ») ; « Partager » en haut à droite du journal
+- [ ] Partager le journal : le menu de partage s'ouvre ; le texte reçu commence par « Journal Portail Keo », le numéro
+      du portail est masqué (02••••••29) et la position n'apparaît pas
 - [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
 - [ ] Simuler l'arrivée : notification de compte à rebours, puis appel
 - [ ] Simuler l'arrivée puis **Annuler** : pas d'appel, journal « Appel annulé »
@@ -98,7 +102,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `RulesTest` | Activation, numéro, jours, plage horaire (y compris après minuit), pause, fériés, 1 appel/jour |
 | `CoordsTest` | Lecture des coordonnées collées depuis Google Maps |
 | `ArrivalTest` | Arrivée GPS : distance et précision |
-| `PrefsTest` | Valeurs par défaut, sauvegarde, journal limité à 40 lignes |
+| `PrefsTest` | Valeurs par défaut, sauvegarde, journal limité à 200 lignes |
 | `CallHelperTest` | Appel auto / manuel, permission manquante, erreur du téléphone |
 | `AutoCallTest` | Appel direct ou compte à rebours, refus, pas de double appel |
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
@@ -112,10 +116,11 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
 | `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
 | `HistoryTest` | Historique des arrivées : limite, semaine en cours (cases jour par jour), heure moyenne, résumé |
-| `JournalTest` | Lignes du journal découpées (heure, date si pas aujourd'hui, message) |
+| `JournalTest` | Lignes du journal découpées (heure, date, message), en-têtes de jour (Aujourd'hui, Hier, Ven. 2 oct.), couleur du point selon l'événement |
 | `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
 | `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
-| `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique |
+| `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
+| `LogShareTest` | Partage du journal : numéros masqués (2 premiers et 2 derniers chiffres), contexte (version, réglages, autorisations), jamais la position |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |
 | `VoiceCommandTest` | Commande vocale : désactivée par défaut, activation, icône qui lance l'appel |

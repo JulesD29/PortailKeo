@@ -52,12 +52,13 @@ class PrefsTest {
     }
 
     @Test
-    fun `journal limite a 40 lignes, plus recent en premier`() {
+    fun `journal limite a 200 lignes, plus recent en premier`() {
         val p = Prefs(TestSupport.app)
-        repeat(45) { p.log("message $it") }
+        repeat(205) { p.log("message $it") }
         val lines = p.logText.lines()
-        assertEquals(40, lines.size)
-        assertTrue(lines.first().endsWith("message 44"))
+        assertEquals(Prefs.LOG_MAX, lines.size)
+        assertEquals(200, Prefs.LOG_MAX)
+        assertTrue(lines.first().endsWith("message 204"))
         assertTrue(lines.first().startsWith("05/10 08:00:00"))
     }
 }

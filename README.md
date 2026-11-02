@@ -48,7 +48,7 @@ and at the times you choose. The app interface is in French.
 | 🏠 **Three tabs** | **Accueil** (status, big button to open the gate, live call tracking), **Réglages** grouped by topic, **Historique**. |
 | 📊 **History** | This week day by day, average arrival time and the log. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
-| 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the **Historique** tab. |
+| 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the **Historique** tab (about two weeks). **Partager** sends it with your settings, gate number masked and no location. |
 
 ## Installation
 
@@ -165,7 +165,7 @@ The first time, Android asks you to allow Portail Keo to install apps.
 
 | Problem | Fix |
 |---|---|
-| No call on arrival | Check the **Journal** (Historique tab): it shows whether the zone was entered and why no call was made. |
+| No call on arrival | Check the **Journal** (Historique tab): it shows whether the zone was entered and why no call was made. To ask for help, tap **Partager** next to the log. |
 | Call placed too late | Increase the gate zone **radius** or the **approach zone**. |
 | "✗ Localisation « Toujours autoriser » manquante" | *Settings › Apps › Portail Keo › Permissions › Location › Allow all the time*. |
 | Nothing happens in the background | Disable battery optimisation / set the app to **Unrestricted**. |
