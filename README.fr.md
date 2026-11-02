@@ -183,6 +183,9 @@ installer des applis.
 | Tuile sans texte | Ouvrez le volet complet, ou agrandissez la tuile (Android 16). |
 | « Mise à jour refusée : signature différente » | Désinstallez l'app, puis installez le dernier APK à la main. |
 
+## Charte graphique
+Couleurs, police et règles d'usage de l'app : [CHARTE.md](CHARTE.md).
+
 ## Compiler depuis les sources
 
 Prérequis : JDK 17 ou plus et le SDK Android (ou Android Studio).

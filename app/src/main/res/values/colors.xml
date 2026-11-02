@@ -1,27 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Palette Material 3 « bleu portail » (utilisée si les couleurs dynamiques Material You sont indisponibles). -->
+<!--
+  Charte graphique Portail Keo (CHARTE.md) — mode clair.
+  Couleurs fixes : les couleurs Material You du fond d'écran ne sont pas utilisées.
+-->
 <resources>
+    <!-- Couleurs de la marque (icône et animation d'ouverture) -->
+    <color name="brand_green">#0B3722</color>
+    <color name="brand_pink">#F884C9</color>
+    <color name="brand_pink_light">#FCB1EC</color>
+
     <color name="ic_bg">#1F6FEB</color>
-    <color name="md_primary">#0B57D0</color>
+
+    <color name="md_primary">#0B3722</color>
     <color name="md_onPrimary">#FFFFFF</color>
-    <color name="md_primaryContainer">#D3E3FD</color>
-    <color name="md_onPrimaryContainer">#041E49</color>
-    <color name="md_secondary">#565E71</color>
+    <color name="md_primaryContainer">#CDEFD8</color>
+    <color name="md_onPrimaryContainer">#0B3722</color>
+    <color name="md_secondary">#8E3A6E</color>
     <color name="md_onSecondary">#FFFFFF</color>
-    <color name="md_secondaryContainer">#DAE2F9</color>
-    <color name="md_onSecondaryContainer">#131C2B</color>
-    <color name="md_tertiary">#8B5000</color>
+    <color name="md_secondaryContainer">#FDCFF4</color>
+    <color name="md_onSecondaryContainer">#4A1038</color>
+    <color name="md_tertiary">#626200</color>
     <color name="md_onTertiary">#FFFFFF</color>
-    <color name="md_tertiaryContainer">#FFDCBE</color>
-    <color name="md_onTertiaryContainer">#2C1600</color>
-    <color name="md_background">#F8F9FF</color>
-    <color name="md_surface">#F8F9FF</color>
-    <color name="md_onSurface">#191C20</color>
-    <color name="md_surfaceVariant">#E0E2EC</color>
-    <color name="md_onSurfaceVariant">#43474E</color>
-    <color name="md_outline">#74777F</color>
-    <color name="md_surfaceContainerLow">#F2F3FA</color>
-    <color name="md_surfaceContainer">#ECEEF4</color>
-    <color name="md_surfaceContainerHigh">#E6E8EE</color>
-    <color name="md_surfaceContainerHighest">#E1E2E8</color>
+    <color name="md_tertiaryContainer">#F2F28A</color>
+    <color name="md_onTertiaryContainer">#1D1D00</color>
+    <color name="md_background">#F7FAF6</color>
+    <color name="md_surface">#F7FAF6</color>
+    <color name="md_onSurface">#181D19</color>
+    <color name="md_surfaceVariant">#DCE5DC</color>
+    <color name="md_onSurfaceVariant">#414942</color>
+    <color name="md_outline">#717971</color>
+    <color name="md_surfaceContainerLow">#F1F5F0</color>
+    <color name="md_surfaceContainer">#EBF0EA</color>
+    <color name="md_surfaceContainerHigh">#E5EAE4</color>
+    <color name="md_surfaceContainerHighest">#DFE4DE</color>
 </resources>

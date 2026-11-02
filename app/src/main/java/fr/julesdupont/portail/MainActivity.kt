@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.VisibleForTesting
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.animation.ValueAnimator
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationServices
@@ -120,6 +121,7 @@ class MainActivity : AppCompatActivity() {
         }
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
+        b.btnOpenGate.iconTint = null // icône du portail en couleurs (charte)
 
         dayLabels.forEachIndexed { i, label ->
             b.chipDays.addView(Chip(this).apply {
@@ -782,7 +784,7 @@ class MainActivity : AppCompatActivity() {
                 com.google.android.material.R.attr.colorErrorContainer to com.google.android.material.R.attr.colorOnErrorContainer
         }
         val dot = when (status.level) {
-            Dashboard.Level.ACTIVE -> STATUS_GREEN
+            Dashboard.Level.ACTIVE -> ContextCompat.getColor(this, R.color.brand_pink)
             Dashboard.Level.CALLED -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorPrimary)
             Dashboard.Level.PAUSED -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorTertiary)
             Dashboard.Level.OFF -> MaterialColors.getColor(b.cardStatus, com.google.android.material.R.attr.colorOutline)
@@ -915,7 +917,7 @@ class MainActivity : AppCompatActivity() {
             row.logTime.text = e.time
             row.logMessage.text = e.message
             val dot = when (Journal.kind(e.message)) {
-                Journal.Kind.OK -> STATUS_GREEN
+                Journal.Kind.OK -> ContextCompat.getColor(this, R.color.brand_pink)
                 Journal.Kind.CALL -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorPrimary)
                 Journal.Kind.PROBLEM -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorError)
                 Journal.Kind.INFO -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorOutline)
@@ -986,7 +988,5 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val STATE_TAB = "tab"
         private const val LOG_PREVIEW = 8
-        /** Pastille « Actif » : vert lisible en mode clair comme en mode sombre. */
-        private const val STATUS_GREEN = 0xFF34A853.toInt()
     }
 }

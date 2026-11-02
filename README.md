@@ -175,6 +175,9 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Tile shows no label | Expand the full shade, or enlarge the tile (Android 16). |
 | "Mise à jour refusée : signature différente" | Uninstall the app, then install the latest APK manually. |
 
+## Design guidelines
+Colours, typeface and usage rules (in French): [CHARTE.md](CHARTE.md).
+
 ## Building from source
 
 Requirements: JDK 17+ and the Android SDK (or Android Studio).

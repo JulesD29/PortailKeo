@@ -31,6 +31,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
       puis revient à l'accueil ; les résumés sous chaque entrée sont à jour après une modification
 - [ ] Suivi en direct : Simuler l'arrivée l'app ouverte → l'accueil affiche le compte à rebours (« Annuler l'appel »
       annule), puis l'appel (anneau, étapes, « Raccrocher maintenant » raccroche) ; retour à l'état normal ensuite
+- [ ] Charte (CHARTE.md) : vert et rose partout, police Be Vietnam Pro, en clair comme en sombre ; les couleurs ne
+      changent pas avec le fond d'écran ; gros bouton vert avec le portail en couleurs et halo rose
 - [ ] Écran principal : la carte d'état change selon la situation (actif, pause, appelé aujourd'hui,
       désactivé, autorisations manquantes) ; clair et sombre lisibles
 - [ ] Réglages : modifier, fermer, rouvrir → tout est conservé sans bouton « Enregistrer » ; « ✓ Zone active »
@@ -122,6 +124,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
 | `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
+| `CharteTest` | Charte : couleurs de la marque et rôles principaux, police Be Vietnam Pro dans le thème |
 | `SplashTest` | Démarrage : nom et phrase seulement au lancement et animations actives, icône animée valide |
 | `LogShareTest` | Partage du journal : numéros masqués (2 premiers et 2 derniers chiffres), contexte (version, réglages, autorisations), jamais la position |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |

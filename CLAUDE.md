@@ -25,6 +25,11 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 - Nouvelle fonctionnalité → ajouter si utile un outil de simulation dans `TestTools` + une ligne
   dans la checklist de tests fonctionnels de `CONTRIBUTING.md`.
 
+## Charte graphique
+- Tout écran ou composant suit **`CHARTE.md`** : rôles Material 3 de `colors.xml` (jamais de couleur en dur, sauf
+  `brand_green`, `brand_pink`, `brand_pink_light`), police Be Vietnam Pro via le thème, rayons 28 / 24 / 16 / complet,
+  rose = accent seulement. Couleurs fixes : pas de Material You.
+
 ## Écrans
 - Premier lancement : `SetupActivity` (étapes dans `SetupWizard`, logique pure) si `!prefs.setupDone`.
 - Partage : `ShareActivity` (QR via `QrCode`/ZXing), import `ConfigImport` (scanner Play Services) →

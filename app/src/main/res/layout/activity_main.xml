@@ -174,7 +174,7 @@
                             android:layout_width="208dp"
                             android:layout_height="208dp"
                             android:background="@drawable/bg_circle"
-                            android:backgroundTint="?attr/colorPrimaryContainer">
+                            android:backgroundTint="?attr/colorSecondaryContainer">
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnOpenGate"
                             android:layout_width="184dp"
@@ -186,7 +186,10 @@
                             android:text="Ouvrir le portail"
                             android:textAppearance="?attr/textAppearanceTitleMedium"
                             app:cornerRadius="92dp"
-                            app:icon="@drawable/ic_gate"
+                            android:textColor="@android:color/white"
+                            app:backgroundTint="@color/brand_green"
+                            app:icon="@drawable/ic_gate_open"
+                            app:iconTint="@null"
                             app:iconGravity="textTop"
                             app:iconPadding="10dp"
                             app:iconSize="48dp" />
