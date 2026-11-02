@@ -10,6 +10,9 @@ adb shell settings put global transition_animation_scale 1
 adb shell settings put global animator_duration_scale 1
 adb shell wm size > "$OUT/ecran.txt"; adb shell wm density >> "$OUT/ecran.txt"
 TODAY=$(date +%F)
+# Premier lancement « à vide » puis compilation complète : le téléphone virtuel est lent au premier démarrage.
+adb shell am start -W -n $PKG/.MainActivity; sleep 15
+adb shell cmd package compile -m speed -f $PKG
 for THEME in LIGHT DARK; do
   cat > /tmp/portail.xml <<XML
 <?xml version='1.0' encoding='utf-8' standalone='yes' ?>
@@ -17,7 +20,8 @@ for THEME in LIGHT DARK; do
     <boolean name="setupDone" value="true" />
     <string name="phone">0600000000</string>
     <string name="lat">48.39</string>
-    <string name="lon">-4.48</string>
+    <string name="lng">-4.48</string>
+    <boolean name="enabled" value="true" />
     <int name="lastSeenWhatsNew" value="99" />
     <string name="lastUpdateCheck">$TODAY</string>
     <string name="theme">$THEME</string>
@@ -31,7 +35,7 @@ XML
   adb shell input keyevent KEYCODE_HOME
   sleep 3
   adb logcat -c
-  adb shell screenrecord --time-limit 14 --bit-rate 8000000 /sdcard/ouverture.mp4 &
+  adb shell screenrecord --time-limit 30 --bit-rate 8000000 /sdcard/ouverture.mp4 &
   REC=$!
   sleep 1
   adb shell am start -W -n $PKG/.MainActivity
