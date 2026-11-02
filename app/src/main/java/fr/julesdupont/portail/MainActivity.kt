@@ -152,6 +152,10 @@ class MainActivity : AppCompatActivity() {
                 else -> R.id.navHome
             }
         }
+        // Après un changement de thème (écran recréé) : rester sur la page du réglage ouverte.
+        savedInstanceState?.getInt(STATE_SECTION)?.takeIf { it != 0 }?.let { id ->
+            sections.firstOrNull { it.id == id }?.let { openDetail(it, savedInstanceState.getString(STATE_SECTION_TITLE).orEmpty()) }
+        }
         configLink(intent)?.let { importConfig(it) }
         Updater.scheduleDaily(this)
         if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
@@ -180,6 +184,8 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(STATE_TAB, tab.name)
+        outState.putInt(STATE_SECTION, openSection?.id ?: 0)
+        outState.putString(STATE_SECTION_TITLE, b.detailToolbar.title?.toString())
     }
 
     /** « Quoi de neuf » une seule fois après une mise à jour qui apporte des nouveautés. */
@@ -379,7 +385,7 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- Onglets et pages des réglages ----------
 
-    private val sections get() = listOf(b.secPortal, b.secSchedule, b.secCall, b.secFeedback, b.secVoice,
+    private val sections get() = listOf(b.secPortal, b.secSchedule, b.secCall, b.secFeedback, b.secVoice, b.secTheme,
         b.secShare, b.testTools, b.secAbout)
 
     private fun setupNavigation() {
@@ -414,8 +420,28 @@ class MainActivity : AppCompatActivity() {
         }
         row(b.rowTest, R.drawable.ic_build, "Outils de test") { openDetail(b.testTools, "Outils de test") }
         b.rowTest.root.visibility = if (TestTools.enabled) View.VISIBLE else View.GONE
+        row(b.rowTheme, R.drawable.ic_contrast, "Apparence") { openDetail(b.secTheme, "Apparence") }
         row(b.rowAbout, R.drawable.ic_info, "À propos et mises à jour") { openDetail(b.secAbout, "À propos") }
+        b.toggleTheme.check(themeButton(prefs.theme))
+        b.toggleTheme.addOnButtonCheckedListener { _, id, checked ->
+            if (!checked) return@addOnButtonCheckedListener
+            val mode = when (id) {
+                R.id.btnThemeLight -> AppTheme.Mode.LIGHT
+                R.id.btnThemeDark -> AppTheme.Mode.DARK
+                else -> AppTheme.Mode.SYSTEM
+            }
+            if (mode == prefs.theme) return@addOnButtonCheckedListener
+            prefs.theme = mode
+            b.rowTheme.rowSubtitle.text = mode.label
+            AppTheme.apply(mode)
+        }
         showTab(Tab.HOME)
+    }
+
+    private fun themeButton(mode: AppTheme.Mode) = when (mode) {
+        AppTheme.Mode.LIGHT -> R.id.btnThemeLight
+        AppTheme.Mode.DARK -> R.id.btnThemeDark
+        AppTheme.Mode.SYSTEM -> R.id.btnThemeSystem
     }
 
     private fun row(r: RowSettingBinding, icon: Int, title: String, onClick: () -> Unit) {
@@ -852,6 +878,7 @@ class MainActivity : AppCompatActivity() {
         b.rowPerms.rowSubtitle.text = Summaries.permissions(missing.size)
         b.rowPerms.rowIcon.setImageResource(if (missing.isEmpty()) R.drawable.ic_check_circle else R.drawable.ic_warning)
         b.rowTest.rowSubtitle.text = "Simuler l'arrivée, réinitialiser l'appel du jour…"
+        b.rowTheme.rowSubtitle.text = prefs.theme.label
         b.rowAbout.rowSubtitle.text = "Version ${Updater.currentVersionName(this)} · Quoi de neuf"
 
         if (tab == Tab.HISTORY) refreshHistory()
@@ -987,6 +1014,8 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val STATE_TAB = "tab"
+        private const val STATE_SECTION = "section"
+        private const val STATE_SECTION_TITLE = "sectionTitle"
         private const val LOG_PREVIEW = 8
     }
 }

@@ -32,6 +32,9 @@ Valeurs : `res/values/colors.xml` (clair) et `res/values-night/colors.xml` (somb
 | surfaceContainer (low → highest) | `#F1F5F0` → `#DFE4DE` | `#16201A` → `#2F3B33` |
 | onSurface / onSurfaceVariant | `#181D19` / `#414942` | `#DDE5DE` / `#C0C9C1` |
 
+Thème : **clair, sombre ou comme le système** (par défaut), au choix dans Réglages › Apparence (`AppTheme`).
+Chaque écran doit être vérifié dans les deux thèmes.
+
 ## Typographie
 
 **Be Vietnam Pro** partout (`res/font/be_vietnam_pro.xml`, licence SIL OFL dans `licences/`), appliquée par le thème

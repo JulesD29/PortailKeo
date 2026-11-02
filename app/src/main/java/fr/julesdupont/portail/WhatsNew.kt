@@ -5,7 +5,7 @@ object WhatsNew {
     data class Item(val edition: Int, val title: String, val text: String)
 
     /** À incrémenter quand on ajoute des nouveautés à présenter. */
-    const val CURRENT = 7
+    const val CURRENT = 8
 
     val items = listOf(
         Item(1, "Portail sur une carte", "Placez le portail et réglez les deux zones directement sur la carte."),
@@ -21,6 +21,8 @@ object WhatsNew {
         Item(6, "Interface repensée", "Trois onglets (Accueil, Réglages, Historique), un gros bouton pour ouvrir le portail et le suivi de l'appel en direct : compte à rebours, appel, raccrochage."),
         Item(7, "Partage du journal", "Onglet Historique › Partager : envoyez le journal et vos réglages pour comprendre un souci (le numéro du portail est masqué, la position n'est pas incluse). Le journal garde maintenant environ deux semaines d'événements."),
         Item(7, "Historique plus lisible", "Le nombre d'appels de la semaine en grand, et le journal regroupé par jour avec une frise colorée. « Tout afficher » est en bas du journal."),
+        Item(8, "Nouvelles couleurs", "Vert et rose, inspirés de l'icône du portail qui s'ouvre, avec une nouvelle police. Les couleurs ne changent plus avec le fond d'écran."),
+        Item(8, "Thème clair ou sombre", "Réglages › Apparence : clair, sombre ou comme le système."),
     )
 
     /** Nouveautés pas encore vues. */

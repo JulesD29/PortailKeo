@@ -469,6 +469,7 @@
                             android:orientation="vertical">
                             <include android:id="@+id/rowPerms" layout="@layout/row_setting" />
                             <include android:id="@+id/rowTest" layout="@layout/row_setting" />
+                            <include android:id="@+id/rowTheme" layout="@layout/row_setting" />
                             <include android:id="@+id/rowAbout" layout="@layout/row_setting" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
@@ -901,6 +902,56 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="Réinitialiser l'assistant (effacer tous les réglages)" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Apparence : thème clair, sombre ou comme le système -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/secTheme"
+                            style="@style/SectionCard"
+                            android:visibility="gone">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Thème"
+                                    android:textAppearance="?attr/textAppearanceTitleMedium" />
+                                <com.google.android.material.button.MaterialButtonToggleGroup
+                                    android:id="@+id/toggleTheme"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="12dp"
+                                    app:selectionRequired="true"
+                                    app:singleSelection="true">
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnThemeLight"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Clair" />
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnThemeDark"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Sombre" />
+                                    <com.google.android.material.button.MaterialButton
+                                        android:id="@+id/btnThemeSystem"
+                                        style="@style/Widget.Material3.Button.OutlinedButton"
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:text="Système" />
+                                </com.google.android.material.button.MaterialButtonToggleGroup>
+                                <TextView
+                                    style="@style/SectionHint"
+                                    android:layout_marginTop="8dp"
+                                    android:text="« Système » suit le réglage du téléphone (et son passage automatique en sombre le soir, s'il est activé)." />
                             </LinearLayout>
                         </com.google.android.material.card.MaterialCardView>
 
