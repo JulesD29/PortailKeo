@@ -20,6 +20,7 @@ object WhatsNew {
         Item(6, "Portail occupé", "Si quelqu'un appelle le portail en même temps que vous, l'app le détecte : elle s'arrête là (le portail est sans doute déjà ouvert) ou rappelle 15 s plus tard si vous cochez « Rappeler si le portail est occupé » dans « Appel automatique »."),
         Item(6, "Interface repensée", "Trois onglets (Accueil, Réglages, Historique), un gros bouton pour ouvrir le portail et le suivi de l'appel en direct : compte à rebours, appel, raccrochage."),
         Item(7, "Partage du journal", "Onglet Historique › Partager : envoyez le journal et vos réglages pour comprendre un souci (le numéro du portail est masqué, la position n'est pas incluse). Le journal garde maintenant environ deux semaines d'événements."),
+        Item(7, "Historique plus lisible", "Le nombre d'appels de la semaine en grand, et le journal regroupé par jour avec une frise colorée. « Tout afficher » est en bas du journal."),
     )
 
     /** Nouveautés pas encore vues. */

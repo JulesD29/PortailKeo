@@ -950,26 +950,54 @@
                     android:paddingBottom="24dp">
                     <TextView style="@style/PageTitle" android:text="Historique" />
 
+                    <!-- Semaine en cours -->
                     <com.google.android.material.card.MaterialCardView
                         style="@style/SectionCard"
                         android:layout_marginTop="8dp"
-                        app:cardCornerRadius="24dp">
+                        app:cardBackgroundColor="?attr/colorSurfaceContainer"
+                        app:cardCornerRadius="24dp"
+                        app:contentPaddingBottom="8dp">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Cette semaine"
-                                android:textAppearance="?attr/textAppearanceTitleMedium" />
-                            <TextView
-                                android:id="@+id/txtHistorySummary"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:textAppearance="?attr/textAppearanceBodyMedium"
-                                android:textColor="?attr/colorOnSurfaceVariant" />
+                                android:gravity="bottom"
+                                android:orientation="horizontal">
+                                <TextView
+                                    android:id="@+id/txtWeekCount"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:includeFontPadding="false"
+                                    android:textAppearance="?attr/textAppearanceDisplaySmall"
+                                    android:textColor="?attr/colorPrimary"
+                                    android:textStyle="bold" />
+                                <TextView
+                                    android:id="@+id/txtWeekLabel"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_marginBottom="4dp"
+                                    android:layout_weight="1"
+                                    android:textAppearance="?attr/textAppearanceBodyLarge" />
+                                <TextView
+                                    android:id="@+id/txtWeekAvg"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="2dp"
+                                    android:background="@drawable/bg_pill"
+                                    android:backgroundTint="?attr/colorSurface"
+                                    android:drawableStart="@drawable/ic_schedule"
+                                    android:drawablePadding="6dp"
+                                    android:drawableTint="?attr/colorOnSurfaceVariant"
+                                    android:gravity="center_vertical"
+                                    android:paddingHorizontal="10dp"
+                                    android:paddingVertical="6dp"
+                                    android:textAppearance="?attr/textAppearanceLabelMedium"
+                                    android:textColor="?attr/colorOnSurfaceVariant" />
+                            </LinearLayout>
                             <LinearLayout
                                 android:id="@+id/weekRow"
                                 android:layout_width="match_parent"
@@ -979,10 +1007,12 @@
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
+                    <!-- Journal -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
                         android:paddingStart="8dp">
@@ -994,32 +1024,45 @@
                             android:textAppearance="?attr/textAppearanceTitleMedium" />
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnLogShare"
-                            style="@style/Widget.Material3.Button.TextButton"
+                            style="@style/Widget.Material3.Button.TonalButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Partager"
                             app:icon="@drawable/ic_share" />
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnLogMore"
-                            style="@style/Widget.Material3.Button.TextButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tout afficher" />
                     </LinearLayout>
                     <com.google.android.material.card.MaterialCardView
                         style="@style/Widget.Material3.CardView.Outlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="24dp"
-                        app:contentPaddingBottom="8dp"
-                        app:contentPaddingLeft="16dp"
-                        app:contentPaddingRight="16dp"
-                        app:contentPaddingTop="8dp">
+                        app:cardCornerRadius="24dp">
                         <LinearLayout
-                            android:id="@+id/logList"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical" />
+                            android:orientation="vertical">
+                            <LinearLayout
+                                android:id="@+id/logList"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingHorizontal="16dp"
+                                android:paddingTop="4dp"
+                                android:paddingBottom="8dp" />
+                            <View
+                                android:id="@+id/logDivider"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                android:background="?attr/colorSurfaceContainerHigh" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnLogMore"
+                                style="@style/Widget.Material3.Button.TextButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:insetTop="0dp"
+                                android:insetBottom="0dp"
+                                app:cornerRadius="0dp"
+                                app:icon="@drawable/ic_expand_more"
+                                app:iconGravity="textEnd" />
+                        </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>

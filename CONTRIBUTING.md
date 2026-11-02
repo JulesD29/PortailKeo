@@ -57,6 +57,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - [ ] Commande vocale : activer l'interrupteur → icône « Portail test » dans les applis ;
       « Ok Google, ouvre Portail test » appelle ; désactiver → l'icône disparaît
 - [ ] Historique : après une arrivée simulée, « Cette semaine : 1 appel » et la ligne du jour apparaissent
+- [ ] Historique : nombre d'appels de la semaine en grand ; journal regroupé par jour avec la frise colorée ; « Tout afficher »
+      en bas du journal (puis « Réduire ») ; « Partager » en haut à droite du journal
 - [ ] Partager le journal : le menu de partage s'ouvre ; le texte reçu commence par « Journal Portail Keo », le numéro
       du portail est masqué (02••••••29) et la position n'apparaît pas
 - [ ] « Quoi de neuf » (Outils de test › Revoir « Quoi de neuf ») : s'affiche une fois, puis plus
@@ -114,7 +116,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `SetupWizardTest` | Ordre des étapes, étapes obligatoires, reprise après import |
 | `DashboardTest` | Carte d'état : priorité des états, prochain créneau (fériés, pause, week-end, minuit), dernier événement |
 | `HistoryTest` | Historique des arrivées : limite, semaine en cours (cases jour par jour), heure moyenne, résumé |
-| `JournalTest` | Lignes du journal découpées (heure, date si pas aujourd'hui, message) |
+| `JournalTest` | Lignes du journal découpées (heure, date, message), en-têtes de jour (Aujourd'hui, Hier, Ven. 2 oct.), couleur du point selon l'événement |
 | `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
 | `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |

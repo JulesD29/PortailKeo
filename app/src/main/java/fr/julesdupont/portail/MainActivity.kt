@@ -33,6 +33,7 @@ import com.google.android.material.snackbar.Snackbar
 import fr.julesdupont.portail.databinding.ActivityMainBinding
 import fr.julesdupont.portail.databinding.ItemDayBinding
 import fr.julesdupont.portail.databinding.ItemLogBinding
+import fr.julesdupont.portail.databinding.ItemLogDayBinding
 import fr.julesdupont.portail.databinding.RowSettingBinding
 import java.time.LocalDate
 import java.time.ZoneId
@@ -833,7 +834,12 @@ class MainActivity : AppCompatActivity() {
     private fun refreshHistory() {
         val today = AppClock.today()
         val calls = History.parse(prefs.history)
-        b.txtHistorySummary.text = History.summary(calls, today)
+        val week = History.thisWeek(calls, today)
+        b.txtWeekCount.text = week.toString()
+        b.txtWeekLabel.text = if (week > 1) "appels cette semaine" else "appel cette semaine"
+        val avg = History.averageTime(calls)
+        b.txtWeekAvg.text = avg?.let { "moy. $it" }
+        b.txtWeekAvg.visibility = if (avg == null) View.GONE else View.VISIBLE
 
         b.weekRow.removeAllViews()
         History.week(calls, today, prefs.days).forEach { d ->
@@ -859,28 +865,39 @@ class MainActivity : AppCompatActivity() {
             b.weekRow.addView(cell.root)
         }
 
+        // Journal regroupé par jour, frise avec un point de couleur par type d'événement.
         val entries = Journal.parse(prefs.logText, today)
         b.logList.removeAllViews()
         if (entries.isEmpty()) {
             b.logList.addView(TextView(this).apply {
                 text = "Aucun événement pour l'instant"
-                setPadding(0, 16, 0, 16)
+                setPadding(0, 24, 0, 16)
             })
         }
+        var lastDay: String? = null
         (if (logExpanded) entries else entries.take(LOG_PREVIEW)).forEach { e ->
-            val row = ItemLogBinding.inflate(layoutInflater, b.logList, false)
-            row.logTime.text = if (e.date != null) "${e.date}\n${e.time}" else e.time
-            row.logMessage.text = e.message
-            val dot = when {
-                e.message.startsWith("Échec") || e.message.startsWith("Erreur") -> com.google.android.material.R.attr.colorError
-                e.message.contains("ppel") || e.message.contains("accroch") -> com.google.android.material.R.attr.colorPrimary
-                else -> com.google.android.material.R.attr.colorOutline
+            val day = Journal.dayLabel(e.date, today)
+            if (day != lastDay) {
+                lastDay = day
+                b.logList.addView(ItemLogDayBinding.inflate(layoutInflater, b.logList, false).root.apply { text = day })
             }
-            row.logDot.backgroundTintList = ColorStateList.valueOf(MaterialColors.getColor(row.logDot, dot))
+            val row = ItemLogBinding.inflate(layoutInflater, b.logList, false)
+            row.logTime.text = e.time
+            row.logMessage.text = e.message
+            val dot = when (Journal.kind(e.message)) {
+                Journal.Kind.OK -> STATUS_GREEN
+                Journal.Kind.CALL -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorPrimary)
+                Journal.Kind.PROBLEM -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorError)
+                Journal.Kind.INFO -> MaterialColors.getColor(row.logDot, com.google.android.material.R.attr.colorOutline)
+            }
+            row.logDot.backgroundTintList = ColorStateList.valueOf(dot)
             b.logList.addView(row.root)
         }
-        b.btnLogMore.visibility = if (entries.size > LOG_PREVIEW) View.VISIBLE else View.GONE
-        b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${entries.size})"
+        val more = entries.size > LOG_PREVIEW
+        b.btnLogMore.visibility = if (more) View.VISIBLE else View.GONE
+        b.logDivider.visibility = if (more) View.VISIBLE else View.GONE
+        b.btnLogMore.text = if (logExpanded) "Réduire" else "Tout afficher (${entries.size} événements)"
+        b.btnLogMore.setIconResource(if (logExpanded) R.drawable.ic_expand_less else R.drawable.ic_expand_more)
     }
 
     /** Partage du journal (texte, numéros masqués, sans la position) via le menu de partage d'Android. */
