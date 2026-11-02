@@ -1,0 +1,48 @@
+# Téléphone virtuel : installe l'app, l'ouvre et filme l'écran (thème clair puis sombre).
+# Se lance seulement sur les branches capture/… ; les vidéos sont publiées sur la branche « captures ».
+# Ne touche ni à develop ni à main, et n'envoie aucune mise à jour aux téléphones.
+name: Capture
+on:
+  push:
+    branches: ["capture/**"]
+permissions:
+  contents: write   # pour publier les vidéos sur la branche captures
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+      - name: Compilation (version debug)
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Accélération du téléphone virtuel (KVM)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Téléphone virtuel, ouverture de l'app filmée
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: false   # l'animation d'ouverture ne se joue pas si elles sont coupées
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash .github/capture/capture.sh
+      - name: Publier les vidéos sur la branche captures
+        if: always()
+        run: |
+          OUT="$RUNNER_TEMP/captures"
+          ls -la "$OUT" || exit 0
+          cd "$RUNNER_TEMP" && rm -rf pub && mkdir pub && cd pub
+          git init -q && git checkout -q -b captures
+          cp "$OUT"/* .
+          echo "Capture de ${GITHUB_SHA} (${GITHUB_REF_NAME})" > LISEZMOI.txt
+          git add . && git -c user.name="github-actions" -c user.email="github-actions@users.noreply.github.com" commit -q -m "Captures de ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${GITHUB_REPOSITORY}.git" captures
