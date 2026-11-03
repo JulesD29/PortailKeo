@@ -723,6 +723,10 @@ class MainActivity : AppCompatActivity() {
             TestTools.resetWhatsNew(this)
             showWhatsNewIfNeeded()
         }
+        b.btnFakeUpdate.setOnClickListener {
+            showUpdateDialog(TestTools.fakeUpdate(this))
+            toast("Mise à jour factice : fenêtre et notification")
+        }
         b.btnResetToday.setOnClickListener {
             TestTools.resetToday(this)
             toast("Appel du jour réinitialisé")

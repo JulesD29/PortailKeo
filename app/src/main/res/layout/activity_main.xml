@@ -914,6 +914,12 @@
                                     android:layout_height="wrap_content"
                                     android:text="Réinitialiser l'appel du jour" />
                                 <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/btnFakeUpdate"
+                                    style="@style/Widget.Material3.Button.OutlinedButton"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Simuler une mise à jour" />
+                                <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btnResetWhatsNew"
                                     style="@style/Widget.Material3.Button.OutlinedButton"
                                     android:layout_width="match_parent"

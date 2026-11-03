@@ -22,7 +22,8 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 - Elle s'installe **à côté** de la vraie app, avec ses propres réglages.
 - **Rechercher une mise à jour** signale la dernière version de `develop` et l'ouvre dans le navigateur
   (sur demande uniquement, pas de vérification automatique).
-- **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
+- **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour,
+  simuler une mise à jour (fenêtre, notification et téléchargement de l'APK de test par le navigateur).
 - Pour tester l'appel automatique en conditions réelles, désactiver l'appel automatique dans la vraie app
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
@@ -141,7 +142,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallLaunchTest` | Appel direct ou via l'écran verrouillé selon l'état du téléphone |
 | `CallActivityTest` | Écran d'appel : appel automatique (verrouillé), pas de double appel, appel manuel |
 | `FeedbackTest` | Retour vocal : vibrations (dont ligne occupée), annonce seulement avec écouteurs et hors appel |
-| `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
+| `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation, mise à jour factice |
 
 ### Règles pour les prochains développements
 1. **Toute nouvelle fonctionnalité arrive avec ses tests**, dans le même commit ou la même pull request.

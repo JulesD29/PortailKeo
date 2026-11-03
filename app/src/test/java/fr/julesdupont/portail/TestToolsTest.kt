@@ -57,6 +57,14 @@ class TestToolsTest {
     }
 
     @Test
+    fun `mise a jour factice vers l'APK de test`() {
+        val r = TestTools.fakeUpdate(app)
+        assertTrue(Updater.isNewer(r, Updater.currentVersionCode(app)))
+        assertTrue(r.apkUrl.endsWith("/releases/download/test/PortailKeo-test.apk"))
+        assertTrue(Prefs(app).logText.contains("[TEST] Mise à jour factice"))
+    }
+
+    @Test
     fun `revoir quoi de neuf`() {
         Prefs(app).lastSeenWhatsNew = WhatsNew.CURRENT
         TestTools.resetWhatsNew(app)
