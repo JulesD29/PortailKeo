@@ -1179,7 +1179,8 @@
             android:visibility="invisible" />
     </FrameLayout>
 
-    <!-- K de la fin de la vidéo qui descend se poser sur celui du bouton « Ouvrir le portail » (MainActivity.flyKToGate). -->
+    <!-- K de la fin de la vidéo (découpé dans sa dernière image) qui descend se poser sur celui du bouton
+         « Ouvrir le portail » (MainActivity.flyKToGate). -->
     <ImageView
         android:id="@+id/splashFlyK"
         android:layout_width="1dp"
@@ -1187,6 +1188,6 @@
         android:elevation="17dp"
         android:importantForAccessibility="no"
         android:scaleType="fitXY"
-        android:src="@drawable/ic_logo_k"
+        android:src="@drawable/ouverture_k"
         android:visibility="invisible" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

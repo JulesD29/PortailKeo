@@ -33,12 +33,15 @@ object Splash {
     fun videoScaleDp(): Float = SCALE
 
     /**
-     * Dernière image de la vidéo : le dessin ic_logo_k (108 unités) y occupe un carré de 271,8 px dont le coin
-     * haut gauche est à (217,4 ; 350,6) — mesuré sur le pilier, 60 unités pour 151 px.
+     * Dernière image de la vidéo : le K y est découpé dans un carré de 272 px dont le coin haut gauche est à
+     * (217 ; 351) (drawable-nodpi/ouverture_k, fond transparent). Ce carré correspond aux 108 unités d'ic_logo_k
+     * (pilier mesuré : 60 unités pour 151 px), ce qui permet de le poser sur le K du bouton.
      */
-    const val END_K_LEFT_PX = 217.4f
-    const val END_K_TOP_PX = 350.6f
-    const val END_K_SIZE_PX = 271.8f
+    const val END_K_LEFT_PX = 217f
+    const val END_K_TOP_PX = 351f
+    const val END_K_SIZE_PX = 272f
+    /** Fin du trajet (part de FLY_MS) où le K de la vidéo se fond dans celui du bouton, dessiné un peu différemment. */
+    const val CROSSFADE_FROM = 0.6f
 
     /** Le K de la fin de la vidéo descend se poser sur celui du bouton « Ouvrir le portail ». */
     const val FLY_MS = 600L

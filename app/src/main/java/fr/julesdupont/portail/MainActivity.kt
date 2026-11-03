@@ -265,7 +265,19 @@ class MainActivity : AppCompatActivity() {
         fly.scaleY = 1f
         fly.visibility = View.VISIBLE
         freezeSplashVideo(R.drawable.ouverture_fin_sans_k) // le K qui part est celui de l'image : on l'y efface
+        fly.alpha = 1f
         icon.alpha = 0
+        // En fin de trajet, le K de la vidéo s'efface pendant que celui du bouton apparaît.
+        android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+            startDelay = (Splash.FLY_MS * Splash.CROSSFADE_FROM).toLong()
+            duration = (Splash.FLY_MS * (1 - Splash.CROSSFADE_FROM)).toLong()
+            addUpdateListener {
+                val v = it.animatedValue as Float
+                icon.alpha = Math.round(v * 255)
+                fly.alpha = 1f - v
+                btn.invalidate()
+            }
+        }.start()
         b.splashOverlay.setOnClickListener(null)
         b.splashOverlay.isClickable = false
         val scale = iconSize / startSize
