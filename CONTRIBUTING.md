@@ -20,9 +20,10 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 <https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk>
 
 - Elle s'installe **à côté** de la vraie app, avec ses propres réglages.
-- **Rechercher une mise à jour** installe la dernière version de `develop` (sur demande uniquement,
-  pas de vérification automatique).
-- **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour.
+- **Rechercher une mise à jour** signale la dernière version de `develop` et l'ouvre dans le navigateur
+  (sur demande uniquement, pas de vérification automatique).
+- **Outils de test** dans l'onglet Réglages : simuler l'arrivée, simuler l'approche, réinitialiser l'appel du jour,
+  simuler une mise à jour (fenêtre, notification et téléchargement de l'APK de test par le navigateur).
 - Pour tester l'appel automatique en conditions réelles, désactiver l'appel automatique dans la vraie app
   ce jour-là (sinon les deux appellent) et mettre de préférence un autre numéro que le portail.
 
@@ -84,7 +85,7 @@ Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré
 1. Sur GitHub : **Pull requests › New pull request**, base `main` ← compare `develop`.
 2. Les **Tests** tournent (sans rien publier).
 3. Si elle est verte : **Merge pull request**.
-4. Le merge sur `main` lance « Release APK » → nouvelle Release → l'app propose la mise à jour.
+4. Le merge sur `main` lance « Release APK » → nouvelle Release → l'app signale la mise à jour.
 
 Un commit qui ne touche que la doc (`*.md`) sur `main` ne déclenche pas de Release.
 
@@ -117,7 +118,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `AutoCallTest` | Appel direct ou compte à rebours, refus, pas de double appel |
 | `GeofenceLogicTest` | Entrée / sortie des zones portail et approche |
 | `PortalServiceTest` | Compte à rebours, Annuler, Appeler maintenant ; suivi d'appel (rappel, raccrochage auto, ligne occupée avec ou sans rappel) ; une zone ne coupe pas un appel suivi ; état en direct pour l'accueil, bouton Annuler de l'accueil |
-| `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions |
+| `UpdaterTest` | Lecture des Releases GitHub, comparaison des versions, au plus une vérification par heure, « Plus tard », pas d'autorisation d'installer des applis |
 | `ZonesTest` | Limites des rayons, écart de 300 m, arrondi des curseurs de la carte |
 | `MapPickerTest` | Aller-retour des valeurs entre la carte et l'écran de réglages |
 | `ConfigShareTest` | Format du lien de configuration (QR), aller-retour, liens invalides refusés |
@@ -128,7 +129,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `HistoryTest` | Historique des arrivées : limite, semaine en cours (cases jour par jour), heure moyenne, résumé |
 | `JournalTest` | Lignes du journal découpées (heure, date, message), en-têtes de jour (Aujourd'hui, Hier, Ven. 2 oct.), couleur du point selon l'événement |
 | `LiveCallTest` | Suivi en direct : compte à rebours, appel en cours (anneau, raccrochage), nouvel essai, terminé |
-| `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations |
+| `SummariesTest` | Résumés de l'onglet Réglages : jours, horaires, zones, appel, retour, autorisations ; rappel d'installation des mises à jour |
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
 | `AppThemeTest` | Thème : comme le système par défaut, choix enregistré, appliqué à toute l'app |
 | `CharteTest` | Charte : couleurs de la marque et rôles principaux, police Be Vietnam Pro, logo et icônes, « Keo » en accent |
@@ -141,7 +142,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `CallLaunchTest` | Appel direct ou via l'écran verrouillé selon l'état du téléphone |
 | `CallActivityTest` | Écran d'appel : appel automatique (verrouillé), pas de double appel, appel manuel |
 | `FeedbackTest` | Retour vocal : vibrations (dont ligne occupée), annonce seulement avec écouteurs et hors appel |
-| `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation |
+| `TestToolsTest` | Outils de la version de test : arrivée / approche simulées, réinitialisation, mise à jour factice |
 
 ### Règles pour les prochains développements
 1. **Toute nouvelle fonctionnalité arrive avec ses tests**, dans le même commit ou la même pull request.

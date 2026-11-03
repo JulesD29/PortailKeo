@@ -345,7 +345,7 @@ class MainActivity : AppCompatActivity() {
         if (!::b.isInitialized) return
         loadForm()
         applyGeofence(silent = true)
-        if (prefs.lastUpdateCheck != LocalDate.now().toString()) checkForUpdate(interactive = false)
+        checkForUpdate(interactive = false) // au plus une fois par heure (Updater.shouldCheck)
         handler.post(liveTick)
     }
 
@@ -723,6 +723,10 @@ class MainActivity : AppCompatActivity() {
             TestTools.resetWhatsNew(this)
             showWhatsNewIfNeeded()
         }
+        b.btnFakeUpdate.setOnClickListener {
+            showUpdateDialog(TestTools.fakeUpdate(this))
+            toast("Mise à jour factice : fenêtre et notification")
+        }
         b.btnResetToday.setOnClickListener {
             TestTools.resetToday(this)
             toast("Appel du jour réinitialisé")
@@ -738,29 +742,34 @@ class MainActivity : AppCompatActivity() {
             if (isFinishing || isDestroyed) return@check
             result.onFailure { if (interactive) toast("Impossible de vérifier : ${it.message}") }
             result.onSuccess { release ->
-                if (release != null) showUpdateDialog(release)
-                else if (interactive) toast("${getString(R.string.app_name)} est à jour")
+                when {
+                    release == null -> if (interactive) toast("${getString(R.string.app_name)} est à jour")
+                    interactive || Updater.shouldOffer(release, prefs.dismissedUpdate) -> showUpdateDialog(release)
+                }
             }
         }
     }
 
+    /** « Télécharger » ouvre l'APK dans le navigateur ; Android l'installe quand on ouvre le fichier téléchargé. */
     private fun showUpdateDialog(release: Updater.Release) {
         MaterialAlertDialogBuilder(this)
             .setTitle("Nouvelle version ${release.name}")
-            .setMessage(Updater.displayNotes(release.notes).take(1500))
-            .setPositiveButton("Installer") { _, _ -> installUpdate(release) }
-            .setNegativeButton("Plus tard", null)
+            .setMessage(Updater.displayNotes(release.notes).take(1500) + "\n\n" + Summaries.UPDATE_HOWTO)
+            .setPositiveButton("Télécharger") { _, _ ->
+                if (openUrl(release.apkUrl)) toast("Une fois téléchargé, ouvrez le fichier pour installer")
+                else toast("Aucun navigateur pour télécharger la mise à jour")
+            }
+            .setNegativeButton("Plus tard") { _, _ -> prefs.dismissedUpdate = release.versionCode }
+            .setNeutralButton("Voir les versions") { _, _ -> openUrl(Updater.RELEASES_URL) }
             .show()
     }
 
-    private fun installUpdate(release: Updater.Release) {
-        if (!packageManager.canRequestPackageInstalls()) {
-            toast("Autorisez « Installer des applis inconnues » pour ${getString(R.string.app_name)}, puis réessayez")
-            startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")))
-            return
-        }
-        toast("Téléchargement de la version ${release.name}…")
-        Updater.downloadAndInstall(this, release) { err -> toast("Échec de la mise à jour : $err") }
+    /** Ouvre un lien ; faux si aucune app ne sait l'ouvrir. */
+    private fun openUrl(url: String): Boolean = try {
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        true
+    } catch (e: android.content.ActivityNotFoundException) {
+        false
     }
 
     // ---------- Formulaire ----------

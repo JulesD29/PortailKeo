@@ -4,8 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInstaller
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -14,13 +12,21 @@ import org.json.JSONObject
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
-import java.time.LocalDate
 import java.util.concurrent.Executors
 
-/** Mises à jour depuis les « Releases » du dépôt GitHub public. */
+/**
+ * Mises à jour depuis les « Releases » du dépôt GitHub public, comme Metrolist : l'app cherche une nouvelle
+ * version et la signale (fenêtre, notification), puis ouvre le lien de l'APK dans le navigateur. C'est le
+ * navigateur qui télécharge et l'installateur d'Android qui installe : l'app n'a pas l'autorisation d'installer
+ * des applis (REQUEST_INSTALL_PACKAGES), qui déclenchait les alertes de Play Protect et des antivirus.
+ */
 object Updater {
     private const val REPO = "JulesD29/PortailKeo"
     const val ACTION_CHECK = "fr.julesdupont.portail.UPDATE_CHECK"
+    const val RELEASES_URL = "https://github.com/$REPO/releases"
+
+    /** Pas plus d'une vérification automatique par heure (l'API GitHub limite les appels). */
+    const val MIN_INTERVAL_MS = 60 * 60 * 1000L
 
     private val io = Executors.newSingleThreadExecutor()
     private val main = Handler(Looper.getMainLooper())
@@ -33,21 +39,17 @@ object Updater {
     fun currentVersionName(ctx: Context): String =
         ctx.packageManager.getPackageInfo(ctx.packageName, 0).versionName ?: "?"
 
-    private fun open(url: String): HttpURLConnection =
-        (URL(url).openConnection() as HttpURLConnection).apply {
-            connectTimeout = 15_000
-            readTimeout = 30_000
-            instanceFollowRedirects = true
-            setRequestProperty("User-Agent", "PortailKeo")
-        }
-
     /** Dernière release publiée (appel bloquant), ou null s'il n'y en a pas. */
     private fun fetchLatest(): Release? {
         // App normale : dernière Release publiée depuis main.
         // Version de test : pré-release « test » publiée depuis develop.
         val path = if (TestTools.enabled) "releases/tags/test" else "releases/latest"
-        val c = open("https://api.github.com/repos/$REPO/$path")
-        c.setRequestProperty("Accept", "application/vnd.github+json")
+        val c = (URL("https://api.github.com/repos/$REPO/$path").openConnection() as HttpURLConnection).apply {
+            connectTimeout = 15_000
+            readTimeout = 30_000
+            setRequestProperty("User-Agent", "PortailKeo")
+            setRequestProperty("Accept", "application/vnd.github+json")
+        }
         try {
             if (c.responseCode == 404) return null
             if (c.responseCode != 200) throw IOException("serveur de mises à jour injoignable (erreur ${c.responseCode})")
@@ -87,72 +89,48 @@ object Updater {
     /** Vrai si la release est plus récente que la version installée. */
     fun isNewer(release: Release, installedVersionCode: Long) = release.versionCode > installedVersionCode
 
-    /** Cherche une version plus récente que celle installée ; callback sur le thread principal. */
+    /** Vérification automatique : au plus une par heure ; sur demande, toujours. */
+    fun shouldCheck(lastCheckMs: Long, nowMs: Long, interactive: Boolean): Boolean =
+        interactive || nowMs - lastCheckMs !in 0 until MIN_INTERVAL_MS
+
+    /** Proposer automatiquement cette version ? Non si l'utilisateur a déjà répondu « Plus tard » pour elle. */
+    fun shouldOffer(release: Release, dismissedVersionCode: Long): Boolean = release.versionCode > dismissedVersionCode
+
     /**
+     * Cherche une version plus récente que celle installée ; callback sur le thread principal.
      * @param interactive true si l'utilisateur a touché « Rechercher une mise à jour ».
      * La version de test ne cherche que sur demande (pas de vérification automatique).
      */
     fun check(ctx: Context, interactive: Boolean = false, callback: (Result<Release?>) -> Unit) {
         val app = ctx.applicationContext
-        if (TestTools.enabled && !interactive) {
+        val prefs = Prefs(app)
+        if ((TestTools.enabled && !interactive) ||
+            !shouldCheck(prefs.lastUpdateCheckMs, System.currentTimeMillis(), interactive)) {
             main.post { callback(Result.success(null)) }
             return
         }
         io.execute {
             val result = runCatching { fetchLatest()?.takeIf { isNewer(it, currentVersionCode(app)) } }
-            if (result.isSuccess) Prefs(app).lastUpdateCheck = LocalDate.now().toString()
+            if (result.isSuccess) prefs.lastUpdateCheckMs = System.currentTimeMillis()
             main.post { callback(result) }
         }
     }
 
-    /** Vérification discrète (1 fois par jour max) : notification si une version est disponible. */
+    /** Vérification en arrière-plan : une notification par nouvelle version. */
     fun backgroundCheck(ctx: Context, done: () -> Unit = {}) {
         val app = ctx.applicationContext
-        if (Prefs(app).lastUpdateCheck == LocalDate.now().toString()) return done()
         check(app) { r ->
-            r.getOrNull()?.let {
-                Prefs(app).log("Nouvelle version disponible : ${it.name}")
-                Notifier.update(app, it.name)
+            val prefs = Prefs(app)
+            r.getOrNull()?.takeIf { it.versionCode > prefs.notifiedUpdate }?.let {
+                prefs.notifiedUpdate = it.versionCode
+                prefs.log("Nouvelle version disponible : ${it.name}")
+                Notifier.update(app, it)
             }
             done()
         }
     }
 
-    /** Télécharge l'APK et le confie à l'installateur Android (l'utilisateur confirme). */
-    fun downloadAndInstall(ctx: Context, release: Release, onError: (String) -> Unit) {
-        val app = ctx.applicationContext
-        io.execute {
-            try {
-                val installer = app.packageManager.packageInstaller
-                val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
-                val sessionId = installer.createSession(params)
-                installer.openSession(sessionId).use { session ->
-                    val c = open(release.apkUrl)
-                    try {
-                        if (c.responseCode != 200) throw IOException("téléchargement impossible (erreur ${c.responseCode})")
-                        c.inputStream.use { input ->
-                            session.openWrite("PortailKeo.apk", 0, -1).use { out ->
-                                input.copyTo(out)
-                                session.fsync(out)
-                            }
-                        }
-                    } finally {
-                        c.disconnect()
-                    }
-                    val intent = Intent(app, InstallReceiver::class.java).setAction(InstallReceiver.ACTION)
-                    val flags = PendingIntent.FLAG_UPDATE_CURRENT or
-                        (if (Build.VERSION.SDK_INT >= 31) PendingIntent.FLAG_MUTABLE else 0)
-                    session.commit(PendingIntent.getBroadcast(app, sessionId, intent, flags).intentSender)
-                }
-                Prefs(app).log("Téléchargement de ${release.name} terminé, installation…")
-            } catch (e: Exception) {
-                Prefs(app).log("Échec de la mise à jour : ${e.message}")
-                main.post { onError(e.message ?: e.javaClass.simpleName) }
-            }
-        }
-    }
-
-    /** Vérification automatique quotidienne, même si l'app n'est pas ouverte. */
+    /** Vérification automatique deux fois par jour, même si l'app n'est pas ouverte. */
     fun scheduleDaily(ctx: Context) {
         if (TestTools.enabled) return
         val app = ctx.applicationContext

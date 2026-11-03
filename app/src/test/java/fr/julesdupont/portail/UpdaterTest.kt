@@ -63,4 +63,31 @@ class UpdaterTest {
         assertFalse(Updater.isNewer(r, 12))
         assertFalse(Updater.isNewer(r, 13))
     }
+
+    @Test
+    fun `verification automatique au plus une fois par heure`() {
+        val h = Updater.MIN_INTERVAL_MS
+        assertTrue("jamais vérifié", Updater.shouldCheck(0L, 10 * h, interactive = false))
+        assertFalse("vérifié il y a 10 min", Updater.shouldCheck(10 * h, 10 * h + h / 6, interactive = false))
+        assertTrue("vérifié il y a 1 h", Updater.shouldCheck(10 * h, 11 * h, interactive = false))
+        assertTrue("sur demande : toujours", Updater.shouldCheck(10 * h, 10 * h + 1, interactive = true))
+        assertTrue("horloge reculée", Updater.shouldCheck(10 * h, 9 * h, interactive = false))
+    }
+
+    @Test
+    fun `plus tard ne repropose pas la meme version`() {
+        val r = Updater.Release(21, "1.21", "u", "")
+        assertTrue(Updater.shouldOffer(r, dismissedVersionCode = 0))
+        assertFalse(Updater.shouldOffer(r, dismissedVersionCode = 21))
+        assertTrue("version suivante", Updater.shouldOffer(Updater.Release(22, "1.22", "u", ""), 21))
+    }
+
+    @Test
+    fun `l'app ne demande pas a installer des applis`() {
+        val app = TestSupport.app
+        val perms = app.packageManager.getPackageInfo(app.packageName, android.content.pm.PackageManager.GET_PERMISSIONS)
+            .requestedPermissions.orEmpty()
+        assertFalse("REQUEST_INSTALL_PACKAGES déclenche les alertes de Play Protect",
+            "android.permission.REQUEST_INSTALL_PACKAGES" in perms)
+    }
 }

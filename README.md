@@ -49,7 +49,7 @@ and at the times you choose. The app interface is in French.
 | 🚪 **Logo and opening animation** | The Keo K whose gate leaves swing open, in green and pink: icon, notifications and an animation each time the app opens, whose K lands on the **Ouvrir le portail** button. |
 | 🌗 **Light or dark theme** | Light, dark or follow the system (Réglages › Apparence), in the app's green and pink colours. |
 | 📊 **History** | This week day by day, average arrival time and the log. |
-| 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
+| 🔄 **Updates** | The app announces each new version published on GitHub; "Télécharger" fetches it in the browser, so the app doesn't need permission to install apps. |
 | 📝 **Log** | Every zone entry, call and reason for not calling is recorded in the **Historique** tab (about two weeks). **Partager** sends it with your settings, gate number masked and no location. |
 
 ## Installation
@@ -66,7 +66,7 @@ and at the times you choose. The app interface is in French.
 > If the download stays stuck at 100 % in Chrome, pull down the notification shade and tap
 > **Download anyway**.
 
-After this first install, updates are offered **inside the app** (see [Automatic updates](#automatic-updates)).
+After this first install, new versions are announced **inside the app** (see [Updates](#updates)).
 
 ## Setup
 
@@ -121,10 +121,21 @@ name, so **"Ok Google, ouvre Portail"** calls the gate straight away. For an exa
 - **Pas d'appel les jours fériés** (on by default): French metropolitan public holidays,
   including Easter Monday, Ascension Day and Whit Monday.
 
-### Automatic updates
-The app checks for a new version when it opens and twice a day. A notification or dialog offers
-to install it; your settings are kept. You can also tap **Rechercher une mise à jour**.
-The first time, Android asks you to allow Portail Keo to install apps.
+### Updates
+The app checks for a new version when it opens (at most once an hour) and twice a day in the
+background. A dialog or notification announces it:
+
+1. **Télécharger** opens the file in your browser.
+2. Open the downloaded file (browser notification): Android installs the update over the
+   previous version and your settings are kept.
+
+**Plus tard**: that version is no longer offered automatically (one notification per version at most).
+**Réglages › À propos › Rechercher une mise à jour** checks at any time.
+
+Since 1.21 the app no longer installs anything itself: the "install apps" permission triggered
+Play Protect and antivirus warnings. The browser downloads the file, just like the first install.
+For hands-off updates, [Obtainium](https://github.com/ImranR98/Obtainium) can also track
+`https://github.com/JulesD29/PortailKeo`.
 
 ## How it works
 
@@ -151,15 +162,14 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Phone calls | Place the call directly, without opening the dialer |
 | Full-screen notifications | Show the call screen over the lock screen when the phone is locked |
 | Manage calls (phone state, end calls) | Check the call is ringing (retry if it dropped) and hang up automatically |
-| Notifications | Approach, countdown, update and error notifications |
+| Notifications | Approach, countdown, new version and error notifications |
 | Battery optimisation exemption | Keep Android from putting the app to sleep |
-| Install apps | Install updates downloaded from GitHub |
-| Internet | Check for and download updates, load the map |
+| Internet | Check for new versions, load the map |
 
 ## Privacy
 
 - Your number, coordinates, settings and log **stay on your phone**; nothing is sent anywhere.
-- Network access: the GitHub API (updates) and OpenStreetMap map tiles, only while the map is open.
+- Network access: the GitHub API (new versions) and OpenStreetMap map tiles, only while the map is open.
   Your position is never sent; only the map area being displayed is downloaded.
 - No accounts, no analytics, no ads.
 
@@ -175,7 +185,7 @@ The first time, Android asks you to allow Portail Keo to install apps.
 | Call drops without ringing | The app retries automatically (up to 3 attempts); check the **Journal** for "nouvel essai". |
 | Gate line busy (someone calls it at the same time) | By default the app stops there: the gate is usually already open. Enable **Rappeler si le portail est occupé** to retry 15 s later (up to 3 attempts). |
 | Tile shows no label | Expand the full shade, or enlarge the tile (Android 16). |
-| "Mise à jour refusée : signature différente" | Uninstall the app, then install the latest APK manually. |
+| "App not installed" when opening the update | Different signature: uninstall the app, then install the latest APK. |
 
 ## Design guidelines
 Colours, typeface and usage rules (in French): [CHARTE.md](CHARTE.md).
@@ -216,8 +226,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── CallHelper.kt          Places the call (TelecomManager)
 ├── PortalTileService.kt   "Ouvrir le portail" Quick Settings tile
 ├── CallActivity.kt        Invisible screen used by the tile and the shortcut
-├── Updater.kt             Updates from GitHub Releases
-├── InstallReceiver.kt     Update install result
+├── Updater.kt             New versions on GitHub (downloaded through the browser)
 ├── RegisterReceiver.kt    Reboot, app update, periodic refresh
 ├── Notifier.kt            Notifications
 ├── Prefs.kt / Perms.kt    Settings and permissions
@@ -228,10 +237,11 @@ app/src/main/java/fr/julesdupont/portail/
 <summary><b>Releases and signing</b></summary>
 
 - Every merge into `main` runs the **Release APK** workflow: it builds, signs and publishes a
-  GitHub Release `v<N>`, which installed apps pick up as an update.
+  GitHub Release `v<N>`, which installed apps announce as an update.
 - The APK is signed with a fixed key stored in the repository **secrets**
   (`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`). Without these
-  secrets, no Release is published.
+  secrets the workflow fails: no debug-signed APK is ever published. A stable key also lets
+  Play Protect build a reputation for the app.
 - Local builds use `signing/keystore.properties` if present, otherwise the debug key.
   The `signing/` folder is git-ignored and must never be committed.
 </details>
@@ -241,8 +251,8 @@ app/src/main/java/fr/julesdupont/portail/
 
 Every push to `develop` publishes **Portail Keo (test)** (orange icon) as the `test` pre-release:
 [PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
-It installs next to the real app, has its own settings, updates from `develop` on demand
-(**Rechercher une mise à jour**), and a **test tools**
+It installs next to the real app, has its own settings, looks for the latest `develop` build on
+demand (**Rechercher une mise à jour**), and a **test tools**
 page in the Réglages tab (simulate arrival / approach, reset today's call). See [CONTRIBUTING.md](CONTRIBUTING.md).
 </details>
 

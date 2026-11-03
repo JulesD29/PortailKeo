@@ -44,6 +44,10 @@ object Summaries {
     fun shortcuts(voiceEnabled: Boolean, spokenName: String): String =
         if (voiceEnabled) "« Ok Google, ouvre $spokenName »" else "Tuile et widget · commande vocale désactivée"
 
+    /** Rappel sous les notes de version : l'app télécharge par le navigateur, Android installe. */
+    const val UPDATE_HOWTO = "« Télécharger » ouvre le fichier dans votre navigateur ; ouvrez-le une fois " +
+        "téléchargé pour installer la mise à jour. Vos réglages sont conservés."
+
     fun permissions(missing: Int): String = when (missing) {
         0 -> "Tout est accordé"
         1 -> "1 réglage à faire"

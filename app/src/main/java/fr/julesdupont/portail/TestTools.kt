@@ -49,4 +49,23 @@ object TestTools {
         p.lastCallDate = ""
         p.log("[TEST] Appel du jour réinitialisé")
     }
+
+    /** APK de la version de test publiée depuis develop. */
+    const val TEST_APK_URL = "https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk"
+
+    /**
+     * Mise à jour factice : « nouvelle version » qui pointe sur l'APK de test actuel, pour essayer la fenêtre,
+     * la notification et le téléchargement par le navigateur (Android accepte de réinstaller la même version).
+     */
+    fun fakeUpdate(ctx: Context): Updater.Release {
+        val release = Updater.Release(
+            versionCode = Updater.currentVersionCode(ctx) + 1,
+            name = "Test (factice)",
+            apkUrl = TEST_APK_URL,
+            notes = "## Nouveautés\n- Mise à jour factice pour essayer le téléchargement par le navigateur.",
+        )
+        Prefs(ctx).log("[TEST] Mise à jour factice : ${release.name}")
+        Notifier.update(ctx, release)
+        return release
+    }
 }

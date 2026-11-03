@@ -1,6 +1,8 @@
 package fr.julesdupont.portail
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SummariesTest {
@@ -15,6 +17,12 @@ class SummariesTest {
 
     @Test
     fun horaires() = assertEquals("Lun → ven · 07:00–10:00", Summaries.schedule(setOf(1, 2, 3, 4, 5), 420, 600))
+
+    @Test
+    fun `rappel d'installation des mises a jour`() {
+        assertTrue("navigateur" in Summaries.UPDATE_HOWTO)
+        assertFalse("Obtainium" in Summaries.UPDATE_HOWTO)
+    }
 
     @Test
     fun numero() {
