@@ -132,7 +132,7 @@ Les tests sont dans `app/src/test/java/fr/julesdupont/portail/` et tournent sur 
 | `MainActivityTest` | Écran principal : onglets, page d'un réglage et retour, résumés, suivi en direct, historique, partage du journal |
 | `AppThemeTest` | Thème : comme le système par défaut, choix enregistré, appliqué à toute l'app |
 | `CharteTest` | Charte : couleurs de la marque et rôles principaux, police Be Vietnam Pro, logo et icônes, « Keo » en accent |
-| `SplashTest` | Ouverture : vidéo seulement au lancement et animations actives, vidéo, première image et écran de démarrage présents, tuile de la vidéo à la taille de celle de l'écran de démarrage, position du K de la fin de la vidéo |
+| `SplashTest` | Ouverture : vidéo seulement au lancement et animations actives, vidéo, première et dernière images et écran de démarrage présents, tuile de la vidéo à la taille de celle de l'écran de démarrage, position du K de la fin de la vidéo |
 | `LogShareTest` | Partage du journal : numéros masqués (2 premiers et 2 derniers chiffres), contexte (version, réglages, autorisations), jamais la position |
 | `WhatsNewTest` | « Quoi de neuf » : nouveautés non vues, édition courante |
 | `PortalWidgetTest` | Widget : contenu selon l'état, mise à jour sans plantage |

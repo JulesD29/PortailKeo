@@ -23,6 +23,8 @@ class SplashTest {
         TestSupport.app.resources.openRawResource(R.raw.ouverture).use { assertTrue(it.read() >= 0) }
         assertTrue(AppCompatResources.getDrawable(TestSupport.app, R.drawable.splash_icon_closed) != null)
         assertTrue("première image de la vidéo", AppCompatResources.getDrawable(TestSupport.app, R.drawable.ouverture_debut) != null)
+        assertTrue("dernière image", AppCompatResources.getDrawable(TestSupport.app, R.drawable.ouverture_fin) != null)
+        assertTrue("dernière image sans le K", AppCompatResources.getDrawable(TestSupport.app, R.drawable.ouverture_fin_sans_k) != null)
     }
 
     @Test

@@ -177,6 +177,10 @@ class MainActivity : AppCompatActivity() {
             height = Math.round(Splash.videoHeightDp() * d)
         }
         b.splashVideo.setBackgroundResource(R.drawable.ouverture_debut)
+        b.splashStill.layoutParams = b.splashStill.layoutParams.apply {
+            width = Math.round(Splash.videoWidthDp() * d)
+            height = Math.round(Splash.videoHeightDp() * d)
+        }
     }
 
     /** Centre la tuile de la vidéo sur l'écran entier, là où Android dessinait celle de l'écran de démarrage. */
@@ -186,6 +190,19 @@ class MainActivity : AppCompatActivity() {
         val screenCenter = window.decorView.height / 2f
         val overlayCenter = loc[1] + b.splashOverlay.height / 2f
         b.splashVideo.translationY = screenCenter - overlayCenter + Splash.tileOffsetDp() * resources.displayMetrics.density
+        b.splashStill.translationY = b.splashVideo.translationY
+    }
+
+    /**
+     * Remplace la vidéo par une image fixe au même endroit. La vidéo est dessinée hors de l'écran de l'app
+     * (SurfaceView) : elle ne suit pas le fondu et resterait affichée comme un rectangle jusqu'à la fin.
+     */
+    private fun freezeSplashVideo(still: Int?) {
+        if (still != null) {
+            b.splashStill.setImageResource(still)
+            b.splashStill.visibility = View.VISIBLE
+        }
+        b.splashVideo.visibility = View.INVISIBLE
     }
 
     /** Après l'écran de démarrage : la vidéo du K se joue, puis l'écran s'efface sur l'accueil. */
@@ -203,7 +220,10 @@ class MainActivity : AppCompatActivity() {
         }
         b.splashVideo.setOnCompletionListener {
             handler.removeCallbacks(hide)
-            if (!flyKToGate()) hideSplash(Splash.FADE_MS)
+            if (!flyKToGate()) {
+                freezeSplashVideo(R.drawable.ouverture_fin)
+                hideSplash(Splash.FADE_MS)
+            }
         }
         b.splashVideo.setOnErrorListener { _, _, _ -> handler.removeCallbacks(hide); hideSplash(0); true }
         // La vidéo est muette : ne pas prendre le son, sinon Android met en pause la musique des écouteurs.
@@ -244,6 +264,7 @@ class MainActivity : AppCompatActivity() {
         fly.scaleX = 1f
         fly.scaleY = 1f
         fly.visibility = View.VISIBLE
+        freezeSplashVideo(R.drawable.ouverture_fin_sans_k) // le K qui part est celui de l'image : on l'y efface
         icon.alpha = 0
         b.splashOverlay.setOnClickListener(null)
         b.splashOverlay.isClickable = false
@@ -269,6 +290,7 @@ class MainActivity : AppCompatActivity() {
     /** Efface la vidéo d'ouverture et laisse place à l'accueil. */
     private fun hideSplash(durationMs: Long) {
         if (b.splashOverlay.visibility != View.VISIBLE) return
+        if (b.splashVideo.visibility == View.VISIBLE) freezeSplashVideo(null) // pour que tout s'efface ensemble
         b.splashOverlay.animate().alpha(0f).setDuration(durationMs).withEndAction {
             b.splashVideo.stopPlayback()
             b.splashOverlay.visibility = View.GONE
