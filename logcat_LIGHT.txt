@@ -1,0 +1,84 @@
+11-03 08:02:54.477 V/SplashScreenExceptionList(  518): SplashScreen checking exception for package fr.julesdupont.portail (target sdk:34) -> false
+11-03 08:02:54.483 V/WindowManagerShell(  827): Transition requested: android.os.BinderProxy@17702a4 TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=9 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=fr.julesdupont.portail/.MainActivity } baseActivity=ComponentInfo{fr.julesdupont.portail/fr.julesdupont.portail.MainActivity} topActivity=ComponentInfo{fr.julesdupont.portail/fr.julesdupont.portail.MainActivity} origActivity=null realActivity=ComponentInfo{fr.julesdupont.portail/fr.julesdupont.portail.MainActivity} numActivities=1 lastActiveTime=61838 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{android.window.IWindowContainerToken$Stub$Proxy@152480d} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{90ad3c2 fr.julesdupont.portail.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-03 08:02:54.487 I/ActivityTaskManager(  518): START u0 {flg=0x10000000 cmp=fr.julesdupont.portail/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+11-03 08:02:54.511 D/CoreBackPreview(  518): Window{9c57976 u0 Splash Screen fr.julesdupont.portail}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@997e3e4, mPriority=0, mIsAnimationCallback=false}
+11-03 08:02:54.800 I/ActivityManager(  518): Start proc 4690:fr.julesdupont.portail/u0a192 for next-top-activity {fr.julesdupont.portail/fr.julesdupont.portail.MainActivity}
+11-03 08:02:54.842 I/sdupont.portail( 4690): Late-enabling -Xcheck:jni
+11-03 08:02:54.903 I/sdupont.portail( 4690): Using CollectorTypeCC GC.
+11-03 08:02:54.907 W/sdupont.portail( 4690): Unexpected CPU variant for x86: x86_64.
+11-03 08:02:54.907 W/sdupont.portail( 4690): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, tremont, kabylake, default
+11-03 08:02:54.921 V/WindowManager(  518): Sent Transition #12 createdAt=11-03 08:02:54.430 via request=TransitionRequestInfo { type = OPEN, triggerTask = TaskInfo{userId=0 taskId=9 displayId=0 isRunning=true baseIntent=Intent { flg=0x10000000 cmp=fr.julesdupont.portail/.MainActivity } baseActivity=ComponentInfo{fr.julesdupont.portail/fr.julesdupont.portail.MainActivity} topActivity=ComponentInfo{fr.julesdupont.portail/fr.julesdupont.portail.MainActivity} origActivity=null realActivity=ComponentInfo{fr.julesdupont.portail/fr.julesdupont.portail.MainActivity} numActivities=1 lastActiveTime=61838 supportsMultiWindow=true resizeMode=1 isResizeable=true minWidth=-1 minHeight=-1 defaultMinSize=220 token=WCT{RemoteToken{f73b87b Task{1c24287 #9 type=standard A=10192:fr.julesdupont.portail}}} topActivityType=1 pictureInPictureParams=null shouldDockBigOverlays=false launchIntoPipHostTaskId=-1 lastParentTaskIdBeforePip=-1 displayCutoutSafeInsets=Rect(0, 128 - 0, 0) topActivityInfo=ActivityInfo{9d3698 fr.julesdupont.portail.MainActivity} launchCookies=[] positionInParent=Point(0, 0) parentTaskId=-1 isFocused=false isVisible=false isVisibleRequested=false isSleeping=false topActivityInSizeCompat=false topActivityEligibleForLetterboxEducation= false topActivityLetterboxed= false isFromDoubleTap= false topActivityLetterboxVerticalPosition= -1 topActivityLetterboxHorizontalPosition= -1 topActivityLetterboxWidth=-1 topActivityLetterboxHeight=-1 locusId=null displayAreaFeatureId=1 cameraCompatControlState=hidden}, remoteTransition = null, displayChange = null }
+11-03 08:02:54.922 V/WindowManager(  518):     info={id=12 t=OPEN f=0x0 trk=0 r=[0@Point(0, 0)] c=[{WCT{RemoteToken{f73b87b Task{1c24287 #9 type=standard A=10192:fr.julesdupont.portail}}} m=OPEN f=NONE leash=Surface(name=Task=9)/@0x78c9075 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0},{WCT{RemoteToken{beb0666 Task{7fa144d #1 type=home}}} m=TO_BACK f=SHOW_WALLPAPER leash=Surface(name=Task=1)/@0xd9b3994 sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0}]}
+11-03 08:02:55.793 D/nativeloader( 4690): Configuring clns-6 for other apk /data/app/~~czbYvTXpUe3eHI-CSnHa4w==/fr.julesdupont.portail-pUpQfbP8O4lGm8oqDp4uHQ==/base.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~czbYvTXpUe3eHI-CSnHa4w==/fr.julesdupont.portail-pUpQfbP8O4lGm8oqDp4uHQ==/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/fr.julesdupont.portail
+11-03 08:02:55.814 V/GraphicsEnvironment( 4690): ANGLE GameManagerService for fr.julesdupont.portail: false
+11-03 08:02:55.814 V/GraphicsEnvironment( 4690): fr.julesdupont.portail is not listed in per-application setting
+11-03 08:02:56.143 I/BlockstoreStorage( 1450): Clearing Blockstore Data for package fr.julesdupont.portail [CONTEXT service_id=258 ]
+11-03 08:02:56.653 W/sdupont.portail( 4690): Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (unsupported, reflection, allowed)
+11-03 08:02:56.893 D/CoreBackPreview(  518): Window{a27c38d u0 fr.julesdupont.portail/fr.julesdupont.portail.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@a6d3baf, mPriority=0, mIsAnimationCallback=false}
+11-03 08:02:58.329 I/ImeTracker(  518): fr.julesdupont.portail:11573e75: onRequestHide at ORIGIN_SERVER_HIDE_INPUT reason HIDE_UNSPECIFIED_WINDOW
+11-03 08:02:58.329 I/ImeTracker(  518): fr.julesdupont.portail:11573e75: onCancelled at PHASE_SERVER_SHOULD_HIDE
+11-03 08:02:58.342 I/GoogleInputMethodService( 1520): GoogleInputMethodService.onStartInput():1877 onStartInput(EditorInfo{inputType=0x0(NULL) imeOptions=0x0 privateImeOptions=null actionName=UNSPECIFIED actionLabel=null actionId=0 initialSelStart=-1 initialSelEnd=-1 initialCapsMode=0x0 hintText=null label=null packageName=fr.julesdupont.portail fieldId=0 fieldName=null extras=null}, false)
+11-03 08:02:58.638 I/ActivityTaskManager(  518): Displayed fr.julesdupont.portail/.MainActivity for user 0: +3s636ms
+11-03 08:02:58.722 D/CoreBackPreview(  518): Window{9c57976 u0 Splash Screen fr.julesdupont.portail}: Setting back callback null
+11-03 08:02:58.724 W/InputManager-JNI(  518): Input channel object '9c57976 Splash Screen fr.julesdupont.portail (client)' was disposed without first being removed with the input manager!
+11-03 08:02:58.861 D/MediaPlayerService(  470): OMX service is not available
+11-03 08:02:59.103 D/MediaPlayerNative( 4690): getMetadata
+11-03 08:02:59.964 W/MediaPlayerNative( 4690): info/warning (3, 0)
+11-03 08:03:00.966 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:00.966 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:02.616 D/ProfileInstaller( 4690): Installing profile for fr.julesdupont.portail
+11-03 08:03:05.112 V/MediaPlayer( 4690): resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+11-03 08:03:05.112 V/MediaPlayer( 4690): cleanDrmObj: mDrmObj=null mDrmSessionId=null
+11-03 08:03:05.112 V/MediaPlayer( 4690): resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+11-03 08:03:05.112 V/MediaPlayer( 4690): cleanDrmObj: mDrmObj=null mDrmSessionId=null
+11-03 08:03:11.601 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{90da44 com.google.android.apps.messaging/10129} BLOCKED
+11-03 08:03:11.602 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{4c5d72d com.google.android.gm/10141} BLOCKED
+11-03 08:03:11.665 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:11.665 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:11.666 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:11.666 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:11.666 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:11.666 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:12.938 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{bea4714 com.google.android.youtube/10138} BLOCKED
+11-03 08:03:12.939 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{f8937b6 com.google.android.apps.maps/10155} BLOCKED
+11-03 08:03:13.022 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:13.022 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:13.022 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:13.175 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:13.175 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:13.175 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:14.807 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:14.807 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:15.901 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{ee94f93 com.google.android.as/10125} BLOCKED
+11-03 08:03:15.938 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:15.939 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:15.986 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:15.986 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:17.285 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{6e06ed5 com.google.android.contacts/10154} BLOCKED
+11-03 08:03:17.298 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:17.298 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:17.302 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:17.302 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:21.263 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{39014db com.google.android.settings.intelligence/10118} BLOCKED
+11-03 08:03:21.347 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{3044882 com.google.android.apps.messaging/10129} BLOCKED
+11-03 08:03:23.365 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{8f9646c com.google.android.as/10125} BLOCKED
+11-03 08:03:25.213 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:25.213 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:25.214 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:25.214 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:25.214 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:25.214 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:27.964 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{394cce7 com.google.android.contacts/10154} BLOCKED
+11-03 08:03:27.975 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:27.975 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:30.214 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:30.217 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:32.368 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:32.368 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:33.691 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:33.692 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:37.082 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:37.082 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:39.864 I/AppsFilter(  518): interaction: PackageSetting{11e2f57 fr.julesdupont.portail/10192} -> PackageSetting{f10c4bb com.google.android.contacts/10154} BLOCKED
+11-03 08:03:39.868 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
+11-03 08:03:39.868 V/MediaPlayerList( 1018): mPackageChangedBroadcastReceiver: action: android.intent.action.PACKAGE_CHANGED
