@@ -25,7 +25,7 @@ object WhatsNew {
         Item(8, "Thème clair ou sombre", "Réglages › Apparence : clair, sombre ou comme le système."),
         Item(9, "Nouveau logo et ouverture animée", "Le K de Keo, dont les battants roses s'ouvrent : sur l'écran d'accueil du téléphone, dans les notifications et à chaque ouverture de l'app (touchez l'écran pour passer l'animation)."),
         Item(10, "Ouverture plus fluide", "À la fin de l'animation, le K se pose sur le bouton « Ouvrir le portail ». Et l'animation ne coupe plus la musique de vos écouteurs."),
-        Item(11, "Mises à jour avec Obtainium", "L'app ne s'installe plus elle-même, ce qui évite les alertes de Play Protect et des antivirus. Pour recevoir les nouvelles versions, installez Obtainium : Réglages › À propos › Mises à jour vous guide."),
+        Item(11, "Mises à jour sans alerte", "L'app n'installe plus elle-même ses mises à jour, ce qui évite les alertes de Play Protect et des antivirus. Quand une version sort, touchez « Télécharger » : votre navigateur récupère le fichier, ouvrez-le pour installer. Vos réglages sont conservés."),
     )
 
     /** Nouveautés pas encore vues. */

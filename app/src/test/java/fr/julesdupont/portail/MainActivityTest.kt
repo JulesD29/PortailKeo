@@ -21,6 +21,7 @@ class MainActivityTest {
             enabled = false
             setupDone = true
             lastSeenWhatsNew = WhatsNew.CURRENT
+            lastUpdateCheckMs = System.currentTimeMillis() // pas de recherche de mise à jour pendant les tests
         }
     }
     @After fun tearDown() = TestSupport.tearDown()

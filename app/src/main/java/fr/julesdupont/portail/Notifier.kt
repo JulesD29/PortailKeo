@@ -14,7 +14,9 @@ object Notifier {
     const val CHANNEL_APPROACH = "approche"
     private const val ID_INFO = 1
     private const val ID_FALLBACK = 2
+    private const val ID_UPDATE = 3
     const val ID_LOCKED_CALL = 4
+    const val EXTRA_SHOW_UPDATE = "show_update"
 
     fun ensureChannels(ctx: Context) {
         val nm = ctx.getSystemService(NotificationManager::class.java)
@@ -75,6 +77,28 @@ object Notifier {
 
     fun cancelLockedCall(ctx: Context) {
         NotificationManagerCompat.from(ctx).cancel(ID_LOCKED_CALL)
+    }
+
+    /** Nouvelle version : toucher ouvre la fenêtre de l'app, « Télécharger » ouvre l'APK dans le navigateur. */
+    fun update(ctx: Context, release: Updater.Release) {
+        val show = PendingIntent.getActivity(
+            ctx, 3,
+            Intent(ctx, MainActivity::class.java).putExtra(EXTRA_SHOW_UPDATE, true)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val download = PendingIntent.getActivity(
+            ctx, 5,
+            Intent(Intent.ACTION_VIEW, Uri.parse(release.apkUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        post(ctx, ID_UPDATE, NotificationCompat.Builder(ctx, CHANNEL)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Mise à jour disponible")
+            .setContentText("${ctx.getString(R.string.app_name)} ${release.name} : touchez pour voir les nouveautés")
+            .setContentIntent(show)
+            .addAction(0, "Télécharger", download)
+            .setAutoCancel(true))
     }
 
     /** Si l'appel automatique échoue, propose un bouton "Appeler" dans une notification. */

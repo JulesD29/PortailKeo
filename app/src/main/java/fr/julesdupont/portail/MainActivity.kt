@@ -161,7 +161,9 @@ class MainActivity : AppCompatActivity() {
             sections.firstOrNull { it.id == id }?.let { openDetail(it, savedInstanceState.getString(STATE_SECTION_TITLE).orEmpty()) }
         }
         configLink(intent)?.let { importConfig(it) }
-        showWhatsNewIfNeeded()
+        Updater.scheduleDaily(this)
+        if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
+        else showWhatsNewIfNeeded()
     }
 
     /**
@@ -335,6 +337,7 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
         if (!::b.isInitialized) return
         configLink(intent)?.let { importConfig(it) }
+        if (intent.getBooleanExtra(Notifier.EXTRA_SHOW_UPDATE, false)) checkForUpdate(interactive = true)
     }
 
     override fun onResume() {
@@ -342,6 +345,7 @@ class MainActivity : AppCompatActivity() {
         if (!::b.isInitialized) return
         loadForm()
         applyGeofence(silent = true)
+        checkForUpdate(interactive = false) // au plus une fois par heure (Updater.shouldCheck)
         handler.post(liveTick)
     }
 
@@ -491,7 +495,7 @@ class MainActivity : AppCompatActivity() {
         b.btnWizard.setOnClickListener { startActivity(SetupActivity.intent(this)) }
         b.btnLogMore.setOnClickListener { logExpanded = !logExpanded; refreshHistory() }
         b.btnLogShare.setOnClickListener { shareLog() }
-        b.btnUpdate.setOnClickListener { showUpdateHelp() }
+        b.btnUpdate.setOnClickListener { checkForUpdate(interactive = true) }
         b.btnWhatsNew.setOnClickListener { showWhatsNew(WhatsNew.items.filter { it.edition == WhatsNew.CURRENT }) }
         b.btnLiveAction.setOnClickListener {
             when (LiveCall.display(LiveCall.state)?.action) {
@@ -728,19 +732,31 @@ class MainActivity : AppCompatActivity() {
 
     // ---------- Mises à jour ----------
 
-    /** Les mises à jour passent par Obtainium, qui suit les Releases GitHub (l'app ne s'installe plus elle-même). */
-    private fun showUpdateHelp() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Mises à jour")
-            .setMessage(Summaries.updateHelp(getString(R.string.app_name), TestTools.enabled))
-            .setPositiveButton("Ajouter à Obtainium") { _, _ ->
-                if (!openUrl(AppVersion.OBTAINIUM_ADD)) {
-                    toast("Installez d'abord Obtainium, puis touchez à nouveau ce bouton")
-                    openUrl(AppVersion.OBTAINIUM_URL)
+    private fun checkForUpdate(interactive: Boolean) {
+        if (interactive) toast("Recherche d'une mise à jour…")
+        Updater.check(this, interactive) { result ->
+            if (isFinishing || isDestroyed) return@check
+            result.onFailure { if (interactive) toast("Impossible de vérifier : ${it.message}") }
+            result.onSuccess { release ->
+                when {
+                    release == null -> if (interactive) toast("${getString(R.string.app_name)} est à jour")
+                    interactive || Updater.shouldOffer(release, prefs.dismissedUpdate) -> showUpdateDialog(release)
                 }
             }
-            .setNeutralButton("Voir les versions") { _, _ -> openUrl(AppVersion.RELEASES_URL) }
-            .setNegativeButton("Fermer", null)
+        }
+    }
+
+    /** « Télécharger » ouvre l'APK dans le navigateur ; Android l'installe quand on ouvre le fichier téléchargé. */
+    private fun showUpdateDialog(release: Updater.Release) {
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Nouvelle version ${release.name}")
+            .setMessage(Updater.displayNotes(release.notes).take(1500) + "\n\n" + Summaries.UPDATE_HOWTO)
+            .setPositiveButton("Télécharger") { _, _ ->
+                if (openUrl(release.apkUrl)) toast("Une fois téléchargé, ouvrez le fichier pour installer")
+                else toast("Aucun navigateur pour télécharger la mise à jour")
+            }
+            .setNegativeButton("Plus tard") { _, _ -> prefs.dismissedUpdate = release.versionCode }
+            .setNeutralButton("Voir les versions") { _, _ -> openUrl(Updater.RELEASES_URL) }
             .show()
     }
 
@@ -996,14 +1012,14 @@ class MainActivity : AppCompatActivity() {
         b.rowPerms.rowIcon.setImageResource(if (missing.isEmpty()) R.drawable.ic_check_circle else R.drawable.ic_warning)
         b.rowTest.rowSubtitle.text = "Simuler l'arrivée, réinitialiser l'appel du jour…"
         b.rowTheme.rowSubtitle.text = prefs.theme.label
-        b.rowAbout.rowSubtitle.text = "Version ${AppVersion.name(this)} · Quoi de neuf"
+        b.rowAbout.rowSubtitle.text = "Version ${Updater.currentVersionName(this)} · Quoi de neuf"
 
         if (tab == Tab.HISTORY) refreshHistory()
 
         PortalWidget.refresh(this)
 
-        b.txtVersion.text = "Version ${AppVersion.name(this)}" +
-            if (TestTools.enabled) " · version de test (publiée depuis develop)" else ""
+        b.txtVersion.text = "Version ${Updater.currentVersionName(this)}" +
+            if (TestTools.enabled) " · version de test (mises à jour depuis develop, sur demande)" else ""
     }
 
     /** Onglet Historique : semaine en cours et journal. */
@@ -1082,7 +1098,7 @@ class MainActivity : AppCompatActivity() {
         val status = Dashboard.status(prefs.toRuleConfig(), prefs.hasLocation && prefs.phone.isNotBlank(),
             permsOk, AppClock.now())
         val text = LogShare.text(LogShare.Info(
-            versionName = AppVersion.name(this),
+            versionName = Updater.currentVersionName(this),
             testBuild = TestTools.enabled,
             device = "${Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${Build.MODEL}",
             androidVersion = Build.VERSION.RELEASE ?: "?",

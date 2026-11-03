@@ -49,7 +49,7 @@ les jours et aux heures que vous choisissez.
 | 🚪 **Logo et ouverture animée** | Le K de Keo dont les battants s'ouvrent, en vert et rose : icône, notifications et animation à chaque ouverture, dont le K se pose sur le bouton « Ouvrir le portail ». |
 | 🌗 **Thème clair ou sombre** | Clair, sombre ou comme le système (Réglages › Apparence), aux couleurs vert et rose de l'app. |
 | 📊 **Historique** | Semaine en cours jour par jour, heure d'arrivée moyenne et journal. |
-| 🔄 **Mises à jour avec Obtainium** | [Obtainium](https://github.com/ImranR98/Obtainium) suit les Releases GitHub et installe les nouvelles versions : l'app n'a pas besoin de l'autorisation d'installer des applis. |
+| 🔄 **Mises à jour** | L'app signale chaque nouvelle version publiée sur GitHub ; « Télécharger » la récupère dans le navigateur, sans que l'app ait besoin de l'autorisation d'installer des applis. |
 | 📝 **Journal** | Chaque entrée dans une zone, chaque appel et chaque raison de ne pas appeler sont notés dans l'onglet **Historique** (environ deux semaines). **Partager** l'envoie avec vos réglages, numéro du portail masqué et sans la position. |
 
 ## Installation
@@ -66,7 +66,7 @@ les jours et aux heures que vous choisissez.
 > Si le téléchargement reste bloqué à 100 % dans Chrome, tirez le volet de notifications et
 > touchez **Télécharger quand même**.
 
-Pour les mises à jour, installez [Obtainium](https://github.com/ImranR98/Obtainium)
+Après cette première installation, les nouvelles versions sont signalées **dans l'app**
 (voir [Mises à jour](#mises-à-jour)).
 
 ## Configuration
@@ -127,17 +127,20 @@ Personnel › *Quand je dis…* → commande personnalisée *« ouvre Portail »
   y compris le lundi de Pâques, l'Ascension et le lundi de Pentecôte.
 
 ### Mises à jour
-L'app ne s'installe plus elle-même (depuis la 1.21) : l'autorisation d'installer des applis
-déclenchait les alertes de Play Protect et des antivirus. Les nouvelles versions arrivent par
-[Obtainium](https://github.com/ImranR98/Obtainium), une app gratuite et open source qui suit les
-Releases GitHub et les installe à votre place.
+L'app cherche une nouvelle version à l'ouverture (au plus une fois par heure) et deux fois par jour
+en arrière-plan. Une fenêtre ou une notification la signale :
 
-1. Installez Obtainium (APK de sa [dernière version](https://github.com/ImranR98/Obtainium/releases/latest)).
-2. Dans Portail Keo : **Réglages › À propos › Mises à jour › Ajouter à Obtainium** (ou, dans Obtainium,
-   **Ajouter une appli** avec l'adresse `https://github.com/JulesD29/PortailKeo`).
-3. Obtainium vérifie régulièrement et propose d'installer chaque nouvelle version ; vos réglages sont conservés.
+1. **Télécharger** ouvre le fichier dans votre navigateur.
+2. Ouvrez le fichier téléchargé (notification du navigateur) : Android installe la mise à jour
+   par-dessus l'ancienne version, vos réglages sont conservés.
 
-L'APK est toujours signé avec la même clé : Obtainium installe par-dessus la version existante.
+**Plus tard** : cette version n'est plus proposée automatiquement (une notification par version au plus).
+**Réglages › À propos › Rechercher une mise à jour** vérifie à tout moment.
+
+Depuis la 1.21, l'app n'installe plus elle-même : l'autorisation d'installer des applis déclenchait les
+alertes de Play Protect et des antivirus. C'est le navigateur qui télécharge, comme pour la première
+installation. Pour des mises à jour sans y penser, [Obtainium](https://github.com/ImranR98/Obtainium)
+peut aussi suivre `https://github.com/JulesD29/PortailKeo`.
 
 ## Fonctionnement
 
@@ -165,15 +168,15 @@ L'APK est toujours signé avec la même clé : Obtainium installe par-dessus la 
 | Appels téléphoniques | Passer l'appel directement, sans ouvrir le clavier |
 | Notifications plein écran | Afficher l'écran d'appel par-dessus l'écran verrouillé |
 | Gestion des appels (état du téléphone, raccrocher) | Vérifier que l'appel sonne (rappel s'il s'est coupé) et raccrocher automatiquement |
-| Notifications | Approche, compte à rebours et erreurs |
+| Notifications | Approche, compte à rebours, nouvelles versions et erreurs |
 | Exemption d'optimisation batterie | Empêcher Android de mettre l'app en veille |
-| Internet | Afficher la carte |
+| Internet | Rechercher les nouvelles versions, afficher la carte |
 
 ## Confidentialité
 
 - Votre numéro, vos coordonnées, vos réglages et le journal **restent sur votre téléphone** ;
   rien n'est envoyé nulle part.
-- Accès réseau : uniquement les fonds de carte OpenStreetMap, quand la carte est ouverte.
+- Accès réseau : l'API GitHub (nouvelles versions) et les fonds de carte OpenStreetMap, seulement quand la carte est ouverte.
   Votre position n'est jamais envoyée ; seule la zone de carte affichée est téléchargée.
 - Pas de compte, pas de statistiques, pas de publicité.
 
@@ -189,7 +192,7 @@ L'APK est toujours signé avec la même clé : Obtainium installe par-dessus la 
 | L'appel se coupe sans sonner | L'app rappelle automatiquement (jusqu'à 3 essais) ; le **Journal** indique « nouvel essai ». |
 | Ligne du portail occupée (quelqu'un l'appelle en même temps) | Par défaut l'app s'arrête là : le portail est souvent déjà ouvert. Cochez **Rappeler si le portail est occupé** pour rappeler 15 s plus tard (jusqu'à 3 essais). |
 | Tuile sans texte | Ouvrez le volet complet, ou agrandissez la tuile (Android 16). |
-| Obtainium refuse la mise à jour (signature différente) | Désinstallez l'app, puis installez le dernier APK à la main. |
+| « Application non installée » en ouvrant la mise à jour | Signature différente : désinstallez l'app, puis installez le dernier APK. |
 
 ## Charte graphique
 Couleurs, police et règles d'usage de l'app : [CHARTE.md](CHARTE.md).
@@ -230,7 +233,7 @@ app/src/main/java/fr/julesdupont/portail/
 ├── CallHelper.kt          Passe l'appel (TelecomManager)
 ├── PortalTileService.kt   Tuile « Ouvrir le portail » des réglages rapides
 ├── CallActivity.kt        Écran invisible utilisé par la tuile et le raccourci
-├── AppVersion.kt          Version installée, liens Obtainium et Releases
+├── Updater.kt             Nouvelles versions sur GitHub (téléchargement par le navigateur)
 ├── RegisterReceiver.kt    Redémarrage, mise à jour de l'app, rafraîchissement périodique
 ├── Notifier.kt            Notifications
 ├── Prefs.kt / Perms.kt    Réglages et autorisations
@@ -241,7 +244,7 @@ app/src/main/java/fr/julesdupont/portail/
 <summary><b>Versions et signature</b></summary>
 
 - Chaque fusion dans `main` lance le workflow **Release APK** : il compile, signe et publie une
-  Release GitHub `v<N>`, qu'Obtainium récupère comme mise à jour.
+  Release GitHub `v<N>`, que les apps installées signalent comme mise à jour.
 - L'APK est signé avec une clé fixe stockée dans les **secrets** du dépôt
   (`KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`). Sans ces secrets,
   le workflow échoue : aucun APK signé avec la clé debug n'est publié. Une clé stable permet aussi
@@ -255,8 +258,8 @@ app/src/main/java/fr/julesdupont/portail/
 
 Chaque envoi sur `develop` publie **Portail Keo (test)** (icône orange) en pré-release `test` :
 [PortailKeo-test.apk](https://github.com/JulesD29/PortailKeo/releases/download/test/PortailKeo-test.apk).
-Elle s'installe à côté de la vraie app, a ses propres réglages (pour la suivre dans Obtainium : inclure
-les préversions et filtrer les APK sur `PortailKeo-test`), et une
+Elle s'installe à côté de la vraie app, a ses propres réglages, cherche la dernière version de `develop`
+sur demande (**Rechercher une mise à jour**), et une
 page **Outils de test** de l'onglet Réglages (simuler l'arrivée / l'approche, réinitialiser l'appel du jour).
 Voir [CONTRIBUTING.md](CONTRIBUTING.md).
 </details>
