@@ -1168,5 +1168,26 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:importantForAccessibility="no" />
+        <!-- Dernière image de la vidéo, qui la remplace pour le fondu final (MainActivity.freezeSplashVideo). -->
+        <ImageView
+            android:id="@+id/splashStill"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:scaleType="fitXY"
+            android:visibility="invisible" />
     </FrameLayout>
+
+    <!-- K de la fin de la vidéo (découpé dans sa dernière image) qui descend se poser sur celui du bouton
+         « Ouvrir le portail » (MainActivity.flyKToGate). -->
+    <ImageView
+        android:id="@+id/splashFlyK"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:elevation="17dp"
+        android:importantForAccessibility="no"
+        android:scaleType="fitXY"
+        android:src="@drawable/ouverture_k"
+        android:visibility="invisible" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

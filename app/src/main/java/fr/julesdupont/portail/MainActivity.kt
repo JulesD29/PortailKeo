@@ -138,7 +138,9 @@ class MainActivity : AppCompatActivity() {
         if (Splash.showIntro(resources.getBoolean(R.bool.splash_intro), savedInstanceState == null,
                 ValueAnimator.areAnimatorsEnabled())) {
             b.splashOverlay.visibility = View.VISIBLE
+            prepareSplashVideo()
             splash.setOnExitAnimationListener { provider ->
+                alignSplashVideo()
                 provider.remove()
                 playSplashIntro()
             }
@@ -164,7 +166,46 @@ class MainActivity : AppCompatActivity() {
         else showWhatsNewIfNeeded()
     }
 
-    /** Après l'animation du portail : le nom et la phrase apparaissent, puis l'écran s'efface sur l'accueil. */
+    /**
+     * La vidéo prend la taille où sa tuile est celle de l'écran de démarrage d'Android, et affiche sa première image
+     * tant qu'elle n'a pas commencé : l'écran de démarrage passe la main sans saut ni retour en arrière.
+     */
+    private fun prepareSplashVideo() {
+        val d = resources.displayMetrics.density
+        b.splashVideo.layoutParams = b.splashVideo.layoutParams.apply {
+            width = Math.round(Splash.videoWidthDp() * d)
+            height = Math.round(Splash.videoHeightDp() * d)
+        }
+        b.splashVideo.setBackgroundResource(R.drawable.ouverture_debut)
+        b.splashStill.layoutParams = b.splashStill.layoutParams.apply {
+            width = Math.round(Splash.videoWidthDp() * d)
+            height = Math.round(Splash.videoHeightDp() * d)
+        }
+    }
+
+    /** Centre la tuile de la vidéo sur l'écran entier, là où Android dessinait celle de l'écran de démarrage. */
+    private fun alignSplashVideo() {
+        val loc = IntArray(2)
+        b.splashOverlay.getLocationOnScreen(loc)
+        val screenCenter = window.decorView.height / 2f
+        val overlayCenter = loc[1] + b.splashOverlay.height / 2f
+        b.splashVideo.translationY = screenCenter - overlayCenter + Splash.tileOffsetDp() * resources.displayMetrics.density
+        b.splashStill.translationY = b.splashVideo.translationY
+    }
+
+    /**
+     * Remplace la vidéo par une image fixe au même endroit. La vidéo est dessinée hors de l'écran de l'app
+     * (SurfaceView) : elle ne suit pas le fondu et resterait affichée comme un rectangle jusqu'à la fin.
+     */
+    private fun freezeSplashVideo(still: Int?) {
+        if (still != null) {
+            b.splashStill.setImageResource(still)
+            b.splashStill.visibility = View.VISIBLE
+        }
+        b.splashVideo.visibility = View.INVISIBLE
+    }
+
+    /** Après l'écran de démarrage : la vidéo du K se joue, puis l'écran s'efface sur l'accueil. */
     private fun playSplashIntro() {
         val hide = Runnable { hideSplash(Splash.FADE_MS) }
         handler.postDelayed(hide, Splash.MAX_MS) // filet de sécurité si la vidéo ne se termine pas
@@ -172,16 +213,96 @@ class MainActivity : AppCompatActivity() {
             mp.setVolume(0f, 0f) // l'ouverture ne fait jamais de bruit
             b.splashVideo.start()
         }
-        b.splashVideo.setOnCompletionListener { handler.removeCallbacks(hide); hideSplash(Splash.FADE_MS) }
+        b.splashVideo.setOnInfoListener { _, what, _ ->
+            // La première image de la vidéo est à l'écran : on retire l'image fixe qui la remplaçait.
+            if (what == android.media.MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START) b.splashVideo.background = null
+            false
+        }
+        b.splashVideo.setOnCompletionListener {
+            handler.removeCallbacks(hide)
+            if (!flyKToGate()) {
+                freezeSplashVideo(R.drawable.ouverture_fin)
+                hideSplash(Splash.FADE_MS)
+            }
+        }
         b.splashVideo.setOnErrorListener { _, _, _ -> handler.removeCallbacks(hide); hideSplash(0); true }
+        // La vidéo est muette : ne pas prendre le son, sinon Android met en pause la musique des écouteurs.
+        b.splashVideo.setAudioFocusRequest(android.media.AudioManager.AUDIOFOCUS_NONE)
         b.splashVideo.setVideoURI(android.net.Uri.parse("android.resource://$packageName/${R.raw.ouverture}"))
         // Toucher l'écran passe la vidéo.
         b.splashOverlay.setOnClickListener { handler.removeCallbacks(hide); hideSplash(150) }
     }
 
+    /**
+     * Fin de la vidéo : un K identique remplace celui de la dernière image, puis rapetisse et descend se poser sur
+     * celui du bouton « Ouvrir le portail » pendant que la vidéo s'efface ; le bouton pulse à l'arrivée.
+     * Faux si le bouton n'est pas à l'écran (appel en cours, autre onglet) : on garde alors le simple fondu.
+     */
+    private fun flyKToGate(): Boolean {
+        val btn = b.btnOpenGate
+        val icon = btn.icon ?: return false
+        if (!btn.isShown || btn.width == 0 || icon.bounds.width() == 0) return false
+        val root = IntArray(2).also { b.root.getLocationOnScreen(it) }
+        val btnLoc = IntArray(2).also { btn.getLocationOnScreen(it) }
+        if (btnLoc[1] + btn.height <= root[1] || btnLoc[1] >= root[1] + b.root.height) return false
+        val video = IntArray(2).also { b.splashVideo.getLocationOnScreen(it) }
+        val (startX, startY, startSize) = Splash.endK(
+            (video[0] - root[0]).toFloat(), (video[1] - root[1]).toFloat(),
+            Splash.videoScaleDp() * resources.displayMetrics.density,
+        )
+        // Le dessin du bouton est centré entre les marges intérieures, sous la marge du haut (icône au-dessus du texte).
+        val iconSize = icon.bounds.width()
+        val targetX = btnLoc[0] - root[0] + btn.paddingLeft +
+            (btn.width - btn.paddingLeft - btn.paddingRight - iconSize) / 2f + icon.bounds.left
+        val targetY = btnLoc[1] - root[1] + btn.paddingTop + icon.bounds.top.toFloat()
+        val fly = b.splashFlyK // invisible en haut à gauche de l'écran : on le place par translation
+        fly.layoutParams = fly.layoutParams.apply { width = Math.round(startSize); height = Math.round(startSize) }
+        fly.pivotX = 0f
+        fly.pivotY = 0f
+        fly.translationX = startX - fly.left
+        fly.translationY = startY - fly.top
+        fly.scaleX = 1f
+        fly.scaleY = 1f
+        fly.visibility = View.VISIBLE
+        freezeSplashVideo(R.drawable.ouverture_fin_sans_k) // le K qui part est celui de l'image : on l'y efface
+        fly.alpha = 1f
+        icon.alpha = 0
+        // En fin de trajet, le K de la vidéo s'efface pendant que celui du bouton apparaît.
+        android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+            startDelay = (Splash.FLY_MS * Splash.CROSSFADE_FROM).toLong()
+            duration = (Splash.FLY_MS * (1 - Splash.CROSSFADE_FROM)).toLong()
+            addUpdateListener {
+                val v = it.animatedValue as Float
+                icon.alpha = Math.round(v * 255)
+                fly.alpha = 1f - v
+                btn.invalidate()
+            }
+        }.start()
+        b.splashOverlay.setOnClickListener(null)
+        b.splashOverlay.isClickable = false
+        val scale = iconSize / startSize
+        b.splashOverlay.animate().alpha(0f).setDuration(Splash.FLY_MS)
+            .setInterpolator(android.view.animation.PathInterpolator(0.4f, 0f, 0.2f, 1f)).start()
+        fly.animate().translationX(targetX - fly.left).translationY(targetY - fly.top).scaleX(scale).scaleY(scale)
+            .setDuration(Splash.FLY_MS)
+            .setInterpolator(android.view.animation.PathInterpolator(0.4f, 0f, 0.2f, 1f))
+            .withEndAction {
+                icon.alpha = 255
+                btn.invalidate()
+                fly.visibility = View.INVISIBLE
+                b.splashVideo.stopPlayback()
+                b.splashOverlay.visibility = View.GONE
+                btn.animate().scaleX(Splash.PULSE_SCALE).scaleY(Splash.PULSE_SCALE).setDuration(Splash.PULSE_MS / 2)
+                    .withEndAction { btn.animate().scaleX(1f).scaleY(1f).setDuration(Splash.PULSE_MS / 2).start() }
+                    .start()
+            }.start()
+        return true
+    }
+
     /** Efface la vidéo d'ouverture et laisse place à l'accueil. */
     private fun hideSplash(durationMs: Long) {
         if (b.splashOverlay.visibility != View.VISIBLE) return
+        if (b.splashVideo.visibility == View.VISIBLE) freezeSplashVideo(null) // pour que tout s'efface ensemble
         b.splashOverlay.animate().alpha(0f).setDuration(durationMs).withEndAction {
             b.splashVideo.stopPlayback()
             b.splashOverlay.visibility = View.GONE

@@ -5,7 +5,7 @@ object WhatsNew {
     data class Item(val edition: Int, val title: String, val text: String)
 
     /** À incrémenter quand on ajoute des nouveautés à présenter. */
-    const val CURRENT = 9
+    const val CURRENT = 10
 
     val items = listOf(
         Item(1, "Portail sur une carte", "Placez le portail et réglez les deux zones directement sur la carte."),
@@ -24,6 +24,7 @@ object WhatsNew {
         Item(8, "Nouvelles couleurs", "Vert et rose, inspirés de l'icône du portail qui s'ouvre, avec une nouvelle police. Les couleurs ne changent plus avec le fond d'écran."),
         Item(8, "Thème clair ou sombre", "Réglages › Apparence : clair, sombre ou comme le système."),
         Item(9, "Nouveau logo et ouverture animée", "Le K de Keo, dont les battants roses s'ouvrent : sur l'écran d'accueil du téléphone, dans les notifications et à chaque ouverture de l'app (touchez l'écran pour passer l'animation)."),
+        Item(10, "Ouverture plus fluide", "À la fin de l'animation, le K se pose sur le bouton « Ouvrir le portail ». Et l'animation ne coupe plus la musique de vos écouteurs."),
     )
 
     /** Nouveautés pas encore vues. */

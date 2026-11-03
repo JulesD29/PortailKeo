@@ -46,7 +46,7 @@ and at the times you choose. The app interface is in French.
 | 🎙️ **Voice command** | "Ok Google, ouvre Portail" calls the gate — handy while driving (optional). |
 | 📳 **Voice feedback** | Vibration when the call starts; double vibration and "Portail appelé" in your earbuds when it ends. |
 | 🏠 **Three tabs** | **Accueil** (status, big button to open the gate, live call tracking), **Réglages** grouped by topic, **Historique**. |
-| 🚪 **Logo and opening animation** | The Keo K whose gate leaves swing open, in green and pink: icon, notifications and an animation each time the app opens. |
+| 🚪 **Logo and opening animation** | The Keo K whose gate leaves swing open, in green and pink: icon, notifications and an animation each time the app opens, whose K lands on the **Ouvrir le portail** button. |
 | 🌗 **Light or dark theme** | Light, dark or follow the system (Réglages › Apparence), in the app's green and pink colours. |
 | 📊 **History** | This week day by day, average arrival time and the log. |
 | 🔄 **Automatic updates** | The app checks GitHub Releases and installs new versions itself. |
