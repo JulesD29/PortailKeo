@@ -18,7 +18,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-feature android:name="android.hardware.telephony" android:required="false" />
 
@@ -127,11 +126,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/portal_widget_info" />
         </receiver>
-
-        <!-- Résultat de l'installation d'une mise à jour -->
-        <receiver
-            android:name=".InstallReceiver"
-            android:exported="false" />
 
         <!-- Ré-enregistre la zone après redémarrage, mise à jour de l'app, et périodiquement -->
         <receiver

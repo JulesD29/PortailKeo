@@ -28,7 +28,9 @@ jobs:
             echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/portailkeo.jks"
             echo "KEYSTORE_FILE=$RUNNER_TEMP/portailkeo.jks" >> "$GITHUB_ENV"
           else
-            echo "::warning::Secret KEYSTORE_BASE64 absent : APK signé avec une clé temporaire."
+            # Jamais d'APK signé avec la clé debug : une clé stable évite les alertes et garde la réputation de l'app.
+            echo "::error::Secret KEYSTORE_BASE64 absent : impossible de signer avec la clé fixe."
+            exit 1
           fi
       - name: Build
         env:
@@ -66,6 +68,5 @@ jobs:
           tag_name: v${{ github.run_number }}
           name: "1.${{ github.run_number }}"
           body_path: notes.md
-          files: |
-            PortailKeo-1.${{ github.run_number }}.apk
-            PortailKeo.apk
+          # Un seul APK par Release : Obtainium l'installe sans demander lequel choisir.
+          files: PortailKeo.apk

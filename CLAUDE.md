@@ -11,7 +11,7 @@ Package : `fr.julesdupont.portail`. minSdk 26, targetSdk 34, compileSdk 35.
 ## Tests (obligatoires)
 - Chaque nouvelle fonctionnalité ou correction de bug arrive **avec ses tests** dans `app/src/test/`.
 - Logique pure hors Android dès que possible (`Rules.evaluate`, `Arrival`, `Coords`, `Holidays`,
-  `Updater.parseRelease`) ; Robolectric pour ce qui touche Android (Prefs, CallHelper, AutoCall,
+  `Summaries`) ; Robolectric pour ce qui touche Android (Prefs, CallHelper, AutoCall,
   GeofenceReceiver.handleTransition, PortalService).
 - Heure via `AppClock` ; appels via `CallHelper.placer` ; utiliser `TestSupport` (setUp/tearDown).
 - Vérifier que le workflow **Tests** passe sur GitHub Actions avant d'annoncer que c'est fini.

@@ -7,14 +7,12 @@ import android.content.Intent
 /** Redémarrage, mise à jour de l'app ou rafraîchissement périodique → on ré-enregistre la zone. */
 class RegisterReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == Updater.ACTION_CHECK) {
-            val pending = goAsync()
-            Updater.backgroundCheck(context) { pending.finish() }
+        // Ancienne vérification automatique des mises à jour (jusqu'à la 1.20) : on l'arrête.
+        if (intent.action == AppVersion.LEGACY_ACTION_CHECK) {
+            AppVersion.cancelLegacyCheck(context)
             return
         }
-        if (intent.action == Intent.ACTION_BOOT_COMPLETED || intent.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
-            Updater.scheduleDaily(context)
-        }
+        if (intent.action == Intent.ACTION_MY_PACKAGE_REPLACED) AppVersion.cancelLegacyCheck(context)
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED,
             Intent.ACTION_MY_PACKAGE_REPLACED,

@@ -1,6 +1,8 @@
 package fr.julesdupont.portail
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SummariesTest {
@@ -15,6 +17,15 @@ class SummariesTest {
 
     @Test
     fun horaires() = assertEquals("Lun → ven · 07:00–10:00", Summaries.schedule(setOf(1, 2, 3, 4, 5), 420, 600))
+
+    @Test
+    fun `aide aux mises a jour`() {
+        val txt = Summaries.updateHelp("Portail Keo", testBuild = false)
+        assertTrue(txt.startsWith("Portail Keo ne s'installe plus elle-même"))
+        assertTrue("Obtainium" in txt)
+        assertFalse("préversions" in txt)
+        assertTrue("PortailKeo-test" in Summaries.updateHelp("Portail Keo (test)", testBuild = true))
+    }
 
     @Test
     fun numero() {

@@ -106,11 +106,6 @@ class Prefs(context: Context) {
         get() = sp.getBoolean("setupDone", hasLocation && phone.isNotBlank())
         set(v) = sp.edit().putBoolean("setupDone", v).apply()
 
-    /** Date (yyyy-MM-dd) de la dernière recherche de mise à jour réussie. */
-    var lastUpdateCheck: String
-        get() = sp.getString("lastUpdateCheck", "") ?: ""
-        set(v) = sp.edit().putString("lastUpdateCheck", v).apply()
-
     /** Édition des nouveautés déjà présentées (voir WhatsNew). */
     var lastSeenWhatsNew: Int
         get() = sp.getInt("lastSeenWhatsNew", 0)

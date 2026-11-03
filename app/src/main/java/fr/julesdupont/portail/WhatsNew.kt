@@ -5,7 +5,7 @@ object WhatsNew {
     data class Item(val edition: Int, val title: String, val text: String)
 
     /** À incrémenter quand on ajoute des nouveautés à présenter. */
-    const val CURRENT = 10
+    const val CURRENT = 11
 
     val items = listOf(
         Item(1, "Portail sur une carte", "Placez le portail et réglez les deux zones directement sur la carte."),
@@ -25,6 +25,7 @@ object WhatsNew {
         Item(8, "Thème clair ou sombre", "Réglages › Apparence : clair, sombre ou comme le système."),
         Item(9, "Nouveau logo et ouverture animée", "Le K de Keo, dont les battants roses s'ouvrent : sur l'écran d'accueil du téléphone, dans les notifications et à chaque ouverture de l'app (touchez l'écran pour passer l'animation)."),
         Item(10, "Ouverture plus fluide", "À la fin de l'animation, le K se pose sur le bouton « Ouvrir le portail ». Et l'animation ne coupe plus la musique de vos écouteurs."),
+        Item(11, "Mises à jour avec Obtainium", "L'app ne s'installe plus elle-même, ce qui évite les alertes de Play Protect et des antivirus. Pour recevoir les nouvelles versions, installez Obtainium : Réglages › À propos › Mises à jour vous guide."),
     )
 
     /** Nouveautés pas encore vues. */

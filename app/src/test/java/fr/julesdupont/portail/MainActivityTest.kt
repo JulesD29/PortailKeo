@@ -21,7 +21,6 @@ class MainActivityTest {
             enabled = false
             setupDone = true
             lastSeenWhatsNew = WhatsNew.CURRENT
-            lastUpdateCheck = LocalDate.now().toString()
         }
     }
     @After fun tearDown() = TestSupport.tearDown()

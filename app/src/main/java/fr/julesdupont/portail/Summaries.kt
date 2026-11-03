@@ -44,6 +44,19 @@ object Summaries {
     fun shortcuts(voiceEnabled: Boolean, spokenName: String): String =
         if (voiceEnabled) "« Ok Google, ouvre $spokenName »" else "Tuile et widget · commande vocale désactivée"
 
+    /** Fenêtre « Mises à jour » de l'onglet Réglages › À propos. */
+    fun updateHelp(appName: String, testBuild: Boolean): String = buildString {
+        append("$appName ne s'installe plus elle-même : les mises à jour passent par Obtainium, ")
+        append("une app gratuite qui suit les versions publiées sur GitHub et les installe pour vous.\n\n")
+        append("1. Installez Obtainium.\n")
+        append("2. Touchez « Ajouter à Obtainium » : l'adresse de l'app est déjà remplie, validez.\n\n")
+        append("Vos réglages sont conservés à chaque mise à jour.")
+        if (testBuild) {
+            append("\n\nVersion de test : dans Obtainium, activez « Inclure les préversions » ")
+            append("et filtrez les APK sur « PortailKeo-test ».")
+        }
+    }
+
     fun permissions(missing: Int): String = when (missing) {
         0 -> "Tout est accordé"
         1 -> "1 réglage à faire"
